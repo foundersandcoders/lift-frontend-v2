@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import subjects from '../../data/subjects.json';
 import { verbData } from '../../utils/verbUtils';
 // import { categorizeBySentiment } from '../../utils/verbUtils';
-import { toast } from 'react-hot-toast';
+
 import type React from 'react';
 import type { PreStatement } from '../../types/types';
 
@@ -163,7 +163,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const handleComplete = () => {
     onComplete(selection);
     handleClose();
-    toast.success('Statement created successfully!');
   };
 
   const renderStep = () => {

@@ -10,7 +10,6 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import subjects from '../../data/subjects.json';
 import nlp from 'compromise';
-import { toast } from 'react-hot-toast';
 import { Trash2, Edit2, Save, Eye, EyeOff } from 'lucide-react';
 import { ConfirmationDialog } from './ui/confirmation-dialog';
 
@@ -174,7 +173,7 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
           (statement) => statement.id !== deleteConfirmation.statementId
         )
       );
-      toast.success('Statement deleted successfully!');
+      console.log('Statement deleted successfully!');
     }
     setDeleteConfirmation({ isOpen: false, statementId: null });
   };
@@ -196,9 +195,10 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
       );
       setEditingStatementId(null);
       setEditingPart(null);
-      toast.success('Statement updated successfully!');
+      console.log('Statement updated successfully!');
     } else {
-      toast.error('This statement already exists! Changes not saved.');
+      // XXXX WE NEED TO REVERT THE CHANGES MADE TO THE STATEMENTS ARRAY
+      setDuplicateConfirmation({ isOpen: true, statement: null });
     }
   };
 
