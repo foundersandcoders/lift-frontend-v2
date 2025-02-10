@@ -6,7 +6,7 @@ import type { Statement } from '../../types/types';
 export async function postNewStatement(statement: Statement): Promise<void> {
   try {
     // POST operation
-    const postResponse = await fetch(`${API_URL}newEntry`, {
+    const postResponse = await fetch(`${API_URL}/newEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export async function postNewStatement(statement: Statement): Promise<void> {
     console.log('Successfully posted:', postData);
 
     // Optionally, if you want to fetch updated data after posting:
-    const getResponse = await fetch(`${API_URL}n/s/${statement.subject}`);
+    const getResponse = await fetch(`${API_URL}/n/s/${statement.subject}`);
     if (!getResponse.ok) {
       throw new Error(`HTTP error on GET! status: ${getResponse.status}`);
     }

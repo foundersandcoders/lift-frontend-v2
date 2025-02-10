@@ -23,3 +23,5 @@ allcode.txt
 *.njsproj
 *.sln
 *.sw?
+
+.env.*
