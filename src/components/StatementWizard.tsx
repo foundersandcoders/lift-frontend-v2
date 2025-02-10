@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Plus, ArrowLeft, Eye, EyeOff } from 'lucide-react';
@@ -329,15 +334,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     <>
       <Button onClick={handleOpen} className='w-full'>
         <Plus className='w-5 h-5 mr-2' />
-        Add New Statement
+        Statement Wizzard
       </Button>
 
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className='sm:max-w-[600px] pt-6'>
-        <DialogDescription className="sr-only">
-          Confirmation Dialog
-        </DialogDescription>
-        <DialogTitle className="sr-only">Confirmation Dialog</DialogTitle>
+          <DialogDescription className='sr-only'>
+            Confirmation Dialog
+          </DialogDescription>
+          <DialogTitle className='sr-only'>Confirmation Dialog</DialogTitle>
           <div className='relative'>
             {step !== 'who' && (
               <Button

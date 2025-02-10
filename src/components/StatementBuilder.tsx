@@ -47,6 +47,11 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
   const [editingStatementId, setEditingStatementId] = useState<string | null>(
     null
   );
+  const [duplicateConfirmation, setDuplicateConfirmation] = useState<{
+    isOpen: boolean;
+    statement: Statement | null;
+  }>({ isOpen: false, statement: null });
+
   const [editingPart, setEditingPart] = useState<
     'subject' | 'verb' | 'object' | null
   >(null);
@@ -79,6 +84,8 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
     setEditingPart(null);
   };
 
+  // Duplicate check: subject, verb, object (and later adverbial if needed)
+  // Note: public/private is not considered.
   const isStatementUnique = (
     newStatement: Omit<Statement, 'id'>,
     excludeId?: string
@@ -89,6 +96,8 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
         existingStatement.subject === newStatement.subject &&
         existingStatement.verb === newStatement.verb &&
         existingStatement.object === newStatement.object
+      // Future: To add adverbial comparison, uncomment below:
+      // && existingStatement.adverbial === newStatement.adverbial
     );
   };
 
@@ -105,18 +114,28 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
 
       if (isStatementUnique(newStatement)) {
         setStatements((prevStatements) => [...prevStatements, newStatement]);
-        onAddStatement(newStatement); // Add this line to update the shared list
+        onAddStatement(newStatement);
         console.log('Statement:', newStatement);
-        toast.success('Statement created successfully!');
         // Reset form fields
-        setSubject('Eve');
+        setSubject(username);
         setVerb(null);
         setObject('');
         setIsPublic(false);
       } else {
-        toast.error('This statement already exists!');
+        // Open the duplicate confirmation dialog.
+        setDuplicateConfirmation({ isOpen: true, statement: newStatement });
+        console.error('Duplicate statement detected:', newStatement);
       }
     }
+  };
+
+  const handleDuplicateCancel = () => {
+    setDuplicateConfirmation({ isOpen: false, statement: null });
+  };
+
+  const handleDuplicateConfirm = () => {
+    // Just dismiss the dialog—do not add the duplicate.
+    setDuplicateConfirmation({ isOpen: false, statement: null });
   };
 
   const handleAddDescriptor = async (newDescriptor: string) => {
@@ -350,7 +369,7 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
   }, [username]);
 
   return (
-    <div className='bg-white rounded-xl shadow-lg p-6 w-full max-w-2xl'>
+    <div className='bg-white rounded-xl shadow-lg p-6 w-full'>
       <h1 className='text-2xl font-bold mb-4'>Statement Builder</h1>
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
@@ -474,6 +493,14 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({
         onConfirm={handleDeleteConfirm}
         title='Delete Statement'
         description='Are you sure you want to delete this statement? This action cannot be undone.'
+      />
+      <ConfirmationDialog
+        isOpen={duplicateConfirmation.isOpen}
+        onClose={handleDuplicateCancel}
+        onConfirm={handleDuplicateConfirm}
+        title='Duplicate Statement'
+        description='This statement already exists and will not be added.'
+        singleButton
       />
     </div>
   );
