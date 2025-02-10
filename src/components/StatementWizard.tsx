@@ -11,27 +11,22 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Plus, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import subjects from '../../data/subjects.json';
+import subjectsData from '../../data/subjects.json';
 import { verbData } from '../../utils/verbUtils';
-// import { categorizeBySentiment } from '../../utils/verbUtils';
+import { useStatements } from '../hooks/useStatements';
+import type { SubjectData } from '../../types/types';
 
 import type React from 'react';
-import type { PreStatement } from '../../types/types';
-
-interface StatementWizardProps {
-  onComplete: (statement: PreStatement) => void;
-  username: string;
-}
+import type { PreStatement, Statement } from '../../types/types';
 
 type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
 
-const StatementWizard: React.FC<StatementWizardProps> = ({
-  onComplete,
-  username,
-}) => {
+const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
+  const { dispatch } = useStatements();
+
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('closed');
-  const [selection, setSelection] = useState({
+  const [selection, setSelection] = useState<PreStatement>({
     subject: '',
     verb: '',
     object: '',
@@ -39,26 +34,24 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   });
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Filter subject tiles based on the provided username
+  // Filter subject tiles based on the provided username.
   const subjectTiles = useMemo(() => {
+    // Cast imported JSON data to an array (ideally typed as SubjectData[])
+    const subjects = subjectsData as SubjectData[];
     const userSubject = subjects.find(
       (subject) => subject.subject === username
     );
     if (!userSubject) return [];
-
     return [
       { label: userSubject.subject, value: userSubject.subject },
-      ...userSubject.descriptors.map((descriptor) => ({
+      ...userSubject.descriptors.map((descriptor: string) => ({
         label: `${userSubject.subject}'s ${descriptor}`,
         value: `${userSubject.subject}'s ${descriptor}`,
       })),
     ];
   }, [username]);
 
-  // Group verbs by sentiment and category
-  //const categorizedVerbs = useMemo(() => categorizeBySentiment(verbData), []);
-
-  // Extract unique categories
+  // Extract unique categories.
   const categories = useMemo(() => {
     const allCategories = verbData.flatMap((verb) => verb.categories);
     return Array.from(new Set(allCategories)).sort();
@@ -84,7 +77,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     const verbObj = verbData.find((v) => v.name === verb);
     if (!verbObj) return 'Can you elaborate on that?';
 
-    // Customize question based on verb category
+    // Customize question based on verb category.
     if (
       verbObj.categories.some(
         (cat) => cat.includes('Support') || cat.includes('Help')
@@ -106,7 +99,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     ) {
       return `Why does ${subject} ${verb.toLowerCase()}? What's the reason?`;
     }
-
     return `How does ${subject} ${verb.toLowerCase()}? What's the context?`;
   };
 
@@ -160,8 +152,13 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     }
   };
 
+  // Instead of using an onComplete prop, we dispatch a new statement into context.
   const handleComplete = () => {
-    onComplete(selection);
+    const newStatement: Statement = {
+      ...selection,
+      id: Date.now().toString(),
+    };
+    dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
     handleClose();
   };
 
@@ -194,7 +191,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </div>
           </div>
         );
-
       case 'action':
         return (
           <div className='space-y-4'>
@@ -246,7 +242,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </div>
           </div>
         );
-
       case 'what':
         return (
           <div className='space-y-6'>
@@ -271,7 +266,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </Button>
           </div>
         );
-
       case 'privacy':
         return (
           <div className='space-y-6'>
@@ -323,7 +317,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </Button>
           </div>
         );
-
       default:
         return null;
     }
@@ -333,7 +326,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     <>
       <Button onClick={handleOpen} className='w-full'>
         <Plus className='w-5 h-5 mr-2' />
-        Statement Wizzard
+        Statement Wizard
       </Button>
 
       <Dialog open={isOpen} onOpenChange={handleClose}>

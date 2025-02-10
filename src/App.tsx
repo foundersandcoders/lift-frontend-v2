@@ -17,7 +17,7 @@ export default function Home() {
           </h1>
 
           <div className='bg-white rounded-xl shadow-lg p-6  '>
-            <StatementWizard onComplete={() => {}} username={USERNAME} />
+            <StatementWizard username={USERNAME} />
             <StatementBuilder username={USERNAME} />
             <StatementList username={USERNAME} />
           </div>
