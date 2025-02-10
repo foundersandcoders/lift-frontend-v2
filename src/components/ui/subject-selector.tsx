@@ -2,9 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { Check, ChevronsUpDown, Plus } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { Button } from './button';
-import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Input } from './input';
-import subjects from '../../../data/subjects.json';
+import { Popover, PopoverContent, PopoverTrigger } from './popover';
+import subjectsData from '../../../data/subjects.json';
+import type { SubjectData } from '../../../types/types';
+
+const subjects = subjectsData as SubjectData[];
 
 interface SubjectSelectorProps {
   value: string;
