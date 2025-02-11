@@ -2,12 +2,19 @@ import React, { useState, useMemo } from 'react';
 import { Check, ChevronsUpDown, Plus } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { Button } from './button';
-import { Input } from './input';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import subjectsData from '../../../data/subjects.json';
-import type { SubjectData } from '../../../types/types';
+import { Input } from './input';
+// Import descriptors from the new JSON file.
+import descriptorsData from '../../../data/descriptors.json';
 
-const subjects = subjectsData as SubjectData[];
+interface DescriptorsData {
+  descriptors: string[];
+}
+
+interface SubjectOption {
+  label: string;
+  value: string;
+}
 
 interface SubjectSelectorProps {
   value: string;
@@ -22,36 +29,33 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
   onAddDescriptor,
   username,
 }) => {
-  // Retrieve initial descriptors for the user.
-  const initialDescriptors = useMemo(() => {
-    const subjectData = subjects.find((s) => s.subject === username);
-    return subjectData ? subjectData.descriptors : [];
+  // Build the subject options using the entered name and descriptors from descriptors.json.
+  const subjectTiles: SubjectOption[] = useMemo(() => {
+    const data = descriptorsData as DescriptorsData;
+    const baseOption = { label: username, value: username };
+    const descriptorOptions = data.descriptors.map((descriptor) => ({
+      label: `${username}'s ${descriptor}`,
+      value: `${username}'s ${descriptor}`,
+    }));
+    return [baseOption, ...descriptorOptions];
   }, [username]);
 
-  // Local state for descriptors, search text, popover open state, etc.
-  const [descriptors, setDescriptors] = useState<string[]>(initialDescriptors);
+  // Local state for search, popover open state, and adding a new descriptor.
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newDescriptor, setNewDescriptor] = useState('');
 
-  // Create the options list: the primary subject and each descriptor option.
+  // Filter the options based on the search text.
   const options = useMemo(() => {
-    const baseOption = { label: username, value: username };
-    const descriptorOptions = descriptors.map((descriptor) => ({
-      label: `${username}'s ${descriptor}`,
-      value: `${username}'s ${descriptor}`,
-    }));
-    // Filter based on search text.
-    return [baseOption, ...descriptorOptions].filter((opt) =>
+    return subjectTiles.filter((opt) =>
       opt.label.toLowerCase().includes(search.toLowerCase())
     );
-  }, [descriptors, search, username]);
+  }, [subjectTiles, search]);
 
   const handleAddNewDescriptor = () => {
     if (newDescriptor.trim()) {
       onAddDescriptor(newDescriptor);
-      setDescriptors((prev) => [...prev, newDescriptor]);
       onChange(`${username}'s ${newDescriptor}`);
       setNewDescriptor('');
       setIsAddingNew(false);

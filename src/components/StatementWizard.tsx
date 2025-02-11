@@ -11,15 +11,18 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Plus, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import subjectsData from '../../data/subjects.json';
+import descriptorsData from '../../data/descriptors.json';
 import { verbData } from '../../utils/verbUtils';
 import { useStatements } from '../hooks/useStatements';
-import type { SubjectData } from '../../types/types';
-
+import { postNewStatement } from '../api/statementsApi';
 import type React from 'react';
 import type { PreStatement, Statement } from '../../types/types';
 
 type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
+
+interface DescriptorsData {
+  descriptors: string[];
+}
 
 const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
   const { dispatch } = useStatements();
@@ -36,17 +39,12 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
 
   // Filter subject tiles based on the provided username.
   const subjectTiles = useMemo(() => {
-    // Cast imported JSON data to an array (ideally typed as SubjectData[])
-    const subjects = subjectsData as SubjectData[];
-    const userSubject = subjects.find(
-      (subject) => subject.subject === username
-    );
-    if (!userSubject) return [];
+    const data = descriptorsData as DescriptorsData;
     return [
-      { label: userSubject.subject, value: userSubject.subject },
-      ...userSubject.descriptors.map((descriptor: string) => ({
-        label: `${userSubject.subject}'s ${descriptor}`,
-        value: `${userSubject.subject}'s ${descriptor}`,
+      { label: username, value: username },
+      ...data.descriptors.map((descriptor: string) => ({
+        label: `${username}'s ${descriptor}`,
+        value: `${username}'s ${descriptor}`,
       })),
     ];
   }, [username]);
@@ -152,13 +150,19 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     }
   };
 
-  // Instead of using an onComplete prop, we dispatch a new statement into context.
-  const handleComplete = () => {
+  const handleComplete = async () => {
     const newStatement: Statement = {
       ...selection,
       id: Date.now().toString(),
     };
+
+    // Dispatch the new statement to the context.
     dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
+
+    // Post the new statement to the backend.
+    await postNewStatement(newStatement);
+
+    // Close the wizard.
     handleClose();
   };
 

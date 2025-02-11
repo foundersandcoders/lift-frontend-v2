@@ -50,9 +50,25 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // If there are no statements, set some defaults.
   useEffect(() => {
     if (statements.length === 0) {
-      dispatch({ type: 'SET_STATEMENTS', payload: preStatements });
+      const newDefaults: Statement[] = (
+        preStatements as Array<
+          Omit<Statement, 'subject'> & { descriptor?: string }
+        >
+      ).map((stmt) => {
+        const subject = stmt.descriptor
+          ? `${username}'s ${stmt.descriptor}`
+          : username;
+        return {
+          ...stmt,
+          subject,
+          // Optionally, regenerate the id:
+          id:
+            Date.now().toString() + Math.random().toString(36).substring(2, 7),
+        };
+      });
+      dispatch({ type: 'SET_STATEMENTS', payload: newDefaults });
     }
-  }, [statements, dispatch]);
+  }, [username, dispatch, statements.length]);
 
   // Handler for editing verb selection in edit mode.
   const handleEditVerbSelect = (selectedVerb: Verb, statementId: string) => {

@@ -12,15 +12,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { ConfirmationDialog } from './ui/confirmation-dialog';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
-
-// We reuse the Statement type from your types file; if not, you can define it here:
-interface Statement {
-  id: string;
-  subject: string;
-  verb: string;
-  object: string;
-  isPublic: boolean;
-}
+import type { Statement } from '../../types/types';
 
 interface StatementBuilderProps {
   username: string;
@@ -28,7 +20,7 @@ interface StatementBuilderProps {
 
 const StatementBuilder: React.FC<StatementBuilderProps> = ({ username }) => {
   // Get the current statements and the dispatch function from context.
-  const { state, dispatch } = useStatements();
+  const { dispatch, state } = useStatements();
   const { statements } = state;
 
   // Local form states.
@@ -42,7 +34,7 @@ const StatementBuilder: React.FC<StatementBuilderProps> = ({ username }) => {
     statement: Statement | null;
   }>({ isOpen: false, statement: null });
 
-  // Callback for creation-mode verb selection.
+  // Callback for verb selection.
   const handleVerbSelect = (selectedVerb: Verb) => {
     const presentTenseVerb = nlp(selectedVerb.name)
       .verbs()

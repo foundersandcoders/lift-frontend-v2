@@ -1,35 +1,32 @@
 [
   {
     "id": "1",
-    "subject": "Eve",
     "verb": "Support",
     "object": "their team",
     "isPublic": true
   },
   {
     "id": "2",
-    "subject": "Eve's coding practice",
+    "descriptor": "coding practice",
     "verb": "Improve",
     "object": "software quality",
     "isPublic": false
   },
   {
     "id": "3",
-    "subject": "Eve",
     "verb": "Create",
     "object": "innovative solutions",
     "isPublic": true
   },
   {
     "id": "4",
-    "subject": "Eve's marketing ideas",
+    "descriptor": "marketing ideas",
     "verb": "Engage",
     "object": "potential customers",
     "isPublic": true
   },
   {
     "id": "5",
-    "subject": "Eve",
     "verb": "Learn",
     "object": "new technologies",
     "isPublic": false
