@@ -197,6 +197,131 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
         );
       case 'action':
         return (
+          // Main container set to flex column and full available height
+          <div className='flex flex-col h-full'>
+            {/* Title always visible */}
+            <h2 className='text-2xl font-semibold text-center mb-4'>
+              {getActionQuestion(selection.subject)}
+            </h2>
+
+            {/*
+              // Filter buttons (temporarily disabled)
+              <div className="flex flex-wrap gap-2 mb-4">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() =>
+                      setSelectedCategory(
+                        selectedCategory === category ? null : category
+                      )
+                    }
+                    className="text-xs"
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+              */}
+
+            {/* Scrollable container for the verb grid */}
+            <div className='flex-grow overflow-y-auto'>
+              <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 p-2'>
+                {verbData
+                  .slice()
+                  .sort((a, b) => a.name.localeCompare(b.name)) // Sorted alphabetically
+                  .map((verb, index) => (
+                    <Button
+                      key={`${verb.name}-${index}`}
+                      variant={
+                        selection.verb === verb.name ? 'default' : 'outline'
+                      }
+                      className='h-auto py-2 px-3 text-left flex items-center justify-center transition-all text-sm'
+                      style={{
+                        backgroundColor:
+                          selection.verb === verb.name
+                            ? verb.color
+                            : 'transparent',
+                        color:
+                          selection.verb === verb.name
+                            ? getContrastColor(verb.color)
+                            : 'inherit',
+                        borderColor: verb.color,
+                      }}
+                      onClick={() => {
+                        setSelection((prev) => ({ ...prev, verb: verb.name }));
+                        setStep('what');
+                      }}
+                    >
+                      <span className='font-medium'>{verb.name}</span>
+                    </Button>
+                  ))}
+              </div>
+            </div>
+          </div>
+        );
+
+        return (
+          <div className='space-y-4'>
+            <h2 className='text-2xl font-semibold text-center mb-6'>
+              {getActionQuestion(selection.subject)}
+            </h2>
+            {/*
+              // Filter buttons (temporarily disabled)
+              <div className='flex flex-wrap gap-2 mb-4'>
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? 'default' : 'outline'}
+                    size='sm'
+                    onClick={() =>
+                      setSelectedCategory(
+                        selectedCategory === category ? null : category
+                      )
+                    }
+                    className='text-xs'
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+              */}
+            <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[50vh] overflow-y-auto p-2'>
+              {verbData
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name)) // Sorting alphabetically by verb name
+                .map((verb, index) => (
+                  <Button
+                    key={`${verb.name}-${index}`}
+                    variant={
+                      selection.verb === verb.name ? 'default' : 'outline'
+                    }
+                    className='h-auto py-2 px-3 text-left flex items-center justify-center transition-all text-sm'
+                    style={{
+                      backgroundColor:
+                        selection.verb === verb.name
+                          ? verb.color
+                          : 'transparent',
+                      color:
+                        selection.verb === verb.name
+                          ? getContrastColor(verb.color)
+                          : 'inherit',
+                      borderColor: verb.color,
+                    }}
+                    onClick={() => {
+                      setSelection((prev) => ({ ...prev, verb: verb.name }));
+                      setStep('what');
+                    }}
+                  >
+                    <span className='font-medium'>{verb.name}</span>
+                  </Button>
+                ))}
+            </div>
+          </div>
+        );
+
+        return (
           <div className='space-y-4'>
             <h2 className='text-2xl font-semibold text-center mb-6'>
               {getActionQuestion(selection.subject)}
