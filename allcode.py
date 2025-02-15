@@ -2,7 +2,7 @@
 import os
 
 # Directories to exclude (won't be recursed into) - comparison done case-insensitively.
-EXCLUDE_DIRS = {"node_modules", ".git"}
+EXCLUDE_DIRS = {"node_modules", ".git", "dist", ".github"}
 
 # Files to exclude (by exact name, case-insensitive)
 EXCLUDE_FILES = {
@@ -19,7 +19,9 @@ EXCLUDE_FILES = {
     "package-lock.json",
     "allcode.py",
     "readme.md",
-    "allcode.txt",  # Exclude the output file
+    "allcode.txt",
+    ".env.development",
+    "vite-env.d.ts",
 }
 
 
