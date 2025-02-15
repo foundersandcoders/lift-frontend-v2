@@ -16,7 +16,7 @@ import { verbData } from '../../utils/verbUtils';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
 import type React from 'react';
-import type { PreStatement, Statement } from '../../types/types';
+import type { Statement } from '../../types/types';
 
 type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
 
@@ -29,7 +29,8 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('closed');
-  const [selection, setSelection] = useState<PreStatement>({
+  const [selection, setSelection] = useState<Statement>({
+    id: '',
     subject: '',
     verb: '',
     object: '',
@@ -120,6 +121,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     setIsOpen(true);
     setStep('who');
     setSelection({
+      id: '',
       subject: '',
       verb: '',
       object: '',

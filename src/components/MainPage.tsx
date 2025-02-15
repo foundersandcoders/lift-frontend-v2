@@ -3,7 +3,7 @@
 import React from 'react';
 import StatementBuilder from './StatementBuilder';
 import StatementWizard from './StatementWizard';
-import StatementList from './StatementList';
+import StatementList from './statements/StatementList';
 
 interface MainPageProps {
   username: string;

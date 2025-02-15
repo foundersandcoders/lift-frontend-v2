@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useStatements } from '../hooks/useStatements';
-import SubjectSelector from './ui/subject-selector';
-import VerbSelector from './ui/VerbSelector';
+import { useStatements } from '../../hooks/useStatements';
+import SubjectSelector from '../ui/subject-selector';
+import VerbSelector from '../ui/VerbSelector';
 // import { Label } from '../components/ui/input';
-import { Input } from '../components/ui/input';
-import { Button } from './ui/button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import nlp from 'compromise';
 import { Trash2, Edit2, Save, Eye, EyeOff } from 'lucide-react';
-import { ConfirmationDialog } from './ui/confirmation-dialog';
-import type { Statement, Verb } from '../../types/types';
-import preStatements from '../../data/preStatements.json';
+import { ConfirmationDialog } from '../ui/confirmation-dialog';
+import type { Statement, Verb, Action } from '../../../types/types';
+import preStatements from '../../../data/preStatements.json';
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { state, dispatch } = useStatements();

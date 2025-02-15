@@ -1,18 +1,16 @@
 export interface Action {
+  id: string;
   creationDate: string;
-  byDate: string;
+  dueDate: string;
   action: string;
 }
-
-export interface PreStatement {
+export interface Statement {
+  id: string;
   subject: string;
   verb: string;
   object: string;
   adverbial?: string;
   isPublic: boolean;
-}
-export interface Statement extends PreStatement {
-  id: string;
   actions?: Action[];
 }
 
