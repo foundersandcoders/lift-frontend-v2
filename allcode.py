@@ -2,7 +2,7 @@
 import os
 
 # Directories to exclude (won't be recursed into) - comparison done case-insensitively.
-EXCLUDE_DIRS = {"node_modules", ".git", "dist", ".github"}
+EXCLUDE_DIRS = {"node_modules", ".git", ".github", "dist"}
 
 # Files to exclude (by exact name, case-insensitive)
 EXCLUDE_FILES = {
@@ -16,6 +16,7 @@ EXCLUDE_FILES = {
     ".prettierrc",
     ".prettierrc.json",
     ".prettierrc.js",
+    ".env.development",
     "package-lock.json",
     "allcode.py",
     "readme.md",
