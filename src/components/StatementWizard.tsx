@@ -16,16 +16,34 @@ import { verbData } from '../../utils/verbUtils';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
 import type React from 'react';
-import type { PreStatement, Statement } from '../../types/types';
+import type {
+  PreStatement,
+  Statement,
+  SetQuestion,
+  Step,
+} from '../../types/types';
 
-type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
+//preset questions JSON
+import setQuestionsData from '../../data/setQuestions.json';
 
-interface DescriptorsData {
-  descriptors: string[];
+interface StatementWizardProps {
+  username: string;
+  /** Optional preset question. If not provided, we default to the first question from setQuestions.json */
+  presetQuestion?: SetQuestion;
 }
 
-const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
+const StatementWizard: React.FC<StatementWizardProps> = ({
+  username,
+  presetQuestion,
+}) => {
   const { dispatch } = useStatements();
+
+  // If no presetQuestion prop is passed, use the first question from the JSON file (if available)
+  const activePresetQuestion: SetQuestion | undefined =
+    presetQuestion ??
+    (setQuestionsData.setQuestions && setQuestionsData.setQuestions.length
+      ? setQuestionsData.setQuestions[0]
+      : undefined);
 
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('closed');
@@ -35,25 +53,18 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     object: '',
     isPublic: false,
   });
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Filter subject tiles based on the provided username.
+  // Build subject tiles (using descriptors)
   const subjectTiles = useMemo(() => {
-    const data = descriptorsData as DescriptorsData;
+    const data = descriptorsData as { descriptors: string[] };
     return [
       { label: username, value: username },
-      ...data.descriptors.map((descriptor: string) => ({
+      ...data.descriptors.map((descriptor) => ({
         label: `${username}'s ${descriptor}`,
         value: `${username}'s ${descriptor}`,
       })),
     ];
   }, [username]);
-
-  // Extract unique categories.
-  const categories = useMemo(() => {
-    const allCategories = verbData.flatMap((verb) => verb.categories);
-    return Array.from(new Set(allCategories)).sort();
-  }, []);
 
   const getContrastColor = (hexColor: string) => {
     const r = Number.parseInt(hexColor.slice(1, 3), 16);
@@ -63,81 +74,52 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     return yiq >= 128 ? 'black' : 'white';
   };
 
-  const getSubjectQuestion = (username: string): string => {
-    return `This statement applies to ${username} or someone/something else?`;
+  // Retrieve the appropriate question for the current step.
+  // If an active preset question exists, use its step question.
+  const getStepQuestion = (currentStep: Step) => {
+    if (activePresetQuestion && currentStep !== 'closed') {
+      return activePresetQuestion.steps[
+        currentStep as keyof typeof activePresetQuestion.steps
+      ].question;
+    }
+    // Default (free mode) questions:
+    if (currentStep === 'who')
+      return `This statement applies to ${username} or someone/something else?`;
+    if (currentStep === 'action')
+      return `What's happening with ${selection.subject}? How do they feel or what do they experience?`;
+    if (currentStep === 'what')
+      return `In what way does ${
+        selection.subject
+      } ${selection.verb.toLowerCase()}? What's the context?`;
+    if (currentStep === 'privacy') return `Who can see this statement?`;
+    return '';
   };
 
-  const getActionQuestion = (subject: string): string => {
-    return `What's happening with ${subject}? How do they feel or what do they experience?`;
-  };
-
-  const getContextQuestion = (subject: string, verb: string): string => {
-    const verbObj = verbData.find((v) => v.name === verb);
-    if (!verbObj) return 'Can you elaborate on that?';
-
-    // Customize question based on verb category.
-    if (
-      verbObj.categories.some(
-        (cat) => cat.includes('Support') || cat.includes('Help')
-      )
-    ) {
-      return `How does ${subject} ${verb.toLowerCase()}? What's the impact?`;
-    }
-    if (
-      verbObj.categories.some(
-        (cat) => cat.includes('Growth') || cat.includes('Development')
-      )
-    ) {
-      return `In what way does ${subject} ${verb.toLowerCase()}? What's the goal?`;
-    }
-    if (
-      verbObj.categories.some(
-        (cat) => cat.includes('Conflict') || cat.includes('Opposition')
-      )
-    ) {
-      return `Why does ${subject} ${verb.toLowerCase()}? What's the reason?`;
-    }
-    return `How does ${subject} ${verb.toLowerCase()}? What's the context?`;
-  };
-
-  const filteredVerbs = useMemo(() => {
-    if (!selectedCategory) return verbData;
-    return verbData.filter((verb) =>
-      verb.categories.includes(selectedCategory)
-    );
-  }, [selectedCategory]);
-
-  const sortedVerbs = useMemo(() => {
-    return [...filteredVerbs].sort((a, b) => {
-      if (a.color !== b.color) {
-        return a.color.localeCompare(b.color);
-      }
-      return a.name.localeCompare(b.name);
-    });
-  }, [filteredVerbs]);
-
+  // When opening the wizard, prefill the subject if in preset mode and it is preset.
   const handleOpen = () => {
     setIsOpen(true);
     setStep('who');
-    setSelection({
-      subject: '',
-      verb: '',
-      object: '',
-      isPublic: false,
-    });
+    if (activePresetQuestion && activePresetQuestion.steps.who.preset) {
+      setSelection((prev) => ({ ...prev, subject: username }));
+    } else {
+      setSelection({
+        subject: '',
+        verb: '',
+        object: '',
+        isPublic: false,
+      });
+    }
   };
 
   const handleClose = () => {
     setIsOpen(false);
     setStep('closed');
-    setSelectedCategory(null);
   };
 
   const handleBack = () => {
     switch (step) {
       case 'action':
         setStep('who');
-        setSelectedCategory(null);
         break;
       case 'what':
         setStep('action');
@@ -156,36 +138,67 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
       id: Date.now().toString(),
     };
 
-    // Dispatch the new statement to the context.
     dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
-
-    // Post the new statement to the backend.
     await postNewStatement(newStatement);
-
-    // Close the wizard.
     handleClose();
   };
 
   const renderStep = () => {
     switch (step) {
       case 'who':
+        // If in preset mode with a preset subject, simply show the auto-filled subject.
+        if (activePresetQuestion && activePresetQuestion.steps.who.preset) {
+          return (
+            <div className='space-y-4'>
+              <h2 className='text-2xl font-semibold text-center mb-6'>
+                {getStepQuestion('who')}
+              </h2>
+              <div className='text-center p-4 border rounded'>
+                <p>{username}</p>
+              </div>
+              <Button
+                onClick={() => {
+                  setSelection((prev) => ({ ...prev, subject: username }));
+                  setStep('action');
+                }}
+                className='w-full'
+              >
+                Continue
+              </Button>
+            </div>
+          );
+        }
+        // Otherwise, let the user pick a subject (free mode)
         return (
           <div className='space-y-4'>
             <h2 className='text-2xl font-semibold text-center mb-6'>
-              {getSubjectQuestion(username)}
+              {getStepQuestion('who')}
             </h2>
             <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
-              {subjectTiles.map((tile, index) => (
+              {subjectTiles.map((tile) => (
                 <Button
                   key={tile.value}
                   variant={
                     selection.subject === tile.value ? 'default' : 'outline'
                   }
                   className={`h-auto py-4 px-6 text-left flex flex-col items-start space-y-1 transition-all ${
-                    index === 0 ? 'bg-blue-50 hover:bg-blue-100' : ''
+                    tile.value === username
+                      ? 'bg-blue-50 hover:bg-blue-100'
+                      : ''
                   }`}
                   onClick={() => {
-                    setSelection((prev) => ({ ...prev, subject: tile.value }));
+                    // In preset mode without allowed descriptors, always use the username.
+                    if (
+                      activePresetQuestion &&
+                      !activePresetQuestion.steps.who.allowDescriptors
+                    ) {
+                      setSelection((prev) => ({ ...prev, subject: username }));
+                    } else {
+                      setSelection((prev) => ({
+                        ...prev,
+                        subject: tile.value,
+                      }));
+                    }
                     setStep('action');
                   }}
                 >
@@ -197,40 +210,15 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
         );
       case 'action':
         return (
-          // Container with a fixed height (adjust as needed) to allow proper scrolling.
           <div className='flex flex-col' style={{ height: '60vh' }}>
-            {/* Sticky header: always visible while scrolling */}
             <h2 className='sticky top-0 bg-white z-10 py-2 text-2xl font-semibold text-center'>
-              {getActionQuestion(selection.subject)}
+              {getStepQuestion('action')}
             </h2>
-
-            {/*
-              // Filter buttons (temporarily disabled)
-              <div className="flex flex-wrap gap-2 mb-4">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() =>
-                      setSelectedCategory(
-                        selectedCategory === category ? null : category
-                      )
-                    }
-                    className="text-xs"
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-              */}
-
-            {/* Scrollable container for the verb grid */}
             <div className='overflow-y-auto'>
               <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 p-2'>
                 {verbData
                   .slice()
-                  .sort((a, b) => a.name.localeCompare(b.name)) // Sorted alphabetically
+                  .sort((a, b) => a.name.localeCompare(b.name))
                   .map((verb, index) => (
                     <Button
                       key={`${verb.name}-${index}`}
@@ -258,182 +246,6 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
                     </Button>
                   ))}
               </div>
-            </div>
-          </div>
-        );
-
-        return (
-          // Main container set to flex column and full available height
-          <div className='flex flex-col h-full'>
-            {/* Title always visible */}
-            <h2 className='text-2xl font-semibold text-center mb-4'>
-              {getActionQuestion(selection.subject)}
-            </h2>
-
-            {/*
-              // Filter buttons (temporarily disabled)
-              <div className="flex flex-wrap gap-2 mb-4">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() =>
-                      setSelectedCategory(
-                        selectedCategory === category ? null : category
-                      )
-                    }
-                    className="text-xs"
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-              */}
-
-            {/* Scrollable container for the verb grid */}
-            <div className='flex-grow overflow-y-auto'>
-              <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 p-2'>
-                {verbData
-                  .slice()
-                  .sort((a, b) => a.name.localeCompare(b.name)) // Sorted alphabetically
-                  .map((verb, index) => (
-                    <Button
-                      key={`${verb.name}-${index}`}
-                      variant={
-                        selection.verb === verb.name ? 'default' : 'outline'
-                      }
-                      className='h-auto py-2 px-3 text-left flex items-center justify-center transition-all text-sm'
-                      style={{
-                        backgroundColor:
-                          selection.verb === verb.name
-                            ? verb.color
-                            : 'transparent',
-                        color:
-                          selection.verb === verb.name
-                            ? getContrastColor(verb.color)
-                            : 'inherit',
-                        borderColor: verb.color,
-                      }}
-                      onClick={() => {
-                        setSelection((prev) => ({ ...prev, verb: verb.name }));
-                        setStep('what');
-                      }}
-                    >
-                      <span className='font-medium'>{verb.name}</span>
-                    </Button>
-                  ))}
-              </div>
-            </div>
-          </div>
-        );
-
-        return (
-          <div className='space-y-4'>
-            <h2 className='text-2xl font-semibold text-center mb-6'>
-              {getActionQuestion(selection.subject)}
-            </h2>
-            {/*
-              // Filter buttons (temporarily disabled)
-              <div className='flex flex-wrap gap-2 mb-4'>
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    variant={selectedCategory === category ? 'default' : 'outline'}
-                    size='sm'
-                    onClick={() =>
-                      setSelectedCategory(
-                        selectedCategory === category ? null : category
-                      )
-                    }
-                    className='text-xs'
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-              */}
-            <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[50vh] overflow-y-auto p-2'>
-              {verbData
-                .slice()
-                .sort((a, b) => a.name.localeCompare(b.name)) // Sorting alphabetically by verb name
-                .map((verb, index) => (
-                  <Button
-                    key={`${verb.name}-${index}`}
-                    variant={
-                      selection.verb === verb.name ? 'default' : 'outline'
-                    }
-                    className='h-auto py-2 px-3 text-left flex items-center justify-center transition-all text-sm'
-                    style={{
-                      backgroundColor:
-                        selection.verb === verb.name
-                          ? verb.color
-                          : 'transparent',
-                      color:
-                        selection.verb === verb.name
-                          ? getContrastColor(verb.color)
-                          : 'inherit',
-                      borderColor: verb.color,
-                    }}
-                    onClick={() => {
-                      setSelection((prev) => ({ ...prev, verb: verb.name }));
-                      setStep('what');
-                    }}
-                  >
-                    <span className='font-medium'>{verb.name}</span>
-                  </Button>
-                ))}
-            </div>
-          </div>
-        );
-
-        return (
-          <div className='space-y-4'>
-            <h2 className='text-2xl font-semibold text-center mb-6'>
-              {getActionQuestion(selection.subject)}
-            </h2>
-            <div className='flex flex-wrap gap-2 mb-4'>
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={
-                    selectedCategory === category ? 'default' : 'outline'
-                  }
-                  size='sm'
-                  onClick={() =>
-                    setSelectedCategory(
-                      selectedCategory === category ? null : category
-                    )
-                  }
-                  className='text-xs'
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-            <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[50vh] overflow-y-auto p-2'>
-              {sortedVerbs.map((verb, index) => (
-                <Button
-                  key={`${verb.name}-${index}`}
-                  variant={selection.verb === verb.name ? 'default' : 'outline'}
-                  className='h-auto py-2 px-3 text-left flex items-center justify-center transition-all text-sm'
-                  style={{
-                    backgroundColor:
-                      selection.verb === verb.name ? verb.color : 'transparent',
-                    color:
-                      selection.verb === verb.name
-                        ? getContrastColor(verb.color)
-                        : 'inherit',
-                    borderColor: verb.color,
-                  }}
-                  onClick={() => {
-                    setSelection((prev) => ({ ...prev, verb: verb.name }));
-                    setStep('what');
-                  }}
-                >
-                  <span className='font-medium'>{verb.name}</span>
-                </Button>
-              ))}
             </div>
           </div>
         );
@@ -441,7 +253,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-semibold text-center'>
-              {getContextQuestion(selection.subject, selection.verb)}
+              {getStepQuestion('what')}
             </h2>
             <Input
               autoFocus
@@ -465,7 +277,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-semibold text-center'>
-              Who can see this statement?
+              {getStepQuestion('privacy')}
             </h2>
             <div className='space-y-4'>
               <Button
@@ -526,6 +338,14 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
 
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className='sm:max-w-[600px] pt-6'>
+          {/* If in preset mode, show the main (employer) question above the wizard */}
+          {activePresetQuestion && (
+            <div className='p-4 bg-gray-200 text-center'>
+              <h2 className='text-xl font-bold'>
+                {activePresetQuestion.mainQuestion}
+              </h2>
+            </div>
+          )}
           <DialogDescription className='sr-only'>
             Confirmation Dialog
           </DialogDescription>

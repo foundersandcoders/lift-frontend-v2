@@ -1,0 +1,64 @@
+{
+  "setQuestions": [
+    {
+      "id": "q1",
+      "mainQuestion": "How do you work in noisy environments?",
+      "steps": {
+        "who": {
+          "question": "Who is this statement about? (Automatically set to your name, descriptors disabled)",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": false
+        },
+        "action": {
+          "question": "How do you manage distractions in noisy environments?",
+          "preset": false,
+          "presetAnswer": null,
+          "allowDescriptors": true
+        },
+        "what": {
+          "question": "What strategies do you use to stay focused?",
+          "preset": false,
+          "presetAnswer": null,
+          "allowDescriptors": true
+        },
+        "privacy": {
+          "question": "Who should see this response?",
+          "preset": false,
+          "presetAnswer": null,
+          "allowDescriptors": false
+        }
+      }
+    },
+    {
+      "id": "q2",
+      "mainQuestion": "How do you handle tight deadlines?",
+      "steps": {
+        "who": {
+          "question": "Who is responsible? (Automatically set to your name, descriptors disabled)",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": false
+        },
+        "action": {
+          "question": "Describe your approach to working under pressure.",
+          "preset": false,
+          "presetAnswer": null,
+          "allowDescriptors": true
+        },
+        "what": {
+          "question": "What techniques do you use to meet deadlines?",
+          "preset": false,
+          "presetAnswer": null,
+          "allowDescriptors": true
+        },
+        "privacy": {
+          "question": "Who can view this answer?",
+          "preset": false,
+          "presetAnswer": null,
+          "allowDescriptors": false
+        }
+      }
+    }
+  ]
+}
