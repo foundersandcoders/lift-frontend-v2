@@ -36,3 +36,23 @@ export interface SubjectData {
   subject: string;
   descriptors: string[];
 }
+
+interface SetQuestionStep {
+  question: string;
+  preset: boolean;
+  presetAnswer: string | null;
+  allowDescriptors: boolean;
+}
+
+export interface SetQuestion {
+  id: string;
+  mainQuestion: string;
+  steps: {
+    who: SetQuestionStep;
+    action: SetQuestionStep;
+    what: SetQuestionStep;
+    privacy: SetQuestionStep;
+  };
+}
+
+export type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
