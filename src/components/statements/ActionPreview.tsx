@@ -1,16 +1,14 @@
 import React from 'react';
-// import { format } from 'date-fns';
-import { MoreVertical, Edit2, Trash2, Save, X } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { format, parse } from 'date-fns';
+import { MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
+import ActionForm from './ActionForm';
 import type { Action } from '../../../types/types';
-import { format, parse } from 'date-fns';
 
 export interface ActionPreviewProps {
   actions: Action[];
@@ -28,68 +26,55 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
   onDeleteAction,
   onAddAction,
 }) => {
-  // Add Action State
-  const [isAddingNew, setIsAddingNew] = React.useState(false);
-  const [newAction, setNewAction] = React.useState({ text: '', dueDate: '' });
-
-  // Edit Action State
+  // State to track which action is being edited.
   const [editingActionId, setEditingActionId] = React.useState<string | null>(
     null
   );
-  const [editForm, setEditForm] = React.useState({ text: '', dueDate: '' });
+  // State to control whether we're adding a new action.
+  const [isAddingNew, setIsAddingNew] = React.useState(false);
 
-  // ---------------------------
-  // ADD ACTION LOGIC
-  // ---------------------------
-  const handleStartAdd = () => {
-    setIsAddingNew(true);
-    setNewAction({ text: '', dueDate: '' });
-  };
-
-  const handleSaveNew = () => {
-    if (!newAction.text || !newAction.dueDate) return;
-    onAddAction(newAction);
-    setIsAddingNew(false);
-    setNewAction({ text: '', dueDate: '' });
-  };
-
-  const handleCancelNew = () => {
-    setIsAddingNew(false);
-    setNewAction({ text: '', dueDate: '' });
-  };
-
-  // ---------------------------
-  // EDIT ACTION LOGIC
-  // ---------------------------
+  // --- Handlers for Editing ---
   const handleStartEdit = (action: Action) => {
     setEditingActionId(action.id);
-    // Directly use the stored dueDate, which is assumed to be in "YYYY-MM-DD" format.
-    setEditForm({
-      text: action.text,
-      dueDate: action.dueDate,
-    });
   };
 
-  const handleSaveEdit = (actionId: string) => {
-    if (!editForm.text || !editForm.dueDate) return;
-    onEditAction(actionId, { text: editForm.text, dueDate: editForm.dueDate });
+  const handleSaveEdit = (
+    actionId: string,
+    data: { text: string; dueDate: string }
+  ) => {
+    onEditAction(actionId, data);
     setEditingActionId(null);
-    setEditForm({ text: '', dueDate: '' });
   };
 
   const handleCancelEdit = () => {
     setEditingActionId(null);
-    setEditForm({ text: '', dueDate: '' });
+  };
+
+  // --- Handlers for Adding New Action ---
+  const handleStartAdd = () => {
+    setIsAddingNew(true);
+  };
+
+  const handleSaveNew = (data: { text: string; dueDate: string }) => {
+    onAddAction(data);
+    setIsAddingNew(false);
+  };
+
+  const handleCancelNew = () => {
+    setIsAddingNew(false);
   };
 
   return (
     <div className='space-y-2'>
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
-
         if (!isEditing) {
-          // Normal (read-only) view
-          // Since dueDate is already in "YYYY-MM-DD", we can display it directly or format it if needed.
+          // Read-only view for an action.
+          // Parse stored "yyyy-MM-dd" into a Date object, then format as "dd/MM/yyyy"
+          const dueDateObj = parse(action.dueDate, 'yyyy-MM-dd', new Date());
+          const dueDateText = !isNaN(dueDateObj.getTime())
+            ? format(dueDateObj, 'dd/MM/yyyy')
+            : 'No due date';
           return (
             <div
               key={action.id}
@@ -97,15 +82,8 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
             >
               <span className='flex-1'>{action.text}</span>
               <span className='mx-4 text-sm text-gray-500'>
-                Due:{' '}
-                {action.dueDate
-                  ? format(
-                      parse(action.dueDate, 'yyyy-MM-dd', new Date()),
-                      'dd/MM/yyyy'
-                    )
-                  : 'No due date'}
+                Due: {dueDateText}
               </span>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button onClick={(e) => e.stopPropagation()}>
@@ -129,50 +107,20 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
             </div>
           );
         } else {
-          // Editing this action
+          // Editing mode: use the ActionForm prefilled with the action data.
           return (
-            <div
+            <ActionForm
               key={action.id}
-              className='flex items-center bg-gray-50 p-2 rounded space-x-2'
-            >
-              <Input
-                placeholder='Action text'
-                value={editForm.text}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, text: e.target.value })
-                }
-                className='flex-1'
-              />
-              <Input
-                type='date'
-                value={editForm.dueDate}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, dueDate: e.target.value })
-                }
-                className='w-36'
-              />
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => handleSaveEdit(action.id)}
-                className='text-green-500 hover:text-green-700'
-              >
-                <Save size={16} />
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={handleCancelEdit}
-                className='text-gray-500 hover:text-gray-700'
-              >
-                <X size={16} />
-              </Button>
-            </div>
+              initialText={action.text}
+              initialDueDate={action.dueDate}
+              onSave={(data) => handleSaveEdit(action.id, data)}
+              onCancel={handleCancelEdit}
+            />
           );
         }
       })}
 
-      {/* Add Action row or inline form */}
+      {/* Add new action: either show the "+ Add Action" row or the inline form */}
       {!isAddingNew ? (
         <div
           className='flex items-center justify-between bg-gray-50 p-2 rounded cursor-pointer hover:bg-gray-100'
@@ -181,40 +129,7 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
           <span className='flex-1'>+ Add Action</span>
         </div>
       ) : (
-        <div className='flex items-center bg-gray-50 p-2 rounded space-x-2'>
-          <Input
-            placeholder='Action text'
-            value={newAction.text}
-            onChange={(e) =>
-              setNewAction({ ...newAction, text: e.target.value })
-            }
-            className='flex-1'
-          />
-          <Input
-            type='date'
-            value={newAction.dueDate}
-            onChange={(e) =>
-              setNewAction({ ...newAction, dueDate: e.target.value })
-            }
-            className='w-36'
-          />
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleSaveNew}
-            className='text-green-500 hover:text-green-700'
-          >
-            <Save size={16} />
-          </Button>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={handleCancelNew}
-            className='text-gray-500 hover:text-gray-700'
-          >
-            <X size={16} />
-          </Button>
-        </div>
+        <ActionForm onSave={handleSaveNew} onCancel={handleCancelNew} />
       )}
     </div>
   );
