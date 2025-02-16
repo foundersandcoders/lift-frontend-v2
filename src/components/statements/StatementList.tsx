@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useStatements } from '../../hooks/useStatements';
-// import { Button } from '../../components/ui/button';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
 import type { Statement } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
@@ -27,6 +26,11 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     isOpen: boolean;
     statement: Statement | null;
   }>({ isOpen: false, statement: null });
+
+  const [actionDeleteConfirmation, setActionDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    actionId: string | null;
+  }>({ isOpen: false, actionId: null });
 
   // If there are no statements, set default ones from preStatements.json
   useEffect(() => {
@@ -129,7 +133,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     }
   };
 
-  // NEW: handleAddAction callback for adding a new action to a statement.
+  // HandleAddAction callback for adding a new action to a statement.
   const handleAddAction = (
     statementId: string,
     newAction: { text: string; dueDate: string }
@@ -157,7 +161,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateStatement(updatedStatement);
   };
 
-  // New: Handler for editing an existing action.
+  // Handler for editing an existing action.
   const handleEditAction = (
     actionId: string,
     updated: { text: string; dueDate: string }
@@ -181,6 +185,42 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateStatement(updatedStatement);
   };
 
+  // Handler for deleting an existing action.
+
+  const handleDeleteActionClick = (actionId: string) => {
+    setActionDeleteConfirmation({ isOpen: true, actionId });
+  };
+
+  const handleDeleteActionConfirm = () => {
+    if (actionDeleteConfirmation.actionId) {
+      const actionId = actionDeleteConfirmation.actionId;
+      // Find the statement that contains this action.
+      const statementToUpdate = statements.find(
+        (s) => s.actions && s.actions.some((a) => a.id === actionId)
+      );
+      if (statementToUpdate && statementToUpdate.actions) {
+        // Remove the action from the actions array.
+        const updatedActions = statementToUpdate.actions.filter(
+          (a) => a.id !== actionId
+        );
+        const updatedStatement: Statement = {
+          ...statementToUpdate,
+          actions: updatedActions,
+        };
+
+        // Update the context.
+        dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+        // Persist the change via the API.
+        updateStatement(updatedStatement);
+      }
+    }
+    setActionDeleteConfirmation({ isOpen: false, actionId: null });
+  };
+
+  const handleDeleteActionCancel = () => {
+    setActionDeleteConfirmation({ isOpen: false, actionId: null });
+  };
+
   return (
     <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
       <h2 className='text-xl font-semibold mb-4'>Created Statements</h2>
@@ -201,6 +241,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
               onEditClick={handleEditClick}
               onAddAction={handleAddAction}
               onEditAction={handleEditAction}
+              onDeleteAction={handleDeleteActionClick}
             />
           </li>
         ))}
@@ -223,6 +264,13 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         title='Duplicate Statement'
         description='This statement already exists and will not be added.'
         singleButton
+      />
+      <ConfirmationDialog
+        isOpen={actionDeleteConfirmation.isOpen}
+        onClose={handleDeleteActionCancel}
+        onConfirm={handleDeleteActionConfirm}
+        title='Delete Action'
+        description='Are you sure you want to delete this action? This action cannot be undone.'
       />
     </div>
   );
