@@ -49,6 +49,19 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // LIFT Brand Colors
+        brand: {
+          pink: '#D600A8',
+          black: '#ED7112',
+          white: '#FFFFFF',
+          green: '#29E2A3',
+          teal: '#00A7A8',
+          blue: '#2235E2',
+          orange: '#EC5D2A',
+          yellow: '#FFCB00',
+          purple: '#7900D6',
+          darkPurple: '#4D1B9B',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -68,6 +81,9 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      fontFamily: {
+        sans: ['Metropolis', 'Arial', 'sans-serif'],
       },
     },
   },

@@ -13,17 +13,31 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Brand colours from LIFT Guidelines */
+    --brand-pink: #d600a8;
+    --brand-black: #ed7112;
+    --brand-white: #ffffff;
+    --brand-green: #29e2a3;
+    --brand-teal: #00a7a8;
+    --brand-blue: #2235e2;
+    --brand-orange: #ec5d2a;
+    --brand-yellow: #ffcb00;
+    --brand-purple: #7900d6;
+    --brand-darkPurple: #4d1b9b;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Set primary, secondary and accent using the brand colours */
+    --primary: var(--brand-pink);
+    --primary-foreground: var(--brand-white);
 
+    --secondary: var(--brand-black);
+    --secondary-foreground: var(--brand-white);
+
+    --accent: var(--brand-blue);
+    --accent-foreground: var(--brand-white);
+
+    /* Retain existing variables for muted, destructive etc. */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -45,17 +59,17 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: var(--brand-pink);
+    --primary-foreground: var(--brand-white);
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: var(--brand-darkPurple);
+    --secondary-foreground: var(--brand-white);
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: var(--brand-blue);
+    --accent-foreground: var(--brand-white);
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -71,7 +85,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }
-
