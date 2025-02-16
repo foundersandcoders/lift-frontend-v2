@@ -11,6 +11,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
+import ActionsCounter from './ActionsCounter';
+import ActionPreview from './ActionPreview';
 
 export interface StatementItemProps {
   statement: Statement;
@@ -29,6 +31,14 @@ export interface StatementItemProps {
   onDelete: (statementId: string) => void;
   onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
+  // Optional callbacks for action preview functionality
+  onEditAction?: (actionId: string) => void;
+  onDeleteAction?: (actionId: string) => void;
+  // Optional callback: receives the statement id and new action details.
+  onAddAction?: (
+    statementId: string,
+    newAction: { text: string; dueDate: string }
+  ) => void;
 }
 
 const StatementItem: React.FC<StatementItemProps> = ({
@@ -41,7 +51,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onDelete,
   onTogglePublic,
   onEditClick,
+  onEditAction = () => {},
+  onDeleteAction = () => {},
+  onAddAction = () => {},
 }) => {
+  const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
   const objectInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -145,37 +159,69 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
   // Static view when not in editing mode with grouped Edit and Delete
   return (
-    <div className='flex justify-between items-center bg-gray-100 p-2 rounded'>
-      <span
-        className={`inline-flex items-center justify-center px-3 py-2 ${
-          statement.isPublic ? 'text-green-500' : 'text-gray-400'
-        }`}
-      >
-        {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />}
-      </span>
-      <span className='flex-1'>{`${statement.subject} ${statement.verb} ${statement.object}`}</span>
-      <div className='flex items-center space-x-2 ml-auto'>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button onClick={(e) => e.stopPropagation()}>
-              <MoreVertical size={18} className='text-gray-500' />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuItem onClick={() => onEditClick(statement.id)}>
-              <Edit2 className='mr-2 h-4 w-4' />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(statement.id)}
-              className='text-red-600'
-            >
-              <Trash2 className='mr-2 h-4 w-4' />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className='bg-white border rounded-md p-3 space-y-2 shadow-sm'>
+      {/* Top row: statement, actions counter, etc. */}
+      <div className='flex items-center justify-between'>
+        {/* Left side: privacy icon + statement text */}
+        <div className='flex items-center space-x-2'>
+          <span
+            className={`inline-flex items-center justify-center ${
+              statement.isPublic ? 'text-green-500' : 'text-gray-400'
+            }`}
+          >
+            {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />}
+          </span>
+          <span>{`${statement.subject} ${statement.verb} ${statement.object}`}</span>
+        </div>
+
+        {/* Right side: actions counter + dropdown */}
+        <div className='flex items-center space-x-4'>
+          {/* Actions counter - click to expand/collapse */}
+          <div
+            onClick={() => setIsActionsExpanded((prev) => !prev)}
+            className='cursor-pointer'
+          >
+            <ActionsCounter
+              count={statement.actions?.length ?? 0}
+              expanded={isActionsExpanded}
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button onClick={(e) => e.stopPropagation()}>
+                <MoreVertical size={18} className='text-gray-500' />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onClick={() => onEditClick(statement.id)}>
+                <Edit2 className='mr-2 h-4 w-4' />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(statement.id)}
+                className='text-red-600'
+              >
+                <Trash2 className='mr-2 h-4 w-4' />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
+
+      {/* Inline actions preview if expanded */}
+      {isActionsExpanded && (
+        <div className='mt-2'>
+          <ActionPreview
+            actions={statement.actions ?? []}
+            onEditAction={onEditAction}
+            onDeleteAction={onDeleteAction}
+            onAddAction={(newAction) =>
+              onAddAction && onAddAction(statement.id, newAction)
+            }
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { ConfirmationDialog } from '../ui/confirmation-dialog';
 import type { Statement } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
 import StatementItem from './StatementItem';
+import { updateStatement } from '../../api/statementsApi';
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { state, dispatch } = useStatements();
@@ -128,6 +129,34 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     }
   };
 
+  // NEW: handleAddAction callback for adding a new action to a statement.
+  const handleAddAction = (
+    statementId: string,
+    newAction: { text: string; dueDate: string }
+  ) => {
+    const actionObj = {
+      id: Date.now().toString(),
+      creationDate: new Date().toISOString(),
+      text: newAction.text,
+      dueDate: newAction.dueDate,
+    };
+
+    const statementToUpdate = statements.find((s) => s.id === statementId);
+    if (!statementToUpdate) return;
+
+    const updatedActions = statementToUpdate.actions
+      ? [...statementToUpdate.actions, actionObj]
+      : [actionObj];
+
+    const updatedStatement: Statement = {
+      ...statementToUpdate,
+      actions: updatedActions,
+    };
+
+    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    updateStatement(updatedStatement);
+  };
+
   return (
     <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
       <h2 className='text-xl font-semibold mb-4'>Created Statements</h2>
@@ -146,6 +175,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
               onDelete={handleDeleteClick}
               onTogglePublic={handleTogglePublic}
               onEditClick={handleEditClick}
+              onAddAction={handleAddAction}
             />
           </li>
         ))}

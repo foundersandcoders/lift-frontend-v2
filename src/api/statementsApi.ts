@@ -30,3 +30,22 @@ export async function postNewStatement(statement: Statement): Promise<void> {
     console.error('Error posting new statement:', error);
   }
 }
+
+export async function updateStatement(statement: Statement): Promise<void> {
+  try {
+    const response = await fetch(`${API_URL}/updateEntry`, {
+      method: 'PUT', // or PATCH, depending on the backend
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(statement),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error on update! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Successfully updated statement:', data);
+  } catch (error) {
+    console.error('Error updating statement:', error);
+  }
+}
