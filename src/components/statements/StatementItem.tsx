@@ -31,8 +31,12 @@ export interface StatementItemProps {
   onDelete: (statementId: string) => void;
   onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
-  // Optional callbacks for action preview functionality
-  onEditAction?: (actionId: string) => void;
+
+  // callbacks for action preview functionality
+  onEditAction?: (
+    actionId: string,
+    updated: { text: string; dueDate: string }
+  ) => void;
   onDeleteAction?: (actionId: string) => void;
   // Optional callback: receives the statement id and new action details.
   onAddAction?: (

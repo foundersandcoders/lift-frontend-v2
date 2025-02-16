@@ -157,6 +157,30 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateStatement(updatedStatement);
   };
 
+  // New: Handler for editing an existing action.
+  const handleEditAction = (
+    actionId: string,
+    updated: { text: string; dueDate: string }
+  ) => {
+    // Find the statement that contains this action.
+    const statementToUpdate = statements.find(
+      (s) => s.actions && s.actions.some((a) => a.id === actionId)
+    );
+    if (!statementToUpdate) return;
+
+    const updatedActions = statementToUpdate.actions!.map((action) =>
+      action.id === actionId ? { ...action, ...updated } : action
+    );
+
+    const updatedStatement: Statement = {
+      ...statementToUpdate,
+      actions: updatedActions,
+    };
+
+    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    updateStatement(updatedStatement);
+  };
+
   return (
     <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
       <h2 className='text-xl font-semibold mb-4'>Created Statements</h2>
@@ -176,6 +200,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
               onTogglePublic={handleTogglePublic}
               onEditClick={handleEditClick}
               onAddAction={handleAddAction}
+              onEditAction={handleEditAction}
             />
           </li>
         ))}
