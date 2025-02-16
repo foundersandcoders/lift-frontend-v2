@@ -7,14 +7,14 @@
     "actions": [
       {
         "id": "a1",
-        "creationDate": "2024-02-15T10:00:00.000Z",
-        "dueDate": "2024-02-20T10:00:00.000Z",
+        "creationDate": "2024-02-15",
+        "dueDate": "2024-02-20",
         "text": "Schedule team meeting"
       },
       {
         "id": "a2",
-        "creationDate": "2024-02-15T10:00:00.000Z",
-        "dueDate": "2024-02-22T10:00:00.000Z",
+        "creationDate": "2024-02-15",
+        "dueDate": "2024-02-22",
         "text": "Send follow-up email"
       }
     ]
@@ -28,8 +28,8 @@
     "actions": [
       {
         "id": "a3",
-        "creationDate": "2024-02-16T10:00:00.000Z",
-        "dueDate": "2024-02-25T10:00:00.000Z",
+        "creationDate": "2024-02-16",
+        "dueDate": "2024-02-25",
         "text": "Review coding guidelines"
       }
     ]
@@ -49,8 +49,8 @@
     "actions": [
       {
         "id": "a4",
-        "creationDate": "2024-02-17T10:00:00.000Z",
-        "dueDate": "2024-02-28T10:00:00.000Z",
+        "creationDate": "2024-02-17",
+        "dueDate": "2024-02-28",
         "text": "Draft social media campaign"
       }
     ]
