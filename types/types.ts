@@ -2,7 +2,7 @@ export interface Action {
   id: string;
   creationDate: string;
   dueDate: string;
-  action: string;
+  text: string;
 }
 export interface Statement {
   id: string;
