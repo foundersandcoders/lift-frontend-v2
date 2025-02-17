@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { useStatements } from '../../hooks/useStatements';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
-import type { Statement } from '../../../types/types';
+import type { Statement, SetQuestion } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
 import nlp from 'compromise';
 import StatementItem from './StatementLine';
 import { updateStatement } from '../../api/statementsApi';
+import QuestionCard from './QuestionCard';
+import setQuestionsData from '../../../data/setQuestions.json';
+import StatementWizard from '../StatementWizard';
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { state, dispatch } = useStatements();
@@ -32,6 +35,21 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     isOpen: boolean;
     actionId: string | null;
   }>({ isOpen: false, actionId: null });
+
+  // State to hold the selected preset question from the QuestionCards.
+  const [selectedPresetQuestion, setSelectedPresetQuestion] =
+    useState<SetQuestion | null>(null);
+  // State to control if the StatementWizard is open.
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  // State to keep track of used preset questions (so they can be hidden later).
+  const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
+
+  console.log(
+    'Wizard open:',
+    isWizardOpen,
+    'Selected question:',
+    selectedPresetQuestion
+  );
 
   // If there are no statements, set default ones from preStatements.json
   useEffect(() => {
@@ -230,10 +248,45 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setActionDeleteConfirmation({ isOpen: false, actionId: null });
   };
 
+  // When a preset question is clicked, open the wizard and set the selected preset question.
+  const handlePresetQuestionSelect = (presetQuestion: SetQuestion) => {
+    setSelectedPresetQuestion(presetQuestion);
+    setIsWizardOpen(true);
+  };
+
+  // Callback for when the wizard completes (i.e. a new statement is created).
+  const handleWizardComplete = (newStatement: Statement) => {
+    // The next console.log is actually needed for type checking.
+    console.log('New statement:', newStatement);
+    // The wizard itself dispatches an ADD_STATEMENT action.
+    // Now mark the preset question as used (or hidden).
+    if (selectedPresetQuestion) {
+      setUsedPresetQuestions((prev) => [...prev, selectedPresetQuestion.id]);
+    }
+
+    // Close the wizard and clear the selected question.
+    setIsWizardOpen(false);
+    setSelectedPresetQuestion(null);
+  };
+
   return (
     <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
-      <h2 className='text-xl font-semibold mb-4'>Created Statements</h2>
+      <h2 className='text-xl font-semibold mb-4'>Items</h2>
+      {/* Single list merging preset questions and created statements */}
       <ul className='space-y-2'>
+        {/* Render preset questions first – filter out any that have been used */}
+        {setQuestionsData.setQuestions
+          .filter((q: SetQuestion) => !usedPresetQuestions.includes(q.id))
+          .map((presetQuestion: SetQuestion) => (
+            <li key={`preset-${presetQuestion.id}`}>
+              <QuestionCard
+                presetQuestion={presetQuestion}
+                onSelect={handlePresetQuestionSelect}
+              />
+            </li>
+          ))}
+
+        {/* Render created statements */}
         {statements.map((statement) => (
           <li key={statement.id}>
             <StatementItem
@@ -255,6 +308,21 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           </li>
         ))}
       </ul>
+
+      {/* Conditionally render the StatementWizard when open */}
+      {isWizardOpen && selectedPresetQuestion && (
+        <StatementWizard
+          username={username}
+          presetQuestion={selectedPresetQuestion}
+          onComplete={handleWizardComplete}
+          onClose={() => {
+            setIsWizardOpen(false);
+            setSelectedPresetQuestion(null);
+          }}
+        />
+      )}
+
+      {/* Existing ConfirmationDialogs */}
       <ConfirmationDialog
         isOpen={deleteConfirmation.isOpen}
         onClose={handleDeleteCancel}

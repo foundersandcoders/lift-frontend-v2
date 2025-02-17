@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,39 +9,32 @@ import {
 } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Plus, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import descriptorsData from '../../data/descriptors.json';
 import { verbData } from '../../utils/verbUtils';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
-import type React from 'react';
 import type { Statement, SetQuestion, Step } from '../../types/types';
-
-//preset questions JSON
-import setQuestionsData from '../../data/setQuestions.json';
 
 interface StatementWizardProps {
   username: string;
-  /** Optional preset question. If not provided, we default to the first question from setQuestions.json */
   presetQuestion?: SetQuestion;
+  onComplete: (newStatement: Statement) => void;
+  onClose: () => void;
 }
 
 const StatementWizard: React.FC<StatementWizardProps> = ({
   username,
   presetQuestion,
+  onComplete,
+  onClose,
 }) => {
   const { dispatch } = useStatements();
+  const activePresetQuestion: SetQuestion | undefined = presetQuestion;
 
-  // If no presetQuestion prop is passed, use the first question from the JSON file (if available)
-  const activePresetQuestion: SetQuestion | undefined =
-    presetQuestion ??
-    (setQuestionsData.setQuestions && setQuestionsData.setQuestions.length
-      ? setQuestionsData.setQuestions[0]
-      : undefined);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [step, setStep] = useState<Step>('closed');
+  // Remove internal open state; wizard is controlled by parent rendering.
+  const [step, setStep] = useState<Step>('who');
   const [selection, setSelection] = useState<Statement>({
     id: '',
     subject: '',
@@ -70,15 +63,12 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     return yiq >= 128 ? 'black' : 'white';
   };
 
-  // Retrieve the appropriate question for the current step.
-  // If an active preset question exists, use its step question.
   const getStepQuestion = (currentStep: Step) => {
     if (activePresetQuestion && currentStep !== 'closed') {
       return activePresetQuestion.steps[
         currentStep as keyof typeof activePresetQuestion.steps
       ].question;
     }
-    // Default (free mode) questions:
     if (currentStep === 'who')
       return `This statement applies to ${username} or someone/something else?`;
     if (currentStep === 'action')
@@ -91,27 +81,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     return '';
   };
 
-  // When opening the wizard, prefill the subject if in preset mode and it is preset.
-  const handleOpen = () => {
-    setIsOpen(true);
-    setStep('who');
+  useEffect(() => {
     if (activePresetQuestion && activePresetQuestion.steps.who.preset) {
       setSelection((prev) => ({ ...prev, subject: username }));
-    } else {
-      setSelection({
-        id: '',
-        subject: '',
-        verb: '',
-        object: '',
-        isPublic: false,
-      });
     }
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setStep('closed');
-  };
+  }, [activePresetQuestion, username]);
 
   const handleBack = () => {
     switch (step) {
@@ -125,7 +99,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         setStep('what');
         break;
       default:
-        handleClose();
+        onClose();
     }
   };
 
@@ -134,16 +108,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       ...selection,
       id: Date.now().toString(),
     };
-
     dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
     await postNewStatement(newStatement);
-    handleClose();
+    onComplete(newStatement);
+    onClose();
   };
 
   const renderStep = () => {
     switch (step) {
       case 'who':
-        // If in preset mode with a preset subject, simply show the auto-filled subject.
         if (activePresetQuestion && activePresetQuestion.steps.who.preset) {
           return (
             <div className='space-y-4'>
@@ -165,7 +138,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </div>
           );
         }
-        // Otherwise, let the user pick a subject (free mode)
         return (
           <div className='space-y-4'>
             <h2 className='text-2xl font-semibold text-center mb-6'>
@@ -184,7 +156,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                       : ''
                   }`}
                   onClick={() => {
-                    // In preset mode without allowed descriptors, always use the username.
                     if (
                       activePresetQuestion &&
                       !activePresetQuestion.steps.who.allowDescriptors
@@ -327,59 +298,51 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   return (
-    <>
-      <Button onClick={handleOpen} className='w-full'>
-        <Plus className='w-5 h-5 mr-2' />
-        Statement Wizard
-      </Button>
-
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className='sm:max-w-[600px] pt-6'>
-          {/* If in preset mode, show the main (employer) question above the wizard */}
-          {activePresetQuestion && (
-            <div className='p-4 bg-gray-200 text-center'>
-              <h2 className='text-xl font-bold'>
-                {activePresetQuestion.mainQuestion}
-              </h2>
-            </div>
-          )}
-          <DialogDescription className='sr-only'>
-            Confirmation Dialog
-          </DialogDescription>
-          <DialogTitle className='sr-only'>Confirmation Dialog</DialogTitle>
-          <div className='relative'>
-            {step !== 'who' && (
-              <Button
-                variant='ghost'
-                size='icon'
-                className='absolute left-4 top-4 z-10'
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleBack();
-                }}
-              >
-                <ArrowLeft className='w-4 h-4' />
-              </Button>
-            )}
-            <AnimatePresence
-              mode='wait'
-              initial={false}
-              onExitComplete={() => null}
-            >
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-              >
-                {renderStep()}
-              </motion.div>
-            </AnimatePresence>
+    <Dialog open={true} onOpenChange={() => onClose()}>
+      <DialogContent className='sm:max-w-[600px] pt-6'>
+        {activePresetQuestion && (
+          <div className='p-4 bg-gray-200 text-center'>
+            <h2 className='text-xl font-bold'>
+              {activePresetQuestion.mainQuestion}
+            </h2>
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+        )}
+        <DialogDescription className='sr-only'>
+          Confirmation Dialog
+        </DialogDescription>
+        <DialogTitle className='sr-only'>Confirmation Dialog</DialogTitle>
+        <div className='relative'>
+          {step !== 'who' && (
+            <Button
+              variant='ghost'
+              size='icon'
+              className='absolute left-4 top-4 z-10'
+              onClick={(e) => {
+                e.stopPropagation();
+                handleBack();
+              }}
+            >
+              <ArrowLeft className='w-4 h-4' />
+            </Button>
+          )}
+          <AnimatePresence
+            mode='wait'
+            initial={false}
+            onExitComplete={() => null}
+          >
+            <motion.div
+              key={step}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

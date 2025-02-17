@@ -2,7 +2,6 @@
 
 import React from 'react';
 import StatementBuilder from './StatementBuilder';
-import StatementWizard from './StatementWizard';
 import StatementList from './statements/StatementList';
 
 interface MainPageProps {
@@ -20,7 +19,6 @@ const MainPage: React.FC<MainPageProps> = ({ username }) => {
 
         <div className='flex flex-col justify-center max-w-3xl mx-auto'>
           <div className='bg-white rounded-xl shadow-lg p-6'>
-            <StatementWizard username={username} />
             <StatementBuilder username={username} />
           </div>
         </div>
