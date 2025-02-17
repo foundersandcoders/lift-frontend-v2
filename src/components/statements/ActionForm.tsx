@@ -26,7 +26,7 @@ const ActionForm: React.FC<ActionFormProps> = ({
   };
 
   return (
-    <div className='flex items-center bg-gray-50 p-2 rounded space-x-2'>
+    <div className='flex items-center   cursor-pointer hover:bg-gray-100 border border-dashed border-gray-300 p-1 rounded'>
       <Input
         placeholder='Action text'
         value={text}
@@ -43,7 +43,7 @@ const ActionForm: React.FC<ActionFormProps> = ({
         variant='ghost'
         size='sm'
         onClick={handleSave}
-        className='text-green-500 hover:text-green-700'
+        className='text-green-500 hover:text-green-700 m-0'
       >
         <Save size={16} />
       </Button>
@@ -51,7 +51,7 @@ const ActionForm: React.FC<ActionFormProps> = ({
         variant='ghost'
         size='sm'
         onClick={onCancel}
-        className='text-gray-500 hover:text-gray-700'
+        className='text-gray-500 hover:text-gray-700 m-0'
       >
         <X size={16} />
       </Button>

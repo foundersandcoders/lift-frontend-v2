@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
-import ActionPreview from './ActionPreview';
+import ActionPreview from './ActionLine';
 
 export interface StatementItemProps {
   statement: Statement;

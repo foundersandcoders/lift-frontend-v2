@@ -65,7 +65,7 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
   };
 
   return (
-    <div className='space-y-2'>
+    <div className='space-y-2 '>
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
         if (!isEditing) {
@@ -78,7 +78,7 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
           return (
             <div
               key={action.id}
-              className='flex items-center justify-between bg-gray-50 p-2 rounded'
+              className='flex items-center justify-between bg-white p-2 rounded border border-gray-200 shadow-sm'
             >
               <span className='flex-1'>{action.text}</span>
               <span className='mx-4 text-sm text-gray-500'>
@@ -123,7 +123,7 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
       {/* Add new action: either show the "+ Add Action" row or the inline form */}
       {!isAddingNew ? (
         <div
-          className='flex items-center justify-between bg-gray-50 p-2 rounded cursor-pointer hover:bg-gray-100'
+          className=' cursor-pointer hover:bg-gray-100 border border-dashed border-gray-300 p-2 rounded'
           onClick={handleStartAdd}
         >
           <span className='flex-1'>+ Add Action</span>

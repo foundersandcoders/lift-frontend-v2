@@ -5,7 +5,8 @@ import { useStatements } from '../../hooks/useStatements';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
 import type { Statement } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
-import StatementItem from './StatementItem';
+import nlp from 'compromise';
+import StatementItem from './StatementLine';
 import { updateStatement } from '../../api/statementsApi';
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
@@ -43,9 +44,17 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         const subject = stmt.descriptor
           ? `${username}'s ${stmt.descriptor}`
           : username;
+        const presentTenseVerb = nlp(stmt.verb)
+          .verbs()
+          .toPresentTense()
+          .text()
+          .toLowerCase();
+        const objectLower = stmt.object.toLowerCase();
         return {
           ...stmt,
           subject,
+          verb: presentTenseVerb,
+          object: objectLower,
           id:
             Date.now().toString() + Math.random().toString(36).substring(2, 7),
         };
