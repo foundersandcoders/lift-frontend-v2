@@ -5,7 +5,7 @@
       "mainQuestion": "How do you work in noisy environments?",
       "steps": {
         "who": {
-          "question": "Who is this statement about? (Automatically set to your name, descriptors disabled)",
+          "question": "Who is this statement about?",
           "preset": true,
           "presetAnswer": "username",
           "allowDescriptors": false
@@ -13,20 +13,17 @@
         "action": {
           "question": "How do you manage distractions in noisy environments?",
           "preset": false,
-          "presetAnswer": null,
-          "allowDescriptors": true
+          "presetAnswer": null
         },
         "what": {
           "question": "What strategies do you use to stay focused?",
           "preset": false,
-          "presetAnswer": null,
-          "allowDescriptors": true
+          "presetAnswer": null
         },
         "privacy": {
-          "question": "Who should see this response?",
+          "question": "Do you want to share this statement?",
           "preset": false,
-          "presetAnswer": null,
-          "allowDescriptors": false
+          "presetAnswer": null
         }
       }
     },
@@ -35,28 +32,25 @@
       "mainQuestion": "How do you handle tight deadlines?",
       "steps": {
         "who": {
-          "question": "Who is responsible? (Automatically set to your name, descriptors disabled)",
+          "question": "Who is responsible?",
           "preset": true,
           "presetAnswer": "username",
-          "allowDescriptors": false
+          "allowDescriptors": true
         },
         "action": {
           "question": "Describe your approach to working under pressure.",
           "preset": false,
-          "presetAnswer": null,
-          "allowDescriptors": true
+          "presetAnswer": null
         },
         "what": {
           "question": "What techniques do you use to meet deadlines?",
           "preset": false,
-          "presetAnswer": null,
-          "allowDescriptors": true
+          "presetAnswer": null
         },
         "privacy": {
-          "question": "Who can view this answer?",
+          "question": "Do you want to share this statement?",
           "preset": false,
-          "presetAnswer": null,
-          "allowDescriptors": false
+          "presetAnswer": null
         }
       }
     }
