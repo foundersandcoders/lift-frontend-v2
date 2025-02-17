@@ -12,6 +12,7 @@ export interface Statement {
   adverbial?: string;
   isPublic: boolean;
   actions?: Action[];
+  presetId?: string;
 }
 
 export interface Category {

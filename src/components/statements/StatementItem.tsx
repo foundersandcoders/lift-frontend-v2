@@ -3,7 +3,15 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import SubjectSelector from '../ui/subject-selector';
 import VerbSelector from '../ui/VerbSelector';
-import { Trash2, Edit2, Save, Eye, EyeOff, MoreVertical } from 'lucide-react';
+import {
+  Trash2,
+  Edit2,
+  Save,
+  Eye,
+  EyeOff,
+  MoreVertical,
+  RotateCcw,
+} from 'lucide-react';
 import type { Statement } from '../../../types/types';
 import {
   DropdownMenu,
@@ -43,6 +51,7 @@ export interface StatementItemProps {
     statementId: string,
     newAction: { text: string; dueDate: string }
   ) => void;
+  onReset?: (statementId: string) => void;
 }
 
 const StatementItem: React.FC<StatementItemProps> = ({
@@ -58,6 +67,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onEditAction = () => {},
   onDeleteAction = () => {},
   onAddAction = () => {},
+  onReset,
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
   const objectInputRef = useRef<HTMLInputElement>(null);
@@ -208,6 +218,13 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
+              {/* Conditionally render the Reset option if onReset is provided */}
+              {onReset && (
+                <DropdownMenuItem onClick={() => onReset(statement.id)}>
+                  <RotateCcw className='mr-2 h-4 w-4' />
+                  Reset
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

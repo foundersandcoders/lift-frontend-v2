@@ -6,7 +6,7 @@ import { ConfirmationDialog } from '../ui/confirmation-dialog';
 import type { Statement, SetQuestion } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
 import nlp from 'compromise';
-import StatementItem from './StatementLine';
+import StatementItem from './StatementItem';
 import { updateStatement } from '../../api/statementsApi';
 import QuestionCard from './QuestionCard';
 import setQuestionsData from '../../../data/setQuestions.json';
@@ -35,6 +35,12 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     isOpen: boolean;
     actionId: string | null;
   }>({ isOpen: false, actionId: null });
+
+  // State for the reset confirmation dialog.
+  const [resetConfirmation, setResetConfirmation] = useState<{
+    isOpen: boolean;
+    statementId: string | null;
+  }>({ isOpen: false, statementId: null });
 
   // State to hold the selected preset question from the QuestionCards.
   const [selectedPresetQuestion, setSelectedPresetQuestion] =
@@ -269,6 +275,33 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setSelectedPresetQuestion(null);
   };
 
+  // Handler for resetting a statement (only applicable for statements with a presetId).
+  const handleResetClick = (statementId: string) => {
+    setResetConfirmation({ isOpen: true, statementId });
+  };
+
+  const handleResetConfirm = () => {
+    if (resetConfirmation.statementId) {
+      const statementToReset = statements.find(
+        (s) => s.id === resetConfirmation.statementId
+      );
+      if (statementToReset && statementToReset.presetId) {
+        dispatch({
+          type: 'DELETE_STATEMENT',
+          payload: resetConfirmation.statementId,
+        });
+        setUsedPresetQuestions((prev) =>
+          prev.filter((id) => id !== statementToReset.presetId)
+        );
+      }
+    }
+    setResetConfirmation({ isOpen: false, statementId: null });
+  };
+
+  const handleResetCancel = () => {
+    setResetConfirmation({ isOpen: false, statementId: null });
+  };
+
   return (
     <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
       <h2 className='text-xl font-semibold mb-4'>Items</h2>
@@ -304,6 +337,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
               onAddAction={handleAddAction}
               onEditAction={handleEditAction}
               onDeleteAction={handleDeleteActionClick}
+              onReset={statement.presetId ? handleResetClick : undefined}
             />
           </li>
         ))}
@@ -348,6 +382,13 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         onConfirm={handleDeleteActionConfirm}
         title='Delete Action'
         description='Are you sure you want to delete this action? This action cannot be undone.'
+      />
+      <ConfirmationDialog
+        isOpen={resetConfirmation.isOpen}
+        onClose={handleResetCancel}
+        onConfirm={handleResetConfirm}
+        title='Reset Statement'
+        description='Are you sure you want to reset this statement? The statement will be deleted and the original question reinstated.'
       />
     </div>
   );

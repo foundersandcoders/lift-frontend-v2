@@ -107,6 +107,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     const newStatement: Statement = {
       ...selection,
       id: Date.now().toString(),
+      presetId: activePresetQuestion ? activePresetQuestion.id : undefined,
     };
     dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
     await postNewStatement(newStatement);
