@@ -20,7 +20,8 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
-import ActionPreview from './ActionLine';
+import ActionPreview from './ActionLines';
+import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 
 export interface StatementItemProps {
   statement: Statement;
@@ -178,13 +179,22 @@ const StatementItem: React.FC<StatementItemProps> = ({
       <div className='flex items-center justify-between'>
         {/* Left side: privacy icon + statement text */}
         <div className='flex items-center space-x-2'>
-          <span
-            className={`inline-flex items-center justify-center ${
-              statement.isPublic ? 'text-green-500' : 'text-gray-400'
-            }`}
-          >
-            {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />}
-          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span
+                className={`inline-flex items-center justify-center ${
+                  statement.isPublic ? 'text-green-500' : 'text-gray-400'
+                }`}
+              >
+                {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              {statement.isPublic
+                ? 'You are sharing this statement'
+                : 'This statement is private'}
+            </TooltipContent>
+          </Tooltip>
           <span>{`${statement.subject} ${statement.verb} ${statement.object}`}</span>
         </div>
 
