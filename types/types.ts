@@ -40,7 +40,7 @@ interface SetQuestionStep {
   question: string;
   preset: boolean;
   presetAnswer: string | null;
-  allowDescriptors: boolean;
+  allowDescriptors?: boolean;
 }
 
 export interface SetQuestion {

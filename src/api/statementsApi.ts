@@ -19,7 +19,7 @@ export async function postNewStatement(statement: Statement): Promise<void> {
     const postData = await postResponse.json();
     console.log('Successfully posted:', postData);
 
-    // Optionally, if you want to fetch updated data after posting:
+    // Optionally, fetch updated data after posting:
     const getResponse = await fetch(`${API_URL}/n/s/${statement.subject}`);
     if (!getResponse.ok) {
       throw new Error(`HTTP error on GET! status: ${getResponse.status}`);
