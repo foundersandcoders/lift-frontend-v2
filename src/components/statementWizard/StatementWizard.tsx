@@ -16,6 +16,7 @@ import { postNewStatement } from '../../api/statementsApi';
 import type { Statement, SetQuestion, Step } from '../../../types/types';
 import { SubjectTiles } from './SubjectTiles';
 import { VerbTiles } from './VerbTiles';
+import { PrivacySelector } from './PrivacySelector';
 
 interface StatementWizardProps {
   username: string;
@@ -33,7 +34,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const { dispatch } = useStatements();
   const activePresetQuestion: SetQuestion | undefined = presetQuestion;
 
-  // Remove internal open state; wizard is controlled by parent rendering.
   const [step, setStep] = useState<Step>('subject');
   const [selection, setSelection] = useState<Statement>({
     id: '',
@@ -117,7 +117,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 }}
                 className='w-full'
               >
-                Continue
+                Next
               </Button>
             </div>
           );
@@ -186,57 +186,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </Button>
           </div>
         );
+
       case 'privacy':
-        return (
-          <div className='space-y-6'>
-            <h2 className='text-2xl font-semibold text-center'>
-              {getStepQuestion('privacy')}
-            </h2>
-            <div className='space-y-4'>
-              <Button
-                variant='outline'
-                className={`w-full h-auto p-4 flex items-center justify-between ${
-                  !selection.isPublic ? 'border-2 border-primary' : ''
-                }`}
-                onClick={() =>
-                  setSelection((prev) => ({ ...prev, isPublic: false }))
-                }
-              >
-                <div className='flex items-center space-x-3'>
-                  <EyeOff className='w-5 h-5' />
-                  <div className='text-left'>
-                    <div className='font-medium'>Private</div>
-                    <div className='text-sm text-muted-foreground'>
-                      Only you can see this
-                    </div>
-                  </div>
-                </div>
-              </Button>
-              <Button
-                variant='outline'
-                className={`w-full h-auto p-4 flex items-center justify-between ${
-                  selection.isPublic ? 'border-2 border-primary' : ''
-                }`}
-                onClick={() =>
-                  setSelection((prev) => ({ ...prev, isPublic: true }))
-                }
-              >
-                <div className='flex items-center space-x-3'>
-                  <Eye className='w-5 h-5' />
-                  <div className='text-left'>
-                    <div className='font-medium'>Public</div>
-                    <div className='text-sm text-muted-foreground'>
-                      Everyone can see this
-                    </div>
-                  </div>
-                </div>
-              </Button>
-            </div>
-            <Button className='w-full' onClick={handleComplete}>
-              Create Statement
-            </Button>
-          </div>
-        );
+        return <PrivacySelector isPublic={selection.isPublic} onChange={...} onComplete={handleComplete} />;
+        
+
       default:
         return null;
     }
