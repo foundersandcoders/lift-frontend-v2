@@ -41,17 +41,18 @@ interface SetQuestionStep {
   preset: boolean;
   presetAnswer: string | null;
   allowDescriptors?: boolean;
+  descriptorCategory?: string;
 }
 
 export interface SetQuestion {
   id: string;
   mainQuestion: string;
   steps: {
-    who: SetQuestionStep;
-    action: SetQuestionStep;
+    subject: SetQuestionStep;
+    verb: SetQuestionStep;
     what: SetQuestionStep;
     privacy: SetQuestionStep;
   };
 }
 
-export type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
+export type Step = 'closed' | 'subject' | 'verb' | 'what' | 'privacy';

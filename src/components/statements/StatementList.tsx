@@ -10,7 +10,7 @@ import StatementItem from './StatementItem';
 import { updateStatement } from '../../api/statementsApi';
 import QuestionCard from './QuestionCard';
 import setQuestionsData from '../../../data/setQuestions.json';
-import StatementWizard from '../StatementWizard';
+import StatementWizard from '../statementWizard/StatementWizard';
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { state, dispatch } = useStatements();

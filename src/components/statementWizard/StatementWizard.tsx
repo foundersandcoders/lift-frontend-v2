@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from './ui/dialog';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
+} from '../ui/dialog';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import descriptorsData from '../../data/descriptors.json';
-import { verbData } from '../../utils/verbUtils';
-import { useStatements } from '../hooks/useStatements';
-import { postNewStatement } from '../api/statementsApi';
-import type { Statement, SetQuestion, Step } from '../../types/types';
+import { useStatements } from '../../hooks/useStatements';
+import { postNewStatement } from '../../api/statementsApi';
+import type { Statement, SetQuestion, Step } from '../../../types/types';
+import { SubjectTiles } from './SubjectTiles';
+import { VerbTiles } from './VerbTiles';
 
 interface StatementWizardProps {
   username: string;
@@ -34,7 +34,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const activePresetQuestion: SetQuestion | undefined = presetQuestion;
 
   // Remove internal open state; wizard is controlled by parent rendering.
-  const [step, setStep] = useState<Step>('who');
+  const [step, setStep] = useState<Step>('subject');
   const [selection, setSelection] = useState<Statement>({
     id: '',
     subject: '',
@@ -43,35 +43,18 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     isPublic: false,
   });
 
-  // Build subject tiles (using descriptors)
-  const subjectTiles = useMemo(() => {
-    const data = descriptorsData as { descriptors: string[] };
-    return [
-      { label: username, value: username },
-      ...data.descriptors.map((descriptor) => ({
-        label: `${username}'s ${descriptor}`,
-        value: `${username}'s ${descriptor}`,
-      })),
-    ];
-  }, [username]);
-
-  const getContrastColor = (hexColor: string) => {
-    const r = Number.parseInt(hexColor.slice(1, 3), 16);
-    const g = Number.parseInt(hexColor.slice(3, 5), 16);
-    const b = Number.parseInt(hexColor.slice(5, 7), 16);
-    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    return yiq >= 128 ? 'black' : 'white';
-  };
-
   const getStepQuestion = (currentStep: Step) => {
-    if (activePresetQuestion && currentStep !== 'closed') {
-      return activePresetQuestion.steps[
-        currentStep as keyof typeof activePresetQuestion.steps
-      ].question;
+    if (
+      currentStep !== 'closed' &&
+      activePresetQuestion?.steps?.[currentStep as Exclude<Step, 'closed'>]
+        ?.question
+    ) {
+      return activePresetQuestion.steps[currentStep as Exclude<Step, 'closed'>]
+        .question;
     }
-    if (currentStep === 'who')
+    if (currentStep === 'subject')
       return `This statement applies to ${username} or someone/something else?`;
-    if (currentStep === 'action')
+    if (currentStep === 'verb')
       return `What's happening with ${selection.subject}? How do they feel or what do they experience?`;
     if (currentStep === 'what')
       return `In what way does ${
@@ -82,18 +65,18 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   useEffect(() => {
-    if (activePresetQuestion && activePresetQuestion.steps.who.preset) {
+    if (activePresetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({ ...prev, subject: username }));
     }
   }, [activePresetQuestion, username]);
 
   const handleBack = () => {
     switch (step) {
-      case 'action':
-        setStep('who');
+      case 'verb':
+        setStep('subject');
         break;
       case 'what':
-        setStep('action');
+        setStep('verb');
         break;
       case 'privacy':
         setStep('what');
@@ -117,12 +100,12 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   const renderStep = () => {
     switch (step) {
-      case 'who':
-        if (activePresetQuestion && activePresetQuestion.steps.who.preset) {
+      case 'subject':
+        if (activePresetQuestion?.steps?.subject?.preset) {
           return (
             <div className='space-y-4'>
               <h2 className='text-2xl font-semibold text-center mb-6'>
-                {getStepQuestion('who')}
+                {getStepQuestion('subject')}
               </h2>
               <div className='text-center p-4 border rounded'>
                 <p>{username}</p>
@@ -130,7 +113,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
               <Button
                 onClick={() => {
                   setSelection((prev) => ({ ...prev, subject: username }));
-                  setStep('action');
+                  setStep('verb');
                 }}
                 className='w-full'
               >
@@ -142,82 +125,43 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         return (
           <div className='space-y-4'>
             <h2 className='text-2xl font-semibold text-center mb-6'>
-              {getStepQuestion('who')}
+              {getStepQuestion('subject')}
             </h2>
-            <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
-              {subjectTiles.map((tile) => (
-                <Button
-                  key={tile.value}
-                  variant={
-                    selection.subject === tile.value ? 'default' : 'outline'
-                  }
-                  className={`h-auto py-4 px-6 text-left flex flex-col items-start space-y-1 transition-all ${
-                    tile.value === username
-                      ? 'bg-blue-50 hover:bg-blue-100'
-                      : ''
-                  }`}
-                  onClick={() => {
-                    if (
-                      activePresetQuestion &&
-                      !activePresetQuestion.steps.who.allowDescriptors
-                    ) {
-                      setSelection((prev) => ({ ...prev, subject: username }));
-                    } else {
-                      setSelection((prev) => ({
-                        ...prev,
-                        subject: tile.value,
-                      }));
-                    }
-                    setStep('action');
-                  }}
-                >
-                  <span className='font-medium'>{tile.label}</span>
-                </Button>
-              ))}
-            </div>
+            <SubjectTiles
+              username={username}
+              activePresetQuestion={activePresetQuestion}
+              selectedValue={selection.subject}
+              onSelect={(value) => {
+                if (
+                  activePresetQuestion &&
+                  !activePresetQuestion.steps.subject.allowDescriptors
+                ) {
+                  setSelection((prev) => ({ ...prev, subject: username }));
+                } else {
+                  setSelection((prev) => ({ ...prev, subject: value }));
+                }
+                setStep('verb');
+              }}
+            />
           </div>
         );
-      case 'action':
+
+      case 'verb':
         return (
           <div className='flex flex-col' style={{ height: '60vh' }}>
             <h2 className='sticky top-0 bg-white z-10 py-2 text-2xl font-semibold text-center'>
-              {getStepQuestion('action')}
+              {getStepQuestion('verb')}
             </h2>
-            <div className='overflow-y-auto'>
-              <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 p-2'>
-                {verbData
-                  .slice()
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map((verb, index) => (
-                    <Button
-                      key={`${verb.name}-${index}`}
-                      variant={
-                        selection.verb === verb.name ? 'default' : 'outline'
-                      }
-                      className='h-auto py-2 px-3 text-left flex items-center justify-center transition-all text-sm'
-                      style={{
-                        backgroundColor:
-                          selection.verb === verb.name
-                            ? verb.color
-                            : 'transparent',
-                        color:
-                          selection.verb === verb.name
-                            ? getContrastColor(verb.color)
-                            : 'inherit',
-                        borderColor: verb.color,
-                      }}
-                      onClick={() => {
-                        setSelection((prev) => ({ ...prev, verb: verb.name }));
-                        setStep('what');
-                      }}
-                    >
-                      <span className='font-medium'>{verb.name}</span>
-                    </Button>
-                  ))}
-              </div>
-            </div>
+            <VerbTiles
+              selectedVerb={selection.verb}
+              onSelect={(verb) => {
+                setSelection((prev) => ({ ...prev, verb }));
+                setStep('what');
+              }}
+            />
           </div>
         );
+
       case 'what':
         return (
           <div className='space-y-6'>
@@ -313,7 +257,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         </DialogDescription>
         <DialogTitle className='sr-only'>Confirmation Dialog</DialogTitle>
         <div className='relative'>
-          {step !== 'who' && (
+          {step !== 'subject' && (
             <Button
               variant='ghost'
               size='icon'
