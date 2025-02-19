@@ -321,7 +321,7 @@
     },
     {
       "id": "q12",
-      "category": "colleagueSharing",
+      "category": "colleague_Sharing",
       "mainQuestion": "Share the information about your work needs that would be helpful for your colleagues.",
       "steps": {
         "subject": {
@@ -350,7 +350,7 @@
     },
     {
       "id": "q13",
-      "category": "employerSupport",
+      "category": "employer_Support",
       "mainQuestion": "Specify the support or understanding you need from us as your employer.",
       "steps": {
         "subject": {
@@ -379,7 +379,7 @@
     },
     {
       "id": "q14",
-      "category": "personalIntroduction",
+      "category": "personal_Introduction",
       "mainQuestion": "Introduce yourself to your team.",
       "steps": {
         "subject": {

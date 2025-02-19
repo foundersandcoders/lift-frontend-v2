@@ -18,6 +18,22 @@ import setQuestionsData from '../../../data/setQuestions.json';
 
 import StatementWizard from '../statementWizard/StatementWizard';
 
+const groupQuestionsByCategory = (questions: SetQuestion[]) => {
+  return questions.reduce<Record<string, SetQuestion[]>>((acc, question) => {
+    const cat = question.category || 'Uncategorized';
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(question);
+    return acc;
+  }, {});
+};
+
+const formatCategoryName = (category: string): string => {
+  // Replace underscores with spaces.
+  const withSpaces = category.replace(/_/g, ' ');
+  // Capitalize the first letter of each word.
+  return withSpaces.replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { state, dispatch } = useStatements();
   const { statements } = state;
@@ -55,13 +71,6 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   // State to keep track of used preset questions (so they can be hidden later).
   const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
-
-  console.log(
-    'Wizard open:',
-    isWizardOpen,
-    'Selected question:',
-    selectedPresetQuestion
-  );
 
   // If there are no statements, set default ones from preStatements.json
   useEffect(() => {
@@ -308,46 +317,55 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setResetConfirmation({ isOpen: false, statementId: null });
   };
 
+  // NEW: Filter out used preset questions and group them by category
+  const filteredQuestions = (
+    setQuestionsData.setQuestions as SetQuestion[]
+  ).filter((q) => !usedPresetQuestions.includes(q.id));
+  const questionsByCategory = groupQuestionsByCategory(filteredQuestions);
+
   return (
     <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
-      <h2 className='text-xl font-semibold mb-4'>Items</h2>
-      {/* Single list merging preset questions and created statements */}
-      <ul className='space-y-2'>
-        {/* Render preset questions first – filter out any that have been used */}
-        {setQuestionsData.setQuestions
-          .filter((q) => !usedPresetQuestions.includes(q.id))
-          .map((presetQuestion) => (
-            <li key={`preset-${presetQuestion.id}`}>
-              <QuestionCard
-                presetQuestion={presetQuestion}
-                onSelect={handlePresetQuestionSelect}
-              />
-            </li>
-          ))}
+      {/* NEW: Render preset questions grouped by category */}
+      {Object.entries(questionsByCategory).map(([category, questions]) => (
+        <div key={category} className='mb-4'>
+          <h3 className='text-lg font-semibold mb-2'>
+            {formatCategoryName(category)}
+          </h3>
+          <ul className='space-y-2'>
+            {questions.map((presetQuestion) => (
+              <li key={`preset-${presetQuestion.id}`}>
+                <QuestionCard
+                  presetQuestion={presetQuestion}
+                  onSelect={handlePresetQuestionSelect}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
 
-        {/* Render created statements */}
-        {statements.map((statement) => (
-          <li key={statement.id}>
-            <StatementItem
-              statement={statement}
-              isEditing={editingStatementId === statement.id}
-              editingPart={
-                editingStatementId === statement.id ? editingPart : null
-              }
-              onPartClick={handlePartClick}
-              onPartUpdate={handlePartUpdate}
-              onSave={handleEditSave}
-              onDelete={handleDeleteClick}
-              onTogglePublic={handleTogglePublic}
-              onEditClick={handleEditClick}
-              onAddAction={handleAddAction}
-              onEditAction={handleEditAction}
-              onDeleteAction={handleDeleteActionClick}
-              onReset={statement.presetId ? handleResetClick : undefined}
-            />
-          </li>
-        ))}
-      </ul>
+      {/* Render created statements */}
+      {statements.map((statement) => (
+        <li key={statement.id}>
+          <StatementItem
+            statement={statement}
+            isEditing={editingStatementId === statement.id}
+            editingPart={
+              editingStatementId === statement.id ? editingPart : null
+            }
+            onPartClick={handlePartClick}
+            onPartUpdate={handlePartUpdate}
+            onSave={handleEditSave}
+            onDelete={handleDeleteClick}
+            onTogglePublic={handleTogglePublic}
+            onEditClick={handleEditClick}
+            onAddAction={handleAddAction}
+            onEditAction={handleEditAction}
+            onDeleteAction={handleDeleteActionClick}
+            onReset={statement.presetId ? handleResetClick : undefined}
+          />
+        </li>
+      ))}
 
       {/* Conditionally render the StatementWizard when open */}
       {isWizardOpen && selectedPresetQuestion && (
