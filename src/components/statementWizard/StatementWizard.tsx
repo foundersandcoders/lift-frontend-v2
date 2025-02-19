@@ -100,8 +100,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   const renderStep = () => {
     switch (step) {
-      case 'subject':
-        if (activePresetQuestion?.steps?.subject?.preset) {
+      case 'subject': {
+        const allowDescriptors =
+          activePresetQuestion?.steps?.subject?.allowDescriptors;
+        if (allowDescriptors === false) {
           return (
             <div className='space-y-4'>
               <h2 className='text-2xl font-semibold text-center mb-6'>
@@ -145,6 +147,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             />
           </div>
         );
+      }
 
       case 'verb':
         return (

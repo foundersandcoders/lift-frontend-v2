@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+// import { useMemo } from 'react';
 import { Button } from '../ui/button';
 import descriptorsData from '../../../data/descriptors.json';
 import type { SetQuestion, DescriptorsData } from '../../../types/types';
@@ -20,11 +21,15 @@ const getSubjectTiles = (
   activePresetQuestion?: SetQuestion
 ): SubjectTile[] => {
   let descriptorOptions: string[] = [];
-  // Use the descriptorCategory from the subject step or default to 'wellbeing'
-  const descriptorCategory =
-    activePresetQuestion?.steps?.subject?.descriptorCategory || 'wellbeing';
+
+  // Use the top-level category from the preset question, defaulting to 'wellbeing'
+  const categoryKey = activePresetQuestion?.category || 'wellbeing';
+  console.log('1 Preset question category:', categoryKey);
   const data = descriptorsData as DescriptorsData;
-  const category = data.descriptors.find((d) => d.name === descriptorCategory);
+  const category = data.descriptors.find(
+    (d) => d.name.toLowerCase() === categoryKey.toLowerCase()
+  );
+  console.log('2 Found descriptor category:', category);
   if (category) {
     descriptorOptions = category.options;
   }
@@ -43,10 +48,11 @@ export const SubjectTiles: React.FC<SubjectTilesProps> = ({
   selectedValue,
   onSelect,
 }) => {
-  const tiles = useMemo(
-    () => getSubjectTiles(username, activePresetQuestion),
-    [username, activePresetQuestion]
-  );
+  // const tiles = useMemo(
+  //   () => getSubjectTiles(username, activePresetQuestion),
+  //   [username, activePresetQuestion]
+  // );
+  const tiles = getSubjectTiles(username, activePresetQuestion);
 
   return (
     <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
