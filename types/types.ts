@@ -50,9 +50,23 @@ export interface SetQuestion {
   steps: {
     subject: SetQuestionStep;
     verb: SetQuestionStep;
-    what: SetQuestionStep;
+    object: SetQuestionStep;
     privacy: SetQuestionStep;
   };
 }
 
-export type Step = 'closed' | 'subject' | 'verb' | 'what' | 'privacy';
+export interface SetQuestionsData {
+  setQuestions: SetQuestion[];
+}
+
+export interface Descriptor {
+  name: string;
+  description: string;
+  options: string[];
+}
+
+export interface DescriptorsData {
+  descriptors: Descriptor[];
+}
+
+export type Step = 'closed' | 'subject' | 'verb' | 'object' | 'privacy';

@@ -9,7 +9,7 @@ import {
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStatements } from '../../hooks/useStatements';
 import { postNewStatement } from '../../api/statementsApi';
@@ -56,7 +56,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       return `This statement applies to ${username} or someone/something else?`;
     if (currentStep === 'verb')
       return `What's happening with ${selection.subject}? How do they feel or what do they experience?`;
-    if (currentStep === 'what')
+    if (currentStep === 'object')
       return `In what way does ${
         selection.subject
       } ${selection.verb.toLowerCase()}? What's the context?`;
@@ -75,11 +75,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       case 'verb':
         setStep('subject');
         break;
-      case 'what':
+      case 'object':
         setStep('verb');
         break;
       case 'privacy':
-        setStep('what');
+        setStep('object');
         break;
       default:
         onClose();
@@ -156,17 +156,17 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
               selectedVerb={selection.verb}
               onSelect={(verb) => {
                 setSelection((prev) => ({ ...prev, verb }));
-                setStep('what');
+                setStep('object');
               }}
             />
           </div>
         );
 
-      case 'what':
+      case 'object':
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-semibold text-center'>
-              {getStepQuestion('what')}
+              {getStepQuestion('object')}
             </h2>
             <Input
               autoFocus
@@ -188,8 +188,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         );
 
       case 'privacy':
-        return <PrivacySelector isPublic={selection.isPublic} onChange={...} onComplete={handleComplete} />;
-        
+        return (
+          <PrivacySelector
+            isPublic={selection.isPublic}
+            onChange={(isPublic) =>
+              setSelection((prev) => ({ ...prev, isPublic }))
+            }
+            onComplete={handleComplete} // <-- This prop was added
+          />
+        );
 
       default:
         return null;

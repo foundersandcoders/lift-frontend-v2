@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Button } from '../ui/button';
 import descriptorsData from '../../../data/descriptors.json';
-import type { SetQuestion } from '../../../types/types';
+import type { SetQuestion, DescriptorsData } from '../../../types/types';
 
 interface SubjectTile {
   label: string;
@@ -23,15 +23,8 @@ const getSubjectTiles = (
   // Use the descriptorCategory from the subject step or default to 'wellbeing'
   const descriptorCategory =
     activePresetQuestion?.steps?.subject?.descriptorCategory || 'wellbeing';
-  const category = (
-    descriptorsData as {
-      descriptors: Array<{
-        name: string;
-        description: string;
-        options: string[];
-      }>;
-    }
-  ).descriptors.find((d) => d.name === descriptorCategory);
+  const data = descriptorsData as DescriptorsData;
+  const category = data.descriptors.find((d) => d.name === descriptorCategory);
   if (category) {
     descriptorOptions = category.options;
   }

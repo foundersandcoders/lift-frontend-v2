@@ -16,13 +16,9 @@ import { verbData } from '../../utils/verbUtils';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
 import type React from 'react';
-import type { Statement } from '../../types/types';
+import type { Statement, DescriptorsData } from '../../types/types';
 
-type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
-
-interface DescriptorsData {
-  descriptors: string[];
-}
+type Step = 'closed' | 'who' | 'action' | 'object' | 'privacy';
 
 const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
   const { dispatch } = useStatements();
@@ -43,10 +39,12 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     const data = descriptorsData as DescriptorsData;
     return [
       { label: username, value: username },
-      ...data.descriptors.map((descriptor: string) => ({
-        label: `${username}'s ${descriptor}`,
-        value: `${username}'s ${descriptor}`,
-      })),
+      ...data.descriptors.flatMap((descriptor) =>
+        descriptor.options.map((option) => ({
+          label: `${username}'s ${option}`,
+          value: `${username}'s ${option}`,
+        }))
+      ),
     ];
   }, [username]);
 
@@ -141,11 +139,11 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
         setStep('who');
         setSelectedCategory(null);
         break;
-      case 'what':
+      case 'object':
         setStep('action');
         break;
       case 'privacy':
-        setStep('what');
+        setStep('object');
         break;
       default:
         handleClose();
@@ -253,7 +251,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
                       }}
                       onClick={() => {
                         setSelection((prev) => ({ ...prev, verb: verb.name }));
-                        setStep('what');
+                        setStep('object');
                       }}
                     >
                       <span className='font-medium'>{verb.name}</span>
@@ -319,7 +317,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
                       }}
                       onClick={() => {
                         setSelection((prev) => ({ ...prev, verb: verb.name }));
-                        setStep('what');
+                        setStep('object');
                       }}
                     >
                       <span className='font-medium'>{verb.name}</span>
@@ -379,7 +377,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
                     }}
                     onClick={() => {
                       setSelection((prev) => ({ ...prev, verb: verb.name }));
-                      setStep('what');
+                      setStep('object');
                     }}
                   >
                     <span className='font-medium'>{verb.name}</span>
@@ -430,7 +428,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
                   }}
                   onClick={() => {
                     setSelection((prev) => ({ ...prev, verb: verb.name }));
-                    setStep('what');
+                    setStep('object');
                   }}
                 >
                   <span className='font-medium'>{verb.name}</span>
@@ -439,7 +437,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
             </div>
           </div>
         );
-      case 'what':
+      case 'object':
         return (
           <div className='space-y-6'>
             <h2 className='text-2xl font-semibold text-center'>

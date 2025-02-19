@@ -3,6 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { useStatements } from '../../hooks/useStatements';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
+// import type {
+//   Statement,
+//   SetQuestion,
+//   SetQuestionsData,
+// } from '../../../types/types';
 import type { Statement, SetQuestion } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
 import nlp from 'compromise';
@@ -10,6 +15,7 @@ import StatementItem from './StatementItem';
 import { updateStatement } from '../../api/statementsApi';
 import QuestionCard from './QuestionCard';
 import setQuestionsData from '../../../data/setQuestions.json';
+
 import StatementWizard from '../statementWizard/StatementWizard';
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
@@ -309,8 +315,8 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
       <ul className='space-y-2'>
         {/* Render preset questions first – filter out any that have been used */}
         {setQuestionsData.setQuestions
-          .filter((q: SetQuestion) => !usedPresetQuestions.includes(q.id))
-          .map((presetQuestion: SetQuestion) => (
+          .filter((q) => !usedPresetQuestions.includes(q.id))
+          .map((presetQuestion) => (
             <li key={`preset-${presetQuestion.id}`}>
               <QuestionCard
                 presetQuestion={presetQuestion}
