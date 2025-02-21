@@ -12,6 +12,7 @@ export interface Statement {
   adverbial?: string;
   isPublic: boolean;
   actions?: Action[];
+  category: string;
   presetId?: string;
 }
 
@@ -47,11 +48,12 @@ interface SetQuestionStep {
 export interface SetQuestion {
   id: string;
   mainQuestion: string;
-  category?: string;
+
   steps: {
     subject: SetQuestionStep;
     verb: SetQuestionStep;
     object: SetQuestionStep;
+    category: string;
     privacy: SetQuestionStep;
   };
 }
@@ -70,4 +72,10 @@ export interface DescriptorsData {
   descriptors: Descriptor[];
 }
 
-export type Step = 'closed' | 'subject' | 'verb' | 'object' | 'privacy';
+export type Step =
+  | 'closed'
+  | 'subject'
+  | 'verb'
+  | 'object'
+  | 'category'
+  | 'privacy';

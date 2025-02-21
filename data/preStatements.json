@@ -4,6 +4,7 @@
     "verb": "Support",
     "object": "their team",
     "isPublic": true,
+    "category": "employer_Support",
     "actions": [
       {
         "id": "a1",
@@ -38,7 +39,8 @@
     "id": "3",
     "verb": "Create",
     "object": "innovative solutions",
-    "isPublic": true
+    "isPublic": true,
+    "category": "employer_Support"
   },
   {
     "id": "4",
@@ -46,6 +48,7 @@
     "verb": "Engage",
     "object": "potential customers",
     "isPublic": true,
+    "category": "colleague_Sharing",
     "actions": [
       {
         "id": "a4",
@@ -59,6 +62,7 @@
     "id": "5",
     "verb": "Learn",
     "object": "new technologies",
-    "isPublic": false
+    "isPublic": false,
+    "category": "wellbeing"
   }
 ]

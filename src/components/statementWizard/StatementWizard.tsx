@@ -17,6 +17,7 @@ import type { Statement, SetQuestion, Step } from '../../../types/types';
 import { SubjectTiles } from './SubjectTiles';
 import { VerbTiles } from './VerbTiles';
 import { PrivacySelector } from './PrivacySelector';
+import statementsCategories from '../../../data/statementsCategories.json';
 
 interface StatementWizardProps {
   username: string;
@@ -40,8 +41,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     subject: '',
     verb: '',
     object: '',
+    category: '',
     isPublic: false,
   });
+
+  const categories = statementsCategories.categories || [];
 
   const getStepQuestion = (currentStep: Step) => {
     if (
@@ -60,6 +64,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       return `In what way does ${
         selection.subject
       } ${selection.verb.toLowerCase()}? What's the context?`;
+    if (currentStep === 'category')
+      return `You can set a category for your statement`;
     if (currentStep === 'privacy') return `Who can see this statement?`;
     return '';
   };
@@ -78,8 +84,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       case 'object':
         setStep('verb');
         break;
-      case 'privacy':
+      case 'category':
         setStep('object');
+        break;
+      case 'privacy':
+        setStep('category');
         break;
       default:
         onClose();
@@ -182,10 +191,46 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             />
             <Button
               className='w-full'
-              onClick={() => selection.object.trim() && setStep('privacy')}
+              onClick={() => selection.object.trim() && setStep('category')}
               disabled={!selection.object.trim()}
             >
               Continue
+            </Button>
+          </div>
+        );
+
+      case 'category':
+        return (
+          <div className='space-y-4'>
+            <h2 className='text-2xl font-semibold text-center mb-6'>
+              {getStepQuestion('category')}
+            </h2>
+            <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
+              {categories.map((cat: { id: string; name: string }) => (
+                <Button
+                  key={cat.id}
+                  variant={
+                    selection.category === cat.id ? 'default' : 'outline'
+                  }
+                  className='h-auto py-4 px-6 text-left flex flex-col items-start space-y-1 transition-all'
+                  onClick={() =>
+                    setSelection((prev) => ({ ...prev, category: cat.id }))
+                  }
+                >
+                  <span className='font-medium'>{cat.name}</span>
+                </Button>
+              ))}
+            </div>
+            <Button
+              onClick={() => {
+                if (selection.category) {
+                  setStep('privacy');
+                }
+              }}
+              disabled={!selection.category}
+              className='w-full'
+            >
+              Next
             </Button>
           </div>
         );

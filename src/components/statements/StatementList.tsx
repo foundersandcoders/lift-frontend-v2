@@ -3,11 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStatements } from '../../hooks/useStatements';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
-// import type {
-//   Statement,
-//   SetQuestion,
-//   SetQuestionsData,
-// } from '../../../types/types';
 import type { Statement, SetQuestion } from '../../../types/types';
 import preStatements from '../../../data/preStatements.json';
 import nlp from 'compromise';
