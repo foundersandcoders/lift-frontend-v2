@@ -48,12 +48,13 @@ interface SetQuestionStep {
 export interface SetQuestion {
   id: string;
   mainQuestion: string;
+  category?: string;
 
   steps: {
     subject: SetQuestionStep;
     verb: SetQuestionStep;
     object: SetQuestionStep;
-    category: string;
+    category: SetQuestionStep;
     privacy: SetQuestionStep;
   };
 }
