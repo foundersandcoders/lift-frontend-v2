@@ -7,7 +7,7 @@
       "steps": {
         "subject": {
           "question": "Who is this statement about?",
-          "preset": false,
+          "preset": true,
           "presetAnswer": "username",
           "allowDescriptors": true
         },

@@ -37,24 +37,24 @@ export interface SubjectData {
   descriptors: string[];
 }
 
-interface SetQuestionStep {
+export interface SetQuestionStep {
   question: string;
   preset: boolean;
   presetAnswer: string | null;
   allowDescriptors?: boolean;
   descriptorCategory?: string;
+  allowedVerbs?: string[];
 }
 
 export interface SetQuestion {
   id: string;
   mainQuestion: string;
   category?: string;
-
   steps: {
     subject: SetQuestionStep;
     verb: SetQuestionStep;
     object: SetQuestionStep;
-    category: SetQuestionStep;
+    category?: SetQuestionStep;
     privacy: SetQuestionStep;
   };
 }
