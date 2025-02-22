@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
-import ActionPreview from './ActionLines';
+import ActionLines from './ActionLines';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 
 export interface StatementItemProps {
@@ -40,14 +40,12 @@ export interface StatementItemProps {
   onDelete: (statementId: string) => void;
   onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
-
-  // callbacks for action preview functionality
   onEditAction?: (
+    statementId: string,
     actionId: string,
     updated: { text: string; dueDate: string }
   ) => void;
-  onDeleteAction?: (actionId: string) => void;
-  // Optional callback: receives the statement id and new action details.
+  onDeleteAction?: (statementId: string, actionId: string) => void;
   onAddAction?: (
     statementId: string,
     newAction: { text: string; dueDate: string }
@@ -243,10 +241,15 @@ const StatementItem: React.FC<StatementItemProps> = ({
       {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
         <div className='mt-2'>
-          <ActionPreview
+          {/* Inject statementId to fulfill onEditAction interface */}
+          <ActionLines
             actions={statement.actions ?? []}
-            onEditAction={onEditAction}
-            onDeleteAction={onDeleteAction}
+            onEditAction={(actionId, updated) =>
+              onEditAction && onEditAction(statement.id, actionId, updated)
+            }
+            onDeleteAction={(actionId) =>
+              onDeleteAction && onDeleteAction(statement.id, actionId)
+            }
             onAddAction={(newAction) =>
               onAddAction && onAddAction(statement.id, newAction)
             }

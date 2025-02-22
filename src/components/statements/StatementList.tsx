@@ -10,6 +10,7 @@ import StatementWizard from '../statementWizard/StatementWizard';
 import setQuestionsData from '../../../data/setQuestions.json';
 import statementsCategories from '../../../data/statementsCategories.json';
 import { formatCategoryName } from '../../../lib/utils';
+import { updateStatement } from '../../api/statementsApi';
 
 // Helper: group preset questions by their category.
 const groupQuestionsByCategory = (questions: SetQuestion[]) => {
@@ -55,26 +56,16 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // Group preset questions and created statements by category.
   const questionsByCategory = groupQuestionsByCategory(presetQuestions);
   const statementsByCategory = groupStatementsByCategory(statements);
-
   // Get categories from your configuration.
   const categoriesList = statementsCategories.categories; // assumed array of { id: string; name: string }
 
-  // Compute extra categories not defined in your configuration.
-  const definedCategoryIds = categoriesList.map((c) => c.id);
-  const extraCategoryIds = Array.from(
-    new Set([
-      ...Object.keys(questionsByCategory),
-      ...Object.keys(statementsByCategory),
-    ])
-  ).filter((catId) => !definedCategoryIds.includes(catId));
-
-  // When a preset question is clicked, open the wizard.
+  // Callback: when a preset question is clicked, open the wizard.
   const handlePresetQuestionSelect = (presetQuestion: SetQuestion) => {
     setSelectedPresetQuestion(presetQuestion);
     setIsWizardOpen(true);
   };
 
-  // When the wizard completes (a new statement is created), mark the question as used.
+  // Callback: when the wizard completes (a new statement is created), mark the question as used.
   const handleWizardComplete = (newStatement: Statement) => {
     // Use newStatement in a no-op so it's not flagged as unused.
     void newStatement;
@@ -90,7 +81,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setSelectedPresetQuestion(null);
   };
 
-  // Handlers for deletion of statements.
+  // Callback: delete a statement.
   const handleDeleteClick = (statementId: string) => {
     setDeleteConfirmation({ isOpen: true, statementId });
   };
@@ -107,6 +98,80 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
 
   const handleDeleteCancel = () => {
     setDeleteConfirmation({ isOpen: false, statementId: null });
+  };
+
+  // Callback: placeholder for editing a statement.
+  const handleEditClick = (statementId: string) => {
+    alert(
+      `Edit functionality for statement ${statementId} is not implemented yet.`
+    );
+  };
+
+  // Callback: Reset a preset-generated statement.
+  const handleResetClick = (statementId: string) => {
+    const statementToReset = statements.find((s) => s.id === statementId);
+    if (statementToReset && statementToReset.presetId) {
+      dispatch({ type: 'DELETE_STATEMENT', payload: statementId });
+      setUsedPresetQuestions((prev) =>
+        prev.filter((id) => id !== statementToReset.presetId)
+      );
+    }
+  };
+
+  // Callback: Add a new action to a statement.
+  const handleAddAction = (
+    statementId: string,
+    newAction: { text: string; dueDate: string }
+  ) => {
+    const statementToUpdate = statements.find((s) => s.id === statementId);
+    if (!statementToUpdate) return;
+    const updatedActions = statementToUpdate.actions
+      ? [
+          ...statementToUpdate.actions,
+          {
+            id: Date.now().toString(),
+            creationDate: new Date().toISOString(),
+            ...newAction,
+          },
+        ]
+      : [
+          {
+            id: Date.now().toString(),
+            creationDate: new Date().toISOString(),
+            ...newAction,
+          },
+        ];
+    const updatedStatement = { ...statementToUpdate, actions: updatedActions };
+    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    updateStatement(updatedStatement);
+  };
+
+  // Callback: Edit an existing action.
+  const handleEditAction = (
+    statementId: string,
+    actionId: string,
+    updatedData: { text: string; dueDate: string }
+  ) => {
+    const statementToUpdate = statements.find((s) => s.id === statementId);
+    if (!statementToUpdate || !statementToUpdate.actions) return;
+    const updatedActions = statementToUpdate.actions.map((action) =>
+      action.id === actionId ? { ...action, ...updatedData } : action
+    );
+    const updatedStatement = { ...statementToUpdate, actions: updatedActions };
+    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    updateStatement(updatedStatement);
+  };
+
+  // Callback: Delete an action.
+  const handleDeleteAction = (statementId: string, actionId: string) => {
+    const statementToUpdate = statements.find((s) => s.id === statementId);
+    if (!statementToUpdate || !statementToUpdate.actions) return;
+    const updatedActions = statementToUpdate.actions.filter(
+      (action) => action.id !== actionId
+    );
+    const updatedStatement = { ...statementToUpdate, actions: updatedActions };
+    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    updateStatement(updatedStatement);
   };
 
   // Render a category section given a category ID and label.
@@ -144,11 +209,15 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                   onSave={() => {}}
                   onDelete={handleDeleteClick}
                   onTogglePublic={() => {}}
-                  onEditClick={() => {}}
-                  onAddAction={() => {}}
-                  onEditAction={() => {}}
-                  onDeleteAction={() => {}}
-                  onReset={statement.presetId ? () => {} : undefined}
+                  onEditClick={handleEditClick}
+                  onAddAction={handleAddAction}
+                  onEditAction={handleEditAction}
+                  onDeleteAction={handleDeleteAction}
+                  onReset={
+                    statement.presetId
+                      ? () => handleResetClick(statement.id)
+                      : undefined
+                  }
                 />
               </li>
             ))}
@@ -158,12 +227,22 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     );
   };
 
+  // Render sections for defined categories and any extra categories.
+  const definedCategories = categoriesList;
+  const definedCategoryIds = definedCategories.map((c) => c.id);
+  const extraCategoryIds = Array.from(
+    new Set([
+      ...Object.keys(questionsByCategory),
+      ...Object.keys(statementsByCategory),
+    ])
+  ).filter((catId) => !definedCategoryIds.includes(catId));
+
   return (
     <>
       <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
-        {/* Render defined categories */}
-        {categoriesList.map((cat) => renderCategorySection(cat.id, cat.name))}
-        {/* Render extra categories (e.g. Uncategorized) */}
+        {definedCategories.map((cat) =>
+          renderCategorySection(cat.id, cat.name)
+        )}
         {extraCategoryIds.map((catId) => renderCategorySection(catId, catId))}
         <ConfirmationDialog
           isOpen={deleteConfirmation.isOpen}
