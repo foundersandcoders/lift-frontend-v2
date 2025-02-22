@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
-import ActionLines from './ActionLines';
+import ActionLine from './ActionLine';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 
 export interface StatementItemProps {
@@ -43,12 +43,12 @@ export interface StatementItemProps {
   onEditAction?: (
     statementId: string,
     actionId: string,
-    updated: { text: string; dueDate: string }
+    updated: { text: string; dueDate?: string }
   ) => void;
   onDeleteAction?: (statementId: string, actionId: string) => void;
   onAddAction?: (
     statementId: string,
-    newAction: { text: string; dueDate: string }
+    newAction: { text: string; dueDate?: string }
   ) => void;
   onReset?: (statementId: string) => void;
 }
@@ -242,7 +242,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       {isActionsExpanded && (
         <div className='mt-2'>
           {/* Inject statementId to fulfill onEditAction interface */}
-          <ActionLines
+          <ActionLine
             actions={statement.actions ?? []}
             onEditAction={(actionId, updated) =>
               onEditAction && onEditAction(statement.id, actionId, updated)

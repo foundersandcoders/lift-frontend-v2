@@ -11,17 +11,17 @@ import ActionForm from './ActionForm';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
 import type { Action } from '../../../types/types';
 
-export interface ActionPreviewProps {
+export interface ActionLineProps {
   actions: Action[];
   onEditAction: (
     actionId: string,
-    updated: { text: string; dueDate: string }
+    updated: { text: string; dueDate?: string }
   ) => void;
   onDeleteAction: (actionId: string) => void;
-  onAddAction: (newAction: { text: string; dueDate: string }) => void;
+  onAddAction: (newAction: { text: string; dueDate?: string }) => void;
 }
 
-const ActionPreview: React.FC<ActionPreviewProps> = ({
+const ActionLine: React.FC<ActionLineProps> = ({
   actions,
   onEditAction,
   onDeleteAction,
@@ -37,14 +37,14 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
       actionId: string | null;
     }>({ isOpen: false, actionId: null });
 
-  // Handlers for editing
+  // --- Handlers for Editing ---
   const handleStartEdit = (action: Action) => {
     setEditingActionId(action.id);
   };
 
   const handleSaveEdit = (
     actionId: string,
-    data: { text: string; dueDate: string }
+    data: { text: string; dueDate?: string }
   ) => {
     onEditAction(actionId, data);
     setEditingActionId(null);
@@ -54,12 +54,12 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
     setEditingActionId(null);
   };
 
-  // Handlers for adding new action
+  // --- Handlers for Adding New Action ---
   const handleStartAdd = () => {
     setIsAddingNew(true);
   };
 
-  const handleSaveNew = (data: { text: string; dueDate: string }) => {
+  const handleSaveNew = (data: { text: string; dueDate?: string }) => {
     onAddAction(data);
     setIsAddingNew(false);
   };
@@ -68,7 +68,7 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
     setIsAddingNew(false);
   };
 
-  // Delete action confirmation
+  // --- Handlers for Deleting an Action with Confirmation ---
   const confirmDeleteAction = (actionId: string) => {
     setActionDeleteConfirmation({ isOpen: true, actionId });
   };
@@ -89,20 +89,24 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
         if (!isEditing) {
-          // Parse stored "yyyy-MM-dd" into a Date object, then format as "dd/MM/yyyy"
-          const dueDateObj = parse(action.dueDate, 'yyyy-MM-dd', new Date());
-          const dueDateText = !isNaN(dueDateObj.getTime())
-            ? format(dueDateObj, 'dd/MM/yyyy')
-            : 'No due date';
+          let dueDateText: string | null = null;
+          if (action.dueDate) {
+            const dueDateObj = parse(action.dueDate, 'yyyy-MM-dd', new Date());
+            if (!isNaN(dueDateObj.getTime())) {
+              dueDateText = format(dueDateObj, 'dd/MM/yyyy');
+            }
+          }
           return (
             <div
               key={action.id}
               className='flex items-center justify-between p-2 rounded border border-gray-200 shadow-sm bg-gray-50 hover:bg-gray-100 transition-colors'
             >
               <span className='flex-1'>{action.text}</span>
-              <span className='mx-4 text-sm text-gray-500'>
-                Due: {dueDateText}
-              </span>
+              {dueDateText && (
+                <span className='mx-4 text-sm text-gray-500'>
+                  Due: {dueDateText}
+                </span>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button onClick={(e) => e.stopPropagation()}>
@@ -130,7 +134,7 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
             <ActionForm
               key={action.id}
               initialText={action.text}
-              initialDueDate={action.dueDate}
+              initialDueDate={action.dueDate || ''}
               onSave={(data) => handleSaveEdit(action.id, data)}
               onCancel={handleCancelEdit}
             />
@@ -160,4 +164,4 @@ const ActionPreview: React.FC<ActionPreviewProps> = ({
   );
 };
 
-export default ActionPreview;
+export default ActionLine;

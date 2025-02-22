@@ -1,7 +1,7 @@
 export interface Action {
   id: string;
   creationDate: string;
-  dueDate: string;
+  dueDate?: string;
   text: string;
 }
 export interface Statement {
