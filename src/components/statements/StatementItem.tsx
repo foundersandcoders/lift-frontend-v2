@@ -175,7 +175,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
   // Static view when not in editing mode with grouped Edit and Delete
   return (
-    <div className='bg-white border rounded-md p-3 space-y-2 shadow-sm'>
+    <div
+      className={`bg-white border rounded-md p-3 space-y-2 shadow-sm ${
+        statement.isResolved ? 'border-green-500' : 'border-gray-200'
+      }`}
+    >
       {/* Top row: statement, actions counter, etc. */}
       <div className='flex items-center justify-between'>
         {/* Left side: privacy icon + statement text */}
