@@ -11,6 +11,8 @@ import {
   EyeOff,
   MoreVertical,
   RotateCcw,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react';
 import type { Statement } from '../../../types/types';
 import {
@@ -51,6 +53,7 @@ export interface StatementItemProps {
     newAction: { text: string; dueDate?: string }
   ) => void;
   onReset?: (statementId: string) => void;
+  onToggleResolved?: (statementId: string) => void;
 }
 
 const StatementItem: React.FC<StatementItemProps> = ({
@@ -67,6 +70,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onDeleteAction = () => {},
   onAddAction = () => {},
   onReset,
+  onToggleResolved = () => {},
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
   const objectInputRef = useRef<HTMLInputElement>(null);
@@ -106,7 +110,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   onPartUpdate(statement.id, 'subject', value)
                 }
                 onAddDescriptor={() => {}}
-                // Assume the username is derived from the subject string.
                 username={statement.subject.split("'s")[0] || statement.subject}
               />
             ) : (
@@ -194,10 +197,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
             </TooltipContent>
           </Tooltip>
           <span>{`${statement.subject} ${statement.verb} ${statement.object}`}</span>
+          {/* Remove the resolved icon from here */}
         </div>
 
-        {/* Right side: actions counter + dropdown */}
+        {/* Right side: resolved icon, actions counter + dropdown */}
         <div className='flex items-center space-x-4'>
+          {/* Resolved icon */}
+          {statement.isResolved && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className='inline-flex items-center justify-center text-green-600'>
+                  <CheckCircle2 size={18} />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                This statement is resolved.
+              </TooltipContent>
+            </Tooltip>
+          )}
           {/* Actions counter - click to expand/collapse */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
@@ -226,6 +243,20 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
+              {/* Toggle Resolved */}
+              <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
+                {statement.isResolved ? (
+                  <>
+                    <XCircle className='mr-2 h-4 w-4' />
+                    Unresolve
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className='mr-2 h-4 w-4' />
+                    Mark as Resolved
+                  </>
+                )}
+              </DropdownMenuItem>
               {/* Conditionally render the Reset option if onReset is provided */}
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
@@ -241,16 +272,16 @@ const StatementItem: React.FC<StatementItemProps> = ({
       {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
         <div className='mt-2'>
-          {/* Inject statementId to fulfill onEditAction interface */}
           <ActionLine
             actions={statement.actions ?? []}
-            onEditAction={(actionId, updated) =>
-              onEditAction && onEditAction(statement.id, actionId, updated)
-            }
+            onEditAction={(
+              actionId,
+              updated: { text: string; dueDate?: string }
+            ) => onEditAction && onEditAction(statement.id, actionId, updated)}
             onDeleteAction={(actionId) =>
               onDeleteAction && onDeleteAction(statement.id, actionId)
             }
-            onAddAction={(newAction) =>
+            onAddAction={(newAction: { text: string; dueDate?: string }) =>
               onAddAction && onAddAction(statement.id, newAction)
             }
           />

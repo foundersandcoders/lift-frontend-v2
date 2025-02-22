@@ -3,6 +3,7 @@ export interface Action {
   creationDate: string;
   dueDate?: string;
   text: string;
+  isResolved?: boolean;
 }
 export interface Statement {
   id: string;
@@ -14,6 +15,7 @@ export interface Statement {
   actions?: Action[];
   category: string;
   presetId?: string;
+  isResolved?: boolean;
 }
 
 export interface Category {

@@ -59,6 +59,15 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // Get categories from your configuration.
   const categoriesList = statementsCategories.categories; // assumed array of { id: string; name: string }
 
+  // New: Handler to toggle the resolved flag on a statement.
+  const handleToggleResolved = (statementId: string) => {
+    const stmt = statements.find((s) => s.id === statementId);
+    if (!stmt) return;
+    const updated = { ...stmt, isResolved: !stmt.isResolved };
+    dispatch({ type: 'UPDATE_STATEMENT', payload: updated });
+    updateStatement(updated);
+  };
+
   // Callback: when a preset question is clicked, open the wizard.
   const handlePresetQuestionSelect = (presetQuestion: SetQuestion) => {
     setSelectedPresetQuestion(presetQuestion);
@@ -121,7 +130,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // Callback: Add a new action to a statement.
   const handleAddAction = (
     statementId: string,
-    newAction: { text: string; dueDate: string }
+    newAction: { text: string; dueDate?: string }
   ) => {
     const statementToUpdate = statements.find((s) => s.id === statementId);
     if (!statementToUpdate) return;
@@ -150,7 +159,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const handleEditAction = (
     statementId: string,
     actionId: string,
-    updatedData: { text: string; dueDate: string }
+    updatedData: { text: string; dueDate?: string }
   ) => {
     const statementToUpdate = statements.find((s) => s.id === statementId);
     if (!statementToUpdate || !statementToUpdate.actions) return;
@@ -218,6 +227,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                       ? () => handleResetClick(statement.id)
                       : undefined
                   }
+                  onToggleResolved={handleToggleResolved}
                 />
               </li>
             ))}
