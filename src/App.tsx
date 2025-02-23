@@ -11,9 +11,10 @@ import { useStatements } from './hooks/useStatements';
 const AppContent: React.FC = () => {
   const { data, setData } = useStatements();
 
-  const handleLoginSubmit = (username: string) => {
+  const handleLoginSubmit = (username: string, managerEmail: string) => {
     // Dispatch an action to update the username in context.
     setData({ type: 'SET_USERNAME', payload: username });
+    setData({ type: 'SET_MANAGER_EMAIL', payload: managerEmail });
   };
 
   return data.username ? (
