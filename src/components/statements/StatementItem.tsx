@@ -54,6 +54,7 @@ export interface StatementItemProps {
   ) => void;
   onReset?: (statementId: string) => void;
   onToggleResolved?: (statementId: string) => void;
+  onToggleActionResolved?: (actionId: string) => void;
 }
 
 const StatementItem: React.FC<StatementItemProps> = ({
@@ -71,6 +72,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onAddAction = () => {},
   onReset,
   onToggleResolved = () => {},
+  onToggleActionResolved = () => {},
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
   const objectInputRef = useRef<HTMLInputElement>(null);
@@ -275,7 +277,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
       {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
-        <div className='mt-2'>
+        <div className='mt-2 '>
           <ActionLine
             actions={statement.actions ?? []}
             onEditAction={(
@@ -287,6 +289,9 @@ const StatementItem: React.FC<StatementItemProps> = ({
             }
             onAddAction={(newAction: { text: string; dueDate?: string }) =>
               onAddAction && onAddAction(statement.id, newAction)
+            }
+            onToggleResolved={(actionId) =>
+              onToggleActionResolved && onToggleActionResolved(actionId)
             }
           />
         </div>

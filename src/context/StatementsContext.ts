@@ -1,4 +1,3 @@
-// src/contexts/StatementsContext.ts
 import { createContext } from 'react';
 import type { Statement } from '../../types/types';
 

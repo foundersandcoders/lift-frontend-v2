@@ -10,6 +10,7 @@ import {
 import ActionForm from './ActionForm';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
 import type { Action } from '../../../types/types';
+import { CheckCircle2, XCircle } from 'lucide-react';
 
 export interface ActionLineProps {
   actions: Action[];
@@ -19,6 +20,7 @@ export interface ActionLineProps {
   ) => void;
   onDeleteAction: (actionId: string) => void;
   onAddAction: (newAction: { text: string; dueDate?: string }) => void;
+  onToggleResolved?: (actionId: string) => void;
 }
 
 const ActionLine: React.FC<ActionLineProps> = ({
@@ -26,6 +28,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
   onEditAction,
   onDeleteAction,
   onAddAction,
+  onToggleResolved,
 }) => {
   const [editingActionId, setEditingActionId] = React.useState<string | null>(
     null
@@ -99,37 +102,68 @@ const ActionLine: React.FC<ActionLineProps> = ({
           return (
             <div
               key={action.id}
-              className='flex items-center justify-between p-2 rounded border border-gray-200 shadow-sm bg-gray-50 hover:bg-gray-100 transition-colors'
+              className={`flex items-center justify-between p-2 rounded border shadow-sm transition-colors bg-gray-50 hover:bg-gray-100 ${
+                action.isResolved ? 'border-green-500' : 'border-gray-200'
+              }`}
             >
+              {/* Text is placed on the left, taking up all remaining space with "flex-1". */}
               <span className='flex-1'>{action.text}</span>
-              {dueDateText && (
-                <span className='mx-4 text-sm text-gray-500'>
-                  Due: {dueDateText}
-                </span>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button onClick={(e) => e.stopPropagation()}>
-                    <MoreVertical size={18} className='text-gray-500' />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  <DropdownMenuItem onClick={() => handleStartEdit(action)}>
-                    <Edit2 className='mr-2 h-4 w-4' />
-                    Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => confirmDeleteAction(action.id)}
-                    className='text-red-600'
-                  >
-                    <Trash2 className='mr-2 h-4 w-4' />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+
+              {/*  Right side holds due date, resolved icon, and dropdown menu. */}
+              <div className='flex items-center space-x-4'>
+                {/* Show resolved icon if action.isResolved is true. */}
+                {action.isResolved && (
+                  <CheckCircle2 size={18} className='text-green-600' />
+                )}
+                {/*  Show due date if present. */}
+                {dueDateText && (
+                  <span className='text-sm text-gray-500'>
+                    Due: {dueDateText}
+                  </span>
+                )}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button onClick={(e) => e.stopPropagation()}>
+                      <MoreVertical size={18} className='text-gray-500' />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align='end'>
+                    <DropdownMenuItem onClick={() => handleStartEdit(action)}>
+                      <Edit2 className='mr-2 h-4 w-4' />
+                      Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => confirmDeleteAction(action.id)}
+                      className='text-red-600'
+                    >
+                      <Trash2 className='mr-2 h-4 w-4' />
+                      Delete
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        onToggleResolved && onToggleResolved(action.id)
+                      }
+                    >
+                      {action.isResolved ? (
+                        <>
+                          <XCircle className='mr-2 h-4 w-4' />
+                          Unresolve
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className='mr-2 h-4 w-4' />
+                          Mark as Resolved
+                        </>
+                      )}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           );
         } else {
+          // Editing mode remains unchanged
           return (
             <ActionForm
               key={action.id}
