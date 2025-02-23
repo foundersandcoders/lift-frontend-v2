@@ -55,7 +55,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   onComplete,
   onClose,
 }) => {
-  const { dispatch } = useStatements();
+  const { setData } = useStatements();
   const isPreset = Boolean(presetQuestion);
 
   // Define the steps; skip 'category' if using a preset question.
@@ -116,7 +116,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       category:
         presetQuestion?.category || selection.category || 'Uncategorized',
     };
-    dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
+    setData({ type: 'ADD_STATEMENT', payload: newStatement });
     await postNewStatement(newStatement);
     onComplete(newStatement);
     onClose();

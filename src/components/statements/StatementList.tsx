@@ -33,8 +33,8 @@ const groupStatementsByCategory = (statements: Statement[]) => {
 };
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
-  const { state, dispatch } = useStatements();
-  const { statements } = state;
+  const { data, setData } = useStatements();
+  const { statements } = data;
 
   // Track which preset questions have been used.
   const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
@@ -64,7 +64,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     const stmt = statements.find((s) => s.id === statementId);
     if (!stmt) return;
     const updated = { ...stmt, isResolved: !stmt.isResolved };
-    dispatch({ type: 'UPDATE_STATEMENT', payload: updated });
+    setData({ type: 'UPDATE_STATEMENT', payload: updated });
     updateStatement(updated);
   };
 
@@ -83,7 +83,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     );
 
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
     updateStatement(updatedStatement);
   };
 
@@ -116,7 +116,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
 
   const handleDeleteConfirm = () => {
     if (deleteConfirmation.statementId) {
-      dispatch({
+      setData({
         type: 'DELETE_STATEMENT',
         payload: deleteConfirmation.statementId,
       });
@@ -139,7 +139,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const handleResetClick = (statementId: string) => {
     const statementToReset = statements.find((s) => s.id === statementId);
     if (statementToReset && statementToReset.presetId) {
-      dispatch({ type: 'DELETE_STATEMENT', payload: statementId });
+      setData({ type: 'DELETE_STATEMENT', payload: statementId });
       setUsedPresetQuestions((prev) =>
         prev.filter((id) => id !== statementToReset.presetId)
       );
@@ -170,7 +170,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           },
         ];
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
     updateStatement(updatedStatement);
   };
 
@@ -186,7 +186,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
       action.id === actionId ? { ...action, ...updatedData } : action
     );
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
     updateStatement(updatedStatement);
   };
 
@@ -198,7 +198,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
       (action) => action.id !== actionId
     );
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    dispatch({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
+    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
     updateStatement(updatedStatement);
   };
 

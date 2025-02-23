@@ -2,11 +2,11 @@ import { createContext } from 'react';
 import type { Statement } from '../../types/types';
 
 export interface StatementsContextType {
-  state: {
+  data: {
     statements: Statement[];
     username: string;
   };
-  dispatch: React.Dispatch<StatementsAction>;
+  setData: React.Dispatch<StatementsAction>;
 }
 
 export type StatementsAction =

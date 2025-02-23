@@ -1,4 +1,3 @@
-// src/contexts/StatementsProvider.tsx
 import React, { useReducer, ReactNode } from 'react';
 import {
   StatementsContext,
@@ -7,30 +6,30 @@ import {
 } from './StatementsContext';
 
 const statementsReducer = (
-  state: StatementsContextType['state'],
+  data: StatementsContextType['data'],
   action: StatementsAction
-): StatementsContextType['state'] => {
+): StatementsContextType['data'] => {
   switch (action.type) {
     case 'SET_USERNAME':
-      return { ...state, username: action.payload };
+      return { ...data, username: action.payload };
     case 'SET_STATEMENTS':
-      return { ...state, statements: action.payload };
+      return { ...data, statements: action.payload };
     case 'ADD_STATEMENT':
-      return { ...state, statements: [...state.statements, action.payload] };
+      return { ...data, statements: [...data.statements, action.payload] };
     case 'UPDATE_STATEMENT':
       return {
-        ...state,
-        statements: state.statements.map((s) =>
+        ...data,
+        statements: data.statements.map((s) =>
           s.id === action.payload.id ? action.payload : s
         ),
       };
     case 'DELETE_STATEMENT':
       return {
-        ...state,
-        statements: state.statements.filter((s) => s.id !== action.payload),
+        ...data,
+        statements: data.statements.filter((s) => s.id !== action.payload),
       };
     default:
-      return state;
+      return data;
   }
 };
 
@@ -41,13 +40,13 @@ interface StatementsProviderProps {
 export const StatementsProvider: React.FC<StatementsProviderProps> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(statementsReducer, {
+  const [data, setData] = useReducer(statementsReducer, {
     statements: [],
-    username: 'Eve',
+    username: '',
   });
 
   return (
-    <StatementsContext.Provider value={{ state, dispatch }}>
+    <StatementsContext.Provider value={{ data, setData }}>
       {children}
     </StatementsContext.Provider>
   );
