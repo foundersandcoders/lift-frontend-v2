@@ -12,6 +12,8 @@ const statementsReducer = (
   switch (action.type) {
     case 'SET_USERNAME':
       return { ...data, username: action.payload };
+    case 'SET_MANAGER_EMAIL':
+      return { ...data, managerEmail: action.payload };
     case 'SET_STATEMENTS':
       return { ...data, statements: action.payload };
     case 'ADD_STATEMENT':
@@ -43,6 +45,7 @@ export const StatementsProvider: React.FC<StatementsProviderProps> = ({
   const [data, setData] = useReducer(statementsReducer, {
     statements: [],
     username: '',
+    managerEmail: '',
   });
 
   return (
