@@ -5,38 +5,29 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { AlertCircle } from 'lucide-react';
+import { validateEmail } from '../../utils/validateEmail';
 
 interface LoginPageProps {
   onSubmit: (username: string, managerEmail: string) => void;
 }
-
-const emailRegex = /^\S+@\S+\.\S+$/;
 
 const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [managerEmail, setManagerEmail] = useState('');
   const [emailError, setEmailError] = useState('');
 
-  const validateEmail = (email: string) => {
-    if (email === '') {
-      setEmailError('');
-      return true;
-    }
-    if (!emailRegex.test(email)) {
-      setEmailError('Please enter a valid email address.');
-      return false;
-    }
-    setEmailError('');
-    return true;
-  };
-
   const handleEmailBlur = () => {
-    validateEmail(managerEmail.trim());
+    const trimmedEmail = managerEmail.trim();
+    if (trimmedEmail && !validateEmail(trimmedEmail)) {
+      setEmailError('Please enter a valid email address.');
+    } else {
+      setEmailError('');
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim() && validateEmail(managerEmail.trim())) {
+    if (name.trim() && !emailError) {
       onSubmit(name.trim(), managerEmail.trim());
     }
   };
