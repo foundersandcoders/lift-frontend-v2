@@ -35,6 +35,7 @@ const Header: React.FC = () => {
   return (
     <header className='bg-brand-pink text-white p-4 shadow-md'>
       <div className='container mx-auto flex items-center justify-between'>
+        {/* Left side: Logo and Title */}
         <div className='flex items-center'>
           <img
             src='../../public/lift_logo.png'
@@ -43,116 +44,109 @@ const Header: React.FC = () => {
           />
           <h1 className='text-2xl font-bold'>Nassport</h1>
         </div>
-        <div className='flex items-center'>
-          {data.username ? (
-            <span className='mr-4'>Logged as: {data.username}</span>
-          ) : (
-            <span>Not logged</span>
-          )}
-          <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
-            <DialogTrigger asChild>
-              <Button variant='ghost' className='text-white'>
-                <User size={24} />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              headerTitle="User's Data"
-              className='sm:max-w-md p-0'
-            >
-              <DialogDescription className='sr-only'>
-                Dashboard with user information and settings.
-              </DialogDescription>
-              <div className='bg-gray-50 p-4'>
-                {/* Username section */}
-                <div>
-                  <div className='text-sm font-semibold text-gray-700 mb-1'>
-                    Your name:
-                  </div>
-                  <div className='text-sm text-gray-800'>
-                    {data.username || 'Not set'}
-                  </div>
+        {/* Right side: Clickable container with border that opens the dialog */}
+        <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
+          <DialogTrigger asChild>
+            <div className='flex items-center border-2 border-white rounded-full px-4 py-2 cursor-pointer'>
+              {data.username ? (
+                <span className='mr-2'>Logged as: {data.username}</span>
+              ) : (
+                <span>Not logged</span>
+              )}
+              <User size={24} />
+            </div>
+          </DialogTrigger>
+          <DialogContent headerTitle="User's Data" className='sm:max-w-md p-0'>
+            <DialogDescription className='sr-only'>
+              Dashboard with user information and settings.
+            </DialogDescription>
+            <div className='bg-gray-50 p-4'>
+              {/* Username section */}
+              <div>
+                <div className='text-sm font-semibold text-gray-700 mb-1'>
+                  Your name:
                 </div>
-                {/* Manager email section */}
-                <div className='mt-4'>
-                  <div className='text-sm font-semibold text-gray-700 mb-1'>
-                    Your line's manager email:
-                  </div>
-                  <div className='flex items-center space-x-2'>
-                    {isEditingEmail ? (
-                      <>
-                        <Input
-                          value={managerEmailInput}
-                          onChange={(e) => setManagerEmailInput(e.target.value)}
-                          placeholder='Enter new manager email'
-                          aria-label='Manager Email'
-                          className='w-full'
-                        />
-                        <Button
-                          onClick={handleEmailSave}
-                          variant='outline'
-                          size='sm'
-                          aria-label='Save Email'
-                          disabled={
-                            managerEmailInput.trim() !== '' &&
-                            !validateEmail(managerEmailInput.trim())
-                          }
-                        >
-                          <Save size={16} className='text-green-500' />
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setIsEditingEmail(false);
-                            setManagerEmailInput(data.managerEmail || '');
-                            setEmailError('');
-                          }}
-                          variant='outline'
-                          size='sm'
-                          aria-label='Cancel Editing'
-                        >
-                          <X size={16} />
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className='text-sm text-gray-800'>
-                          {data.managerEmail || 'Not set'}
-                        </span>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant='ghost'
-                              size='icon'
-                              aria-label="Edit your line's manager email"
-                              onClick={() => setIsEditingEmail(true)}
-                            >
-                              <Edit2 size={16} />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Edit your line's manager email
-                          </TooltipContent>
-                        </Tooltip>
-                      </>
-                    )}
-                  </div>
-                  {emailError && (
-                    <div className='text-red-500 text-xs mt-1'>
-                      {emailError}
-                    </div>
-                  )}
+                <div className='text-sm text-gray-800'>
+                  {data.username || 'Not set'}
                 </div>
               </div>
-              <DialogFooter className='p-4 bg-gray-50 sm:rounded-b-lg'>
-                <Button
-                  onClick={() => setIsDashboardOpen(false)}
-                  variant='outline'
-                >
-                  Close
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
+              {/* Manager email section */}
+              <div className='mt-4'>
+                <div className='text-sm font-semibold text-gray-700 mb-1'>
+                  Your line's manager email:
+                </div>
+                <div className='flex items-center space-x-2'>
+                  {isEditingEmail ? (
+                    <>
+                      <Input
+                        value={managerEmailInput}
+                        onChange={(e) => setManagerEmailInput(e.target.value)}
+                        placeholder='Enter new manager email'
+                        aria-label='Manager Email'
+                        className='w-full'
+                      />
+                      <Button
+                        onClick={handleEmailSave}
+                        variant='outline'
+                        size='sm'
+                        aria-label='Save Email'
+                        disabled={
+                          managerEmailInput.trim() !== '' &&
+                          !validateEmail(managerEmailInput.trim())
+                        }
+                      >
+                        <Save size={16} className='text-green-500' />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setIsEditingEmail(false);
+                          setManagerEmailInput(data.managerEmail || '');
+                          setEmailError('');
+                        }}
+                        variant='outline'
+                        size='sm'
+                        aria-label='Cancel Editing'
+                      >
+                        <X size={16} />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <span className='text-sm text-gray-800'>
+                        {data.managerEmail || 'Not set'}
+                      </span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            className='flex items-center justify-center rounded-full bg-white p-2 text-brand-pink'
+                            aria-label="Edit your line's manager email"
+                            onClick={() => setIsEditingEmail(true)}
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Edit your line's manager email
+                        </TooltipContent>
+                      </Tooltip>
+                    </>
+                  )}
+                </div>
+                {emailError && (
+                  <div className='text-red-500 text-xs mt-1'>{emailError}</div>
+                )}
+              </div>
+            </div>
+            <DialogFooter className='p-4 bg-gray-50 sm:rounded-b-lg'>
+              <Button
+                onClick={() => setIsDashboardOpen(false)}
+                variant='outline'
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </header>
   );
