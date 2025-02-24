@@ -4,6 +4,7 @@ import React from 'react';
 import { StatementsProvider } from './context/StatementsProvider';
 import LoginPage from './components/LoginPage';
 import MainPage from './components/MainPage';
+import Header from './components/Header';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { useStatements } from './hooks/useStatements';
 
