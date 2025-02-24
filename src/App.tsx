@@ -3,8 +3,8 @@
 import React from 'react';
 import { StatementsProvider } from './context/StatementsProvider';
 import LoginPage from './components/LoginPage';
-import MainPage from './components/MainPage';
 import Header from './components/Header';
+import MainPage from './components/MainPage';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { useStatements } from './hooks/useStatements';
 
@@ -18,11 +18,16 @@ const AppContent: React.FC = () => {
     setData({ type: 'SET_MANAGER_EMAIL', payload: managerEmail });
   };
 
-  return data.username ? (
-    // MainPage receives the username from context.
-    <MainPage />
-  ) : (
-    <LoginPage onSubmit={handleLoginSubmit} />
+  return (
+    // MainPage and Header receives the username from context.
+    <>
+      <Header />
+      {data.username ? (
+        <MainPage />
+      ) : (
+        <LoginPage onSubmit={handleLoginSubmit} />
+      )}
+    </>
   );
 };
 
