@@ -7,6 +7,7 @@ import Header from './components/Header';
 import MainPage from './components/MainPage';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { useStatements } from './hooks/useStatements';
+import { QuestionsProvider } from './context/QuestionsProvider';
 
 // Outer Component: Responsible only for setting up the environment (the providers) for the rest of the app.
 const AppContent: React.FC = () => {
@@ -36,7 +37,9 @@ const App: React.FC = () => {
   return (
     <TooltipProvider>
       <StatementsProvider>
-        <AppContent />
+        <QuestionsProvider>
+          <AppContent />
+        </QuestionsProvider>
       </StatementsProvider>
     </TooltipProvider>
   );

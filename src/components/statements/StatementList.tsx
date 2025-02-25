@@ -7,7 +7,7 @@ import type { Statement, SetQuestion } from '../../../types/types';
 import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';
 import StatementWizard from '../statementWizard/StatementWizard';
-import setQuestionsData from '../../../data/setQuestions.json';
+import { useQuestions } from '../../hooks/useQuestions';
 import statementsCategories from '../../../data/statementsCategories.json';
 import { formatCategoryName } from '../../../lib/utils';
 import { updateStatement } from '../../api/statementsApi';
@@ -48,8 +48,9 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const [selectedPresetQuestion, setSelectedPresetQuestion] =
     useState<SetQuestion | null>(null);
 
-  // Preset questions from JSON.
-  const presetQuestions = setQuestionsData.setQuestions.filter(
+  // Preset questions from context.
+  const { questions } = useQuestions();
+  const presetQuestions = questions.filter(
     (q) => !usedPresetQuestions.includes(q.id)
   );
 
