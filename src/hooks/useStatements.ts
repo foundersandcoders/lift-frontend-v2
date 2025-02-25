@@ -1,4 +1,3 @@
-// src/hooks/useStatements.ts
 import { useContext } from 'react';
 import { StatementsContext } from '../context/StatementsContext';
 

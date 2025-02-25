@@ -4,12 +4,8 @@ import { cn } from '../../../lib/utils';
 import { Button } from './button';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Input } from './input';
-// Import descriptors from the new JSON file.
 import descriptorsData from '../../../data/descriptors.json';
-
-interface DescriptorsData {
-  descriptors: string[];
-}
+import type { DescriptorsData } from '../../../types/types';
 
 interface SubjectOption {
   label: string;
