@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   XCircle,
 } from 'lucide-react';
-import type { Statement } from '../../../types/types';
+import type { Statement } from '../../../types/statements';
 import {
   DropdownMenu,
   DropdownMenuTrigger,

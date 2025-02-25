@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { Statement } from '../../types/types';
+import type { Statement } from '../../types/statements';
 
 export interface StatementsContextType {
   data: {
