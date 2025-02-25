@@ -13,7 +13,9 @@ import { Input } from './ui/input';
 import { User, Edit2, Save, X } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { validateEmail } from '../../utils/validateEmail';
-import QuestionCounter from './ui/QuestionCounter';
+import QuestionCounter from './ui/questionCounter/QuestionCounter';
+import SmallCircularQuestionCounter from './ui/questionCounter/smallCircularQuestionCounter';
+import LargeCircularQuestionCounter from './ui/questionCounter/LargeCircularQuestionCounter';
 
 const Header: React.FC = () => {
   // const { questions, setQuestions } = useQuestions();
@@ -50,9 +52,9 @@ const Header: React.FC = () => {
               {data.username ? (
                 <span className='mr-2'>Logged as: {data.username}</span>
               ) : (
-                <span>Not logged</span>
+                <span className='mr-2'>Not logged</span>
               )}
-              <User size={24} />
+              <SmallCircularQuestionCounter />
             </div>
           </DialogTrigger>
           <DialogContent headerTitle="User's Data" className='sm:max-w-md p-0'>
@@ -142,6 +144,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className='text-sm text-gray-800'>
                   <QuestionCounter />
+                  <LargeCircularQuestionCounter />
                 </div>
               </div>
             </div>
