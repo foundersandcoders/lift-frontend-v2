@@ -34,7 +34,6 @@ cd beacon
 npm install
 ```
 
-
 ## Project Structure
 
 The project is organized as follows:
@@ -58,7 +57,6 @@ To start the development server, run:
 npm run dev
 ```
 
-
 This will start a local server at `http://localhost:3000` where you can view the application.
 
 ### Linting
@@ -68,7 +66,6 @@ Ensure your code adheres to the project's style guidelines by running:
 ```bash
 npm run lint
 ```
-
 
 ## Deployment
 
@@ -91,7 +88,6 @@ Configuration settings are managed through environment variables. Ensure you hav
 VITE_API_URL=<your_backend_api_url>
 VITE_RESEND_KEY=<your_resend_key>
 ```
-
 
 ## Contributing
 
