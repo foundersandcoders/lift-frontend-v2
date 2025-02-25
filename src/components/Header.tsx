@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStatements } from '../hooks/useStatements';
-// import { useQuestions } from '@/hooks/useQuestions';
+
 import {
   Dialog,
   DialogTrigger,
@@ -10,7 +10,7 @@ import {
 } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { User, Edit2, Save, X } from 'lucide-react';
+import { Edit2, Save, X } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { validateEmail } from '../../utils/validateEmail';
 import QuestionCounter from './ui/questionCounter/QuestionCounter';
