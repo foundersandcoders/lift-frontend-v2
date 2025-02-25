@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-// import StatementBuilder from './StatementBuilder';
 import StatementList from './statements/StatementList';
 import { useStatements } from '../hooks/useStatements';
 
@@ -15,12 +14,6 @@ const MainPage: React.FC = () => {
       </h1>
       <div className='container mx-auto px-4'>
         <StatementList username={username} />
-
-        {/* <div className='flex flex-col justify-center max-w-3xl mx-auto'>
-          <div className='bg-white rounded-xl shadow-lg p-6'>
-            <StatementBuilder username={username} />
-          </div>
-        </div> */}
       </div>
     </main>
   );

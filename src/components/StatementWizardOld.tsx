@@ -21,7 +21,7 @@ import type { Statement, DescriptorsData } from '../../types/statements';
 type Step = 'closed' | 'who' | 'action' | 'object' | 'privacy';
 
 const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
-  const { dispatch } = useStatements();
+  const { setData } = useStatements();
 
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>('closed');
@@ -31,6 +31,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     verb: '',
     object: '',
     isPublic: false,
+    category: '',
   });
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -124,6 +125,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
       verb: '',
       object: '',
       isPublic: false,
+      category: '',
     });
   };
 
@@ -157,7 +159,7 @@ const StatementWizard: React.FC<{ username: string }> = ({ username }) => {
     };
 
     // Dispatch the new statement to the context.
-    dispatch({ type: 'ADD_STATEMENT', payload: newStatement });
+    setData({ type: 'ADD_STATEMENT', payload: newStatement });
 
     // Post the new statement to the backend.
     await postNewStatement(newStatement);
