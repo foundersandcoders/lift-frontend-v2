@@ -37,11 +37,7 @@ const Header: React.FC = () => {
       <div className='container mx-auto flex items-center justify-between'>
         {/* Left side: Logo and Title */}
         <div className='flex items-center'>
-          <img
-            src='../../public/lift_logo.png'
-            alt='Logo'
-            className='h-10 mr-2'
-          />
+          <img src='/lift_logo.png' alt='Logo' className='h-10 mr-2' />
           <h1 className='text-2xl font-bold'>Nassport</h1>
         </div>
         {/* Right side: Clickable container with border that opens the dialog */}
