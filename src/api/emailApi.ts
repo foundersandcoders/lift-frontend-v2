@@ -1,25 +1,18 @@
-import express, { Request, Response } from "express";
+const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
 import { Resend } from "resend";
+import { Email } from "../../types/emails";
 
-export async function x () {}
+const resend = new Resend(RESEND_KEY);
 
-/*
-app.get("/", async (req: Request, res: Response) => {
-  const { data, error } = await resend.emails.send({
-    from: "Employee Journal <onboarding@resend.dev>",
-    to: ["delivered@resend.dev"],
-    subject: "hello world",
-    html: "<strong>it works!</strong>",
-  });
+export async function sendEmail(email: Email) {
+  try {
+    const { data, error } = await resend.emails.send(email);
 
-  if (error) {
-    return res.status(400).json({ error });
+    if (error) throw new Error(error.message);
+    
+    return data;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
   }
-
-  res.status(200).json({ data });
-});
-
-app.listen(3000, () => {
-  console.log("Listening on http://localhost:3000");
-});
-*/
+}

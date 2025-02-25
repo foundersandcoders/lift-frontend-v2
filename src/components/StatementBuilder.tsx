@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import VerbSelector from './ui/VerbSelector';
 import SubjectSelector from './ui/subject-selector';
-import type { Verb } from '../../types/types';
+import type { Verb } from '../../types/statements';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -12,7 +12,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { ConfirmationDialog } from './ui/confirmation-dialog';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
-import type { Statement } from '../../types/types';
+import type { Statement } from '../../types/statements';
 
 interface StatementBuilderProps {
   username: string;

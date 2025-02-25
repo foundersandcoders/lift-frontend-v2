@@ -16,7 +16,7 @@ import { verbData } from '../../utils/verbUtils';
 import { useStatements } from '../hooks/useStatements';
 import { postNewStatement } from '../api/statementsApi';
 import type React from 'react';
-import type { Statement, DescriptorsData } from '../../types/types';
+import type { Statement, DescriptorsData } from '../../types/statements';
 
 type Step = 'closed' | 'who' | 'action' | 'object' | 'privacy';
 

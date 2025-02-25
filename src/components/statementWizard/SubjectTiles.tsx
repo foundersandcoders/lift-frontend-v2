@@ -2,7 +2,7 @@ import React from 'react';
 // import { useMemo } from 'react';
 import { Button } from '../ui/button';
 import descriptorsData from '../../../data/descriptors.json';
-import type { SetQuestion, DescriptorsData } from '../../../types/types';
+import type { SetQuestion, DescriptorsData } from '../../../types/statements';
 
 interface SubjectTile {
   label: string;

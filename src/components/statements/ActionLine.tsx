@@ -9,7 +9,7 @@ import {
 } from '../ui/dropdown-menu';
 import ActionForm from './ActionForm';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
-import type { Action } from '../../../types/types';
+import type { Action } from '../../../types/statements';
 import { CheckCircle2, XCircle } from 'lucide-react';
 
 export interface ActionLineProps {

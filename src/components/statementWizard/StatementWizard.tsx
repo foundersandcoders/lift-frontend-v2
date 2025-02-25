@@ -14,7 +14,7 @@ import { ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStatements } from '../../hooks/useStatements';
 import { postNewStatement } from '../../api/statementsApi';
-import type { Statement, SetQuestion, Step } from '../../../types/types';
+import type { Statement, SetQuestion, Step } from '../../../types/statements';
 import { SubjectTiles } from './SubjectTiles';
 import { VerbTiles } from './VerbTiles';
 import { PrivacySelector } from './PrivacySelector';

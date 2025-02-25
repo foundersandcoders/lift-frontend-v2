@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useStatements } from '../../hooks/useStatements';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
-import type { Statement, SetQuestion } from '../../../types/types';
+import type { Statement, SetQuestion } from '../../../types/statements';
 import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';
 import StatementWizard from '../statementWizard/StatementWizard';

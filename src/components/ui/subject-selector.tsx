@@ -5,7 +5,7 @@ import { Button } from './button';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { Input } from './input';
 import descriptorsData from '../../../data/descriptors.json';
-import type { DescriptorsData } from '../../../types/types';
+import type { DescriptorsData } from '../../../types/statements';
 
 interface SubjectOption {
   label: string;

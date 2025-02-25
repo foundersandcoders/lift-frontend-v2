@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 console.log('Backend API:', API_URL);
 
-import type { Statement } from '../../types/types';
+import type { Statement } from '../../types/statements';
 
 export async function postNewStatement(statement: Statement): Promise<void> {
   try {
