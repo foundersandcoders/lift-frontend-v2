@@ -1,0 +1,32 @@
+{
+  "categories": [
+    {
+      "id": "wellbeing",
+      "name": "Wellness at work"
+    },
+    {
+      "id": "parental",
+      "name": "My role as a parent and/or carer"
+    },
+    {
+      "id": "religious",
+      "name": "My religion or beliefs"
+    },
+    {
+      "id": "disability",
+      "name": "My experience as someone with a disability or long term condition"
+    },
+    {
+      "id": "colleagueSharing",
+      "name": "Colleague Sharing"
+    },
+    {
+      "id": "employerSupport",
+      "name": "Employer Support"
+    },
+    {
+      "id": "personalIntroduction",
+      "name": "Personal Introduction"
+    }
+  ]
+}

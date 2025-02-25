@@ -11,6 +11,8 @@ import {
   EyeOff,
   MoreVertical,
   RotateCcw,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react';
 import type { Statement } from '../../../types/types';
 import {
@@ -20,7 +22,7 @@ import {
   DropdownMenuItem,
 } from '../ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
-import ActionPreview from './ActionLines';
+import ActionLine from './ActionLine';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 
 export interface StatementItemProps {
@@ -40,19 +42,19 @@ export interface StatementItemProps {
   onDelete: (statementId: string) => void;
   onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
-
-  // callbacks for action preview functionality
   onEditAction?: (
+    statementId: string,
     actionId: string,
-    updated: { text: string; dueDate: string }
+    updated: { text: string; dueDate?: string }
   ) => void;
-  onDeleteAction?: (actionId: string) => void;
-  // Optional callback: receives the statement id and new action details.
+  onDeleteAction?: (statementId: string, actionId: string) => void;
   onAddAction?: (
     statementId: string,
-    newAction: { text: string; dueDate: string }
+    newAction: { text: string; dueDate?: string }
   ) => void;
   onReset?: (statementId: string) => void;
+  onToggleResolved?: (statementId: string) => void;
+  onToggleActionResolved?: (actionId: string) => void;
 }
 
 const StatementItem: React.FC<StatementItemProps> = ({
@@ -69,6 +71,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onDeleteAction = () => {},
   onAddAction = () => {},
   onReset,
+  onToggleResolved = () => {},
+  onToggleActionResolved = () => {},
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
   const objectInputRef = useRef<HTMLInputElement>(null);
@@ -108,7 +112,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   onPartUpdate(statement.id, 'subject', value)
                 }
                 onAddDescriptor={() => {}}
-                // Assume the username is derived from the subject string.
                 username={statement.subject.split("'s")[0] || statement.subject}
               />
             ) : (
@@ -174,7 +177,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
   // Static view when not in editing mode with grouped Edit and Delete
   return (
-    <div className='bg-white border rounded-md p-3 space-y-2 shadow-sm'>
+    <div
+      className={`bg-white border rounded-md p-3 space-y-2 shadow-sm ${
+        statement.isResolved ? 'border-green-500' : 'border-gray-200'
+      }`}
+    >
       {/* Top row: statement, actions counter, etc. */}
       <div className='flex items-center justify-between'>
         {/* Left side: privacy icon + statement text */}
@@ -196,10 +203,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
             </TooltipContent>
           </Tooltip>
           <span>{`${statement.subject} ${statement.verb} ${statement.object}`}</span>
+          {/* Remove the resolved icon from here */}
         </div>
 
-        {/* Right side: actions counter + dropdown */}
+        {/* Right side: resolved icon, actions counter + dropdown */}
         <div className='flex items-center space-x-4'>
+          {/* Resolved icon */}
+          {statement.isResolved && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className='inline-flex items-center justify-center text-green-600'>
+                  <CheckCircle2 size={18} />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                This statement is resolved.
+              </TooltipContent>
+            </Tooltip>
+          )}
           {/* Actions counter - click to expand/collapse */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
@@ -228,6 +249,20 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
+              {/* Toggle Resolved */}
+              <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
+                {statement.isResolved ? (
+                  <>
+                    <XCircle className='mr-2 h-4 w-4' />
+                    Unresolve
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className='mr-2 h-4 w-4' />
+                    Mark as Resolved
+                  </>
+                )}
+              </DropdownMenuItem>
               {/* Conditionally render the Reset option if onReset is provided */}
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
@@ -242,13 +277,21 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
       {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
-        <div className='mt-2'>
-          <ActionPreview
+        <div className='mt-2 '>
+          <ActionLine
             actions={statement.actions ?? []}
-            onEditAction={onEditAction}
-            onDeleteAction={onDeleteAction}
-            onAddAction={(newAction) =>
+            onEditAction={(
+              actionId,
+              updated: { text: string; dueDate?: string }
+            ) => onEditAction && onEditAction(statement.id, actionId, updated)}
+            onDeleteAction={(actionId) =>
+              onDeleteAction && onDeleteAction(statement.id, actionId)
+            }
+            onAddAction={(newAction: { text: string; dueDate?: string }) =>
               onAddAction && onAddAction(statement.id, newAction)
+            }
+            onToggleResolved={(actionId) =>
+              onToggleActionResolved && onToggleActionResolved(actionId)
             }
           />
         </div>

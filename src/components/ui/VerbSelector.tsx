@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import categoryStructure from '../../../data/categoryStructure.json';
-import verbData from '../../../data/data.json';
+import verbData from '../../../data/verbs.json';
 import type { Category, Verb } from '../../../types/types';
 
 interface VerbSelectorProps {

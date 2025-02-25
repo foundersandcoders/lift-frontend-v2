@@ -1,17 +1,18 @@
-// src/contexts/StatementsContext.ts
 import { createContext } from 'react';
 import type { Statement } from '../../types/types';
 
 export interface StatementsContextType {
-  state: {
+  data: {
     statements: Statement[];
     username: string;
+    managerEmail: string;
   };
-  dispatch: React.Dispatch<StatementsAction>;
+  setData: React.Dispatch<StatementsAction>;
 }
 
 export type StatementsAction =
   | { type: 'SET_USERNAME'; payload: string }
+  | { type: 'SET_MANAGER_EMAIL'; payload: string }
   | { type: 'SET_STATEMENTS'; payload: Statement[] }
   | { type: 'ADD_STATEMENT'; payload: Statement }
   | { type: 'UPDATE_STATEMENT'; payload: Statement }

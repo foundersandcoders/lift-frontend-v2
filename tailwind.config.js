@@ -62,11 +62,21 @@ export default {
           purple: '#7900D6',
           darkPurple: '#4D1B9B',
         },
+        objectInput: '#bfdbfe', // Border for the object step screen
+        verbSelector: '#bbf7d0', // Border for the verb selector screen
+        subjectSelector: '#fef08a', // Background for the object input element
+        privacySelector: '#22c55e', // Border for the privacy selector screen
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      spacing: {
+        'wizard-padding': '1.5rem',
+      },
+      fontSize: {
+        'wizard-h2': '1.5rem',
       },
       keyframes: {
         'accordion-down': {

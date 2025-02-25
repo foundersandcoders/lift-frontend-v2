@@ -1,8 +1,9 @@
 export interface Action {
   id: string;
   creationDate: string;
-  dueDate: string;
+  dueDate?: string;
   text: string;
+  isResolved?: boolean;
 }
 export interface Statement {
   id: string;
@@ -12,7 +13,9 @@ export interface Statement {
   adverbial?: string;
   isPublic: boolean;
   actions?: Action[];
+  category: string;
   presetId?: string;
+  isResolved?: boolean;
 }
 
 export interface Category {
@@ -36,22 +39,46 @@ export interface SubjectData {
   descriptors: string[];
 }
 
-interface SetQuestionStep {
+export interface SetQuestionStep {
   question: string;
   preset: boolean;
   presetAnswer: string | null;
   allowDescriptors?: boolean;
+  descriptorCategory?: string;
+  allowedVerbs?: string[];
 }
 
 export interface SetQuestion {
   id: string;
   mainQuestion: string;
+  category?: string;
   steps: {
-    who: SetQuestionStep;
-    action: SetQuestionStep;
-    what: SetQuestionStep;
+    subject: SetQuestionStep;
+    verb: SetQuestionStep;
+    object: SetQuestionStep;
+    category?: SetQuestionStep;
     privacy: SetQuestionStep;
   };
 }
 
-export type Step = 'closed' | 'who' | 'action' | 'what' | 'privacy';
+export interface SetQuestionsData {
+  setQuestions: SetQuestion[];
+}
+
+export interface Descriptor {
+  name: string;
+  description: string;
+  options: string[];
+}
+
+export interface DescriptorsData {
+  descriptors: Descriptor[];
+}
+
+export type Step =
+  | 'closed'
+  | 'subject'
+  | 'verb'
+  | 'object'
+  | 'category'
+  | 'privacy';
