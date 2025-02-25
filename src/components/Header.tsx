@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useStatements } from '../hooks/useStatements';
+// import { useQuestions } from '@/hooks/useQuestions';
 import {
   Dialog,
   DialogTrigger,
@@ -12,8 +13,10 @@ import { Input } from './ui/input';
 import { User, Edit2, Save, X } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { validateEmail } from '../../utils/validateEmail';
+import QuestionCounter from './ui/QuestionCounter';
 
 const Header: React.FC = () => {
+  // const { questions, setQuestions } = useQuestions();
   const { data, setData } = useStatements();
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
@@ -131,6 +134,15 @@ const Header: React.FC = () => {
                 {emailError && (
                   <div className='text-red-500 text-xs mt-1'>{emailError}</div>
                 )}
+              </div>
+              {/* Question counter */}
+              <div>
+                <div className='text-sm font-semibold text-gray-700 mb-1'>
+                  Your progress:
+                </div>
+                <div className='text-sm text-gray-800'>
+                  <QuestionCounter />
+                </div>
               </div>
             </div>
             <DialogFooter className='p-4 bg-gray-50 sm:rounded-b-lg'>

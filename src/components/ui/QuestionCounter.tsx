@@ -1,15 +1,12 @@
-// QuestionCounter.tsx
 import React from 'react';
+import { useAnsweredCount } from '../../hooks/useAnsweredCount';
+import { useQuestions } from '../../hooks/useQuestions';
 
-interface QuestionCounterProps {
-  answered: number;
-  total: number;
-}
+const QuestionCounter: React.FC = () => {
+  const answered = useAnsweredCount();
+  const { questions } = useQuestions();
+  const total = questions.length;
 
-const QuestionCounter: React.FC<QuestionCounterProps> = ({
-  answered,
-  total,
-}) => {
   return (
     <div className='text-sm text-gray-700'>
       {answered} / {total} answered
