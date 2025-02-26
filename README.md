@@ -1,4 +1,4 @@
-# Beacon
+# Beacons
 
 Beacon is a frontend application designed to work seamlessly with the LIFT-backend. It provides an intuitive interface for users to interact with various data-driven components, focusing on subject and verb selection for creating statements.
 
