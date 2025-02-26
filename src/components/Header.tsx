@@ -43,7 +43,7 @@ const Header: React.FC = () => {
         {/* Left side: Logo and Title */}
         <div className='flex items-center'>
           <img src='/lift_logo.png' alt='Logo' className='h-10 mr-2' />
-          <h1 className='text-2xl font-bold'>Nassport</h1>
+          <h1 className='text-2xl font-bold'>Beacons</h1>
         </div>
         {/* Right side: Clickable container with border that opens the dialog */}
         <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
