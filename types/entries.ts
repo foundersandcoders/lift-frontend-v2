@@ -1,22 +1,48 @@
-export interface Action {
-  id: string;
-  creationDate: string;
-  dueDate?: string;
-  text: string;
-  isResolved?: boolean;
-}
-export interface Statement {
-  id: string;
+export interface Atoms {
   subject: string;
   verb: string;
   object: string;
-  adverbial?: string;
+  adverbial?: string[];
+}
+
+export interface Action {
+  id: string;
+  creationDate: string;
+  byDate: string;
+  action: string;
+  completed: boolean;
+}
+
+export interface Entry {
+  id: string;
+  input: string; // The full statement as a single string (headline)
   isPublic: boolean;
+  atoms: Atoms; // Nested grammatical components
   actions?: Action[];
   category: string;
   presetId?: string;
   isResolved?: boolean;
 }
+
+// export interface Action {
+//   id: string;
+//   creationDate: string;
+//   dueDate?: string;
+//   text: string;
+//   isResolved?: boolean;
+// }
+// export interface Statement {
+//   id: string;
+//   subject: string;
+//   verb: string;
+//   object: string;
+//   adverbial?: string;
+//   isPublic: boolean;
+//   actions?: Action[];
+//   category: string;
+//   presetId?: string;
+//   isResolved?: boolean;
+// }
 
 export interface Category {
   id: string;

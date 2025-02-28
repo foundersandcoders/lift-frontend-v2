@@ -12,9 +12,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useStatements } from '../../hooks/useStatements';
-import { postNewStatement } from '../../api/statementsApi';
-import type { Statement, SetQuestion, Step } from '../../../types/statements';
+import { useEntries } from '../../hooks/useEntries';
+import { postNewEntry } from '../../api/entriesApi';
+import type { Entry, SetQuestion, Step } from '../../../types/entries';
 import { SubjectTiles } from './SubjectTiles';
 import { VerbTiles } from './VerbTiles';
 import { PrivacySelector } from './PrivacySelector';
@@ -23,17 +23,17 @@ import statementsCategories from '../../../data/statementsCategories.json';
 interface StatementWizardProps {
   username: string;
   presetQuestion?: SetQuestion;
-  onComplete: (newStatement: Statement) => void;
+  onComplete: (newStatement: Entry) => void;
   onClose: () => void;
 }
 
 // Default questions for each step
-const defaultQuestions = (username: string, selection: Statement) => ({
+const defaultQuestions = (username: string, selection: Entry) => ({
   subject: `This statement applies to ${username} or someone/something else?`,
-  verb: `What's happening with ${selection.subject}? How do they feel or what do they experience?`,
+  verb: `What's happening with ${selection.atoms.subject}? How do they feel or what do they experience?`,
   object: `In what way does ${
-    selection.subject
-  } ${selection.verb.toLowerCase()}? What's the context?`,
+    selection.atoms.subject
+  } ${selection.atoms.verb.toLowerCase()}? What's the context?`,
   category: `You can set a category for your statement`,
   privacy: `Who can see this statement?`,
 });
@@ -55,7 +55,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   onComplete,
   onClose,
 }) => {
-  const { setData } = useStatements();
+  const { setData } = useEntries();
   const isPreset = Boolean(presetQuestion);
 
   // Define the steps; skip 'category' if using a preset question.
@@ -73,19 +73,26 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const [step, setStep] = useState<Step>('subject');
-  const [selection, setSelection] = useState<Statement>({
+  const [selection, setSelection] = useState<Entry>({
     id: '',
-    subject: '',
-    verb: '',
-    object: '',
-    category: '',
+    input: '',
     isPublic: false,
+    atoms: {
+      subject: '',
+      verb: '',
+      object: '',
+      adverbial: [],
+    },
+    category: '',
   });
 
   // If the preset question indicates a preset subject, default to username.
   useEffect(() => {
     if (presetQuestion?.steps?.subject?.preset) {
-      setSelection((prev) => ({ ...prev, subject: username }));
+      setSelection((prev) => ({
+        ...prev,
+        atoms: { ...prev.atoms, subject: username },
+      }));
     }
   }, [presetQuestion, username]);
 
@@ -108,17 +115,27 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const handleComplete = async () => {
-    const newStatement: Statement = {
+    // Build the full input string from atoms.
+    const { subject, verb, object, adverbial } = selection.atoms;
+    const adverbialText =
+      adverbial && adverbial.length > 0 ? adverbial.join(' ') : '';
+    const fullInput = `${subject} ${verb} ${object}${
+      adverbialText ? ' ' + adverbialText : ''
+    }`;
+
+    const newEntry: Entry = {
       ...selection,
       id: Date.now().toString(),
+      input: fullInput,
       presetId: presetQuestion ? presetQuestion.id : undefined,
-      // If using a preset question, use its category. Otherwise use the selection.category.
+      // If using a preset question, use its category; otherwise, use selection.category.
       category:
         presetQuestion?.category || selection.category || 'Uncategorized',
     };
-    setData({ type: 'ADD_STATEMENT', payload: newStatement });
-    await postNewStatement(newStatement);
-    onComplete(newStatement);
+
+    setData({ type: 'ADD_ENTRY', payload: newEntry });
+    await postNewEntry(newEntry);
+    onComplete(newEntry);
     onClose();
   };
 
@@ -135,7 +152,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           </div>
           <Button
             onClick={() => {
-              setSelection((prev) => ({ ...prev, subject: username }));
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, subject: username },
+              }));
               handleNext('verb');
             }}
             className='w-full'
@@ -150,13 +170,16 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         <SubjectTiles
           username={username}
           activePresetQuestion={presetQuestion}
-          selectedValue={selection.subject}
+          selectedValue={selection.atoms.subject}
           onSelect={(value) => {
             const newSubject =
               presetQuestion && !presetQuestion.steps.subject.allowDescriptors
                 ? username
                 : value;
-            setSelection((prev) => ({ ...prev, subject: newSubject }));
+            setSelection((prev) => ({
+              ...prev,
+              atoms: { ...prev.atoms, subject: newSubject },
+            }));
             handleNext('verb');
           }}
         />
@@ -170,9 +193,12 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       <StepContainer question={question}>
         <div className='flex flex-col h-[60vh] p-4 rounded-md'>
           <VerbTiles
-            selectedVerb={selection.verb}
+            selectedVerb={selection.atoms.verb}
             onSelect={(verb) => {
-              setSelection((prev) => ({ ...prev, verb }));
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, verb },
+              }));
               handleNext('object');
             }}
           />
@@ -191,17 +217,20 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           <Input
             autoFocus
             placeholder='Type your answer...'
-            value={selection.object}
+            value={selection.atoms.object}
             onChange={(e) =>
-              setSelection((prev) => ({ ...prev, object: e.target.value }))
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, object: e.target.value },
+              }))
             }
             className='text-lg p-4 rounded'
           />
         </div>
         <Button
           className='w-full mt-4'
-          onClick={() => selection.object.trim() && handleNext(nextStep)}
-          disabled={!selection.object.trim()}
+          onClick={() => selection.atoms.object.trim() && handleNext(nextStep)}
+          disabled={!selection.atoms.object.trim()}
         >
           Continue
         </Button>

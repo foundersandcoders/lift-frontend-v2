@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useStatements } from '../hooks/useStatements';
+import { useEntries } from '../hooks/useEntries';
 
 import {
   Dialog,
@@ -19,7 +19,7 @@ import LargeCircularQuestionCounter from './ui/questionCounter/LargeCircularQues
 
 const Header: React.FC = () => {
   // const { questions, setQuestions } = useQuestions();
-  const { data, setData } = useStatements();
+  const { data, setData } = useEntries();
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [managerEmailInput, setManagerEmailInput] = useState(

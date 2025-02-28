@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import type { SetQuestion } from '../../../types/statements';
+import type { SetQuestion } from '../../../types/entries';
 import { HelpCircle, ChevronRight } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';

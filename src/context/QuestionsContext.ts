@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { SetQuestion } from '../../types/statements';
+import type { SetQuestion } from '../../types/entries';
 
 export interface QuestionsContextType {
   questions: SetQuestion[];
