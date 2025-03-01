@@ -13,6 +13,13 @@ if (Cypress.platform === 'linux') {
     });
   });
 
+  // Add X server configuration
+  before(() => {
+    const display = cy.exec('wsl grep nameserver /etc/resolv.conf | awk \'{print $2}\'').then((result) => {
+      process.env.DISPLAY = `${result.stdout.trim()}:0`;
+    });
+  });
+
   // Add retry logic for flaky tests
   Cypress.Commands.overwrite('should', (originalFn, subject, expectation, ...args) => {
     const retries = 3;

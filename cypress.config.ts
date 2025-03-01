@@ -30,14 +30,23 @@ export default defineConfig({
         config.chromeWebSecurity = false;
         config.experimentalSingleTabRunMode = true;
         config.experimentalInteractiveRunEvents = true;
+        
+        // Add X server configuration
+        process.env.DISPLAY = `$(grep nameserver /etc/resolv.conf | awk '{print $2}'):0`;
       }
       
       // Add browser launch options
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.family === 'chromium' && browser.name !== 'electron') {
-          launchOptions.args.push('--disable-gpu');
-          launchOptions.args.push('--no-sandbox');
-          launchOptions.args.push('--disable-dev-shm-usage');
+          launchOptions.args.push(
+            '--disable-gpu',
+            '--no-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-software-rasterizer',
+            '--disable-background-timer-throttling',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-renderer-backgrounding'
+          );
         }
         return launchOptions;
       });

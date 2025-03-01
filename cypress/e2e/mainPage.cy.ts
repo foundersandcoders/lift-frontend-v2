@@ -5,10 +5,20 @@ describe('MainPage Component', () => {
     // Handle WSL2 specific setup
     if (Cypress.platform === 'linux') {
       cy.log('Running in WSL2 environment');
-      cy.wslExec('--set-version Ubuntu 2');
       
-      // Ensure X server is running
-      cy.wslExec('export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk \'{print $2}\'):0');
+      // Set up X server display
+      cy.exec('wsl export DISPLAY=$(grep nameserver /etc/resolv.conf | awk \'{print $2}\'):0', {
+        failOnNonZeroExit: false
+      });
+      
+      // Verify X server connection
+      cy.exec('wsl xdpyinfo', {
+        failOnNonZeroExit: false
+      }).then((result) => {
+        if (result.code !== 0) {
+          throw new Error('X server connection failed. Please ensure an X server is running on your Windows host.');
+        }
+      });
     }
   });
 
