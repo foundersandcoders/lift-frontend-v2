@@ -1,6 +1,14 @@
 describe('MainPage Component', () => {
   const testUsername = 'testuser123';
   
+  before(() => {
+    // Handle WSL2 specific setup
+    if (Cypress.platform === 'linux') {
+      cy.log('Running in WSL2 environment');
+      cy.exec('wsl --set-version Ubuntu 2', { failOnNonZeroExit: false });
+    }
+  });
+
   beforeEach(() => {
     // Mock the useEntries hook response
     cy.intercept('GET', '/api/entries', {
