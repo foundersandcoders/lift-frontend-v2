@@ -2,7 +2,14 @@
 import os
 
 # Directories to exclude (won't be recursed into) - comparison done case-insensitively.
-EXCLUDE_DIRS = {"node_modules", ".git", ".github", "dist", "public"}
+EXCLUDE_DIRS = {
+    "node_modules",
+    ".git",
+    ".github",
+    "dist",
+    "public",
+    ".aider.tags.cache.v3",
+}
 
 # Files to exclude (by exact name, case-insensitive)
 EXCLUDE_FILES = {
@@ -24,6 +31,8 @@ EXCLUDE_FILES = {
     ".env.development",
     "vite-env.d.ts",
     ".DS_Store",
+    ".aider.chat.history.md",
+    ".aider.input.history",
 }
 
 
