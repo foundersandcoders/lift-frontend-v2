@@ -1,3 +1,5 @@
+import MainPage from '../../src/components/MainPage';
+
 describe('MainPage Component', () => {
   const testUsername = 'testuser123';
   

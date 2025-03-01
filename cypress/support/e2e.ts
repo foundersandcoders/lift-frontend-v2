@@ -1,7 +1,9 @@
 import './commands';
 
-// Handle WSL2 specific configurations
-if (Cypress.platform === 'linux') {
+// Export the setup function
+export const setupWSL2Config = () => {
+  // Handle WSL2 specific configurations
+  if (Cypress.platform === 'linux') {
   Cypress.config('chromeWebSecurity', false);
   Cypress.config('baseUrl', 'http://localhost:3000');
   
@@ -36,4 +38,7 @@ if (Cypress.platform === 'linux') {
 
     return originalFn(subject, expectation, ...args).catch(tryAgain);
   });
-}
+};
+
+// Initialize the WSL2 configuration
+setupWSL2Config();

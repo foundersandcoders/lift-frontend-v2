@@ -1,6 +1,9 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+  // Add this to ensure proper ES module handling
+  experimentalWebKitSupport: true,
+  experimentalMemoryManagement: true,
   component: {
     devServer: {
       framework: 'react',
