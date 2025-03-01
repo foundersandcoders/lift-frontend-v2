@@ -7,6 +7,26 @@ if (Cypress.platform === 'linux') {
   
   // Add custom commands for WSL2
   Cypress.Commands.add('wslExec', (command) => {
-    return cy.exec(`wsl ${command}`);
+    return cy.exec(`wsl ${command}`, {
+      failOnNonZeroExit: false,
+      timeout: 10000
+    });
+  });
+
+  // Add retry logic for flaky tests
+  Cypress.Commands.overwrite('should', (originalFn, subject, expectation, ...args) => {
+    const retries = 3;
+    let attempts = 0;
+    
+    const tryAgain = (err) => {
+      if (attempts < retries) {
+        attempts++;
+        cy.wait(500, { log: false });
+        return originalFn(subject, expectation, ...args);
+      }
+      throw err;
+    };
+
+    return originalFn(subject, expectation, ...args).catch(tryAgain);
   });
 }

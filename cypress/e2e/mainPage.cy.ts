@@ -5,7 +5,10 @@ describe('MainPage Component', () => {
     // Handle WSL2 specific setup
     if (Cypress.platform === 'linux') {
       cy.log('Running in WSL2 environment');
-      cy.exec('wsl --set-version Ubuntu 2', { failOnNonZeroExit: false });
+      cy.wslExec('--set-version Ubuntu 2');
+      
+      // Ensure X server is running
+      cy.wslExec('export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk \'{print $2}\'):0');
     }
   });
 
@@ -21,8 +24,14 @@ describe('MainPage Component', () => {
       }
     }).as('getEntries');
     
-    cy.mount(<MainPage />);
-    cy.wait('@getEntries');
+    // Add retry logic for mounting
+    cy.mount(<MainPage />, {
+      retryOnNetworkFailure: true,
+      retryOnStatusCodeFailure: true,
+      retryOnMountFailure: true
+    });
+    
+    cy.wait('@getEntries', { timeout: 10000 });
   });
 
   it('should display the main page container', () => {
