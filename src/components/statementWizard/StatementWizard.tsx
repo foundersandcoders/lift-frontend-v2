@@ -1,4 +1,3 @@
-// src/components/statementWizard/StatementWizard.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,16 +9,15 @@ import {
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEntries } from '../../hooks/useEntries';
 import { postNewEntry } from '../../api/entriesApi';
 import type { Entry, SetQuestion, Step } from '../../../types/entries';
 import { SubjectTiles } from './SubjectTiles';
-// import { VerbTiles } from './VerbTiles';
 import SentimentVerbPicker from './SentimentVerbPicker';
 import { PrivacySelector } from './PrivacySelector';
 import statementsCategories from '../../../data/statementsCategories.json';
+import StepContainer from './StepContainer';
 
 interface StatementWizardProps {
   username: string;
@@ -28,7 +26,7 @@ interface StatementWizardProps {
   onClose: () => void;
 }
 
-// Default questions for each step
+// Default sub-questions for each step
 const defaultQuestions = (username: string, selection: Entry) => ({
   subject: `This statement applies to ${username} or someone/something else?`,
   verb: `What's happening with ${selection.atoms.subject}? How do they feel or what do they experience?`,
@@ -39,17 +37,6 @@ const defaultQuestions = (username: string, selection: Entry) => ({
   privacy: `Who can see this statement?`,
 });
 
-// A reusable container for each step screen
-const StepContainer: React.FC<{
-  question: string;
-  children: React.ReactNode;
-}> = ({ question, children }) => (
-  <div className='space-y-4 p-6'>
-    <h2 className='text-2xl font-semibold text-center mb-6'>{question}</h2>
-    {children}
-  </div>
-);
-
 const StatementWizard: React.FC<StatementWizardProps> = ({
   username,
   presetQuestion,
@@ -59,12 +46,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const { setData } = useEntries();
   const isPreset = Boolean(presetQuestion);
 
-  // Define the steps; skip 'category' if using a preset question.
+  // Define steps; skip 'category' if using a preset question.
   const steps: Step[] = isPreset
     ? ['subject', 'verb', 'object', 'privacy']
     : ['subject', 'verb', 'object', 'category', 'privacy'];
 
-  // Define a mapping of step names to border color classes.
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
     subject: 'border-subjectSelector',
     verb: 'border-verbSelector',
@@ -87,7 +73,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     category: '',
   });
 
-  // If the preset question indicates a preset subject, default to username.
   useEffect(() => {
     if (presetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({
@@ -97,8 +82,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     }
   }, [presetQuestion, username]);
 
-  // Get the question text for the current step
-  const getQuestion = (currentStep: Exclude<Step, 'closed'>) =>
+  // Get the sub-question for each step.
+  const getSubQuestion = (currentStep: Exclude<Step, 'closed'>) =>
     presetQuestion?.steps?.[currentStep]?.question ||
     defaultQuestions(username, selection)[currentStep];
 
@@ -116,7 +101,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const handleComplete = async () => {
-    // Build the full input string from atoms.
     const { subject, verb, object, adverbial } = selection.atoms;
     const adverbialText =
       adverbial && adverbial.length > 0 ? adverbial.join(' ') : '';
@@ -129,7 +113,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       id: Date.now().toString(),
       input: fullInput,
       presetId: presetQuestion ? presetQuestion.id : undefined,
-      // If using a preset question, use its category; otherwise, use selection.category.
       category:
         presetQuestion?.category || selection.category || 'Uncategorized',
     };
@@ -140,14 +123,13 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     onClose();
   };
 
-  // Render functions for each step
-
+  // Render steps
   const renderSubjectStep = () => {
-    const question = getQuestion('subject');
+    const subQuestion = getSubQuestion('subject');
     const allowDescriptors = presetQuestion?.steps?.subject?.allowDescriptors;
     if (allowDescriptors === false) {
       return (
-        <StepContainer question={question}>
+        <StepContainer subQuestion={subQuestion}>
           <div className='text-center p-4 border rounded'>
             <p>{username}</p>
           </div>
@@ -167,7 +149,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       );
     }
     return (
-      <StepContainer question={question}>
+      <StepContainer subQuestion={subQuestion}>
         <SubjectTiles
           username={username}
           activePresetQuestion={presetQuestion}
@@ -189,24 +171,13 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const renderVerbStep = () => {
-    const question = getQuestion('verb');
+    const subQuestion = getSubQuestion('verb');
     return (
-      <StepContainer question={question}>
+      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <div className='flex flex-col h-[60vh] p-4 rounded-md'>
-          {/* <VerbTiles
-            selectedVerb={selection.atoms.verb}
-            onSelect={(verb) => {
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, verb },
-              }));
-              handleNext('object');
-            }}
-          /> */}
           <SentimentVerbPicker
             selectedVerb={selection.atoms.verb}
             onVerbSelect={(verb) => {
-              // Update the selection and move to the next step when a verb is selected.
               setSelection((prev) => ({
                 ...prev,
                 atoms: { ...prev.atoms, verb: verb.name },
@@ -220,11 +191,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const renderObjectStep = () => {
-    const question = getQuestion('object');
-    // Next step depends on whether we need to show the category screen.
+    const subQuestion = getSubQuestion('object');
     const nextStep: Step = presetQuestion ? 'privacy' : 'category';
     return (
-      <StepContainer question={question}>
+      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <div className='p-4 rounded-md'>
           <Input
             autoFocus
@@ -251,10 +221,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const renderCategoryStep = () => {
-    const question = getQuestion('category');
+    const subQuestion = getSubQuestion('category');
     const categories = statementsCategories.categories || [];
     return (
-      <StepContainer question={question}>
+      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
           {categories.map((cat: { id: string; name: string }) => (
             <Button
@@ -281,9 +251,9 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const renderPrivacyStep = () => {
-    const question = getQuestion('privacy');
+    const subQuestion = getSubQuestion('privacy');
     return (
-      <StepContainer question={question}>
+      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <PrivacySelector
           isPublic={selection.isPublic}
           onChange={(isPublic) =>
@@ -315,49 +285,35 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
-        className={`sm:max-w-[600px] pt-6 border-8 ${
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${
           stepBorderColors[step as Exclude<Step, 'closed'>]
         }`}
       >
+        {/* Top header: only render if there's a preset question */}
         {presetQuestion && (
-          <div className='p-4 bg-gray-200 text-center'>
+          <div className='px-4 py-3 bg-gray-200 border-b'>
             <h2 className='text-xl font-bold'>{presetQuestion.mainQuestion}</h2>
           </div>
         )}
-        <DialogDescription className='sr-only'>
-          Confirmation Dialog
-        </DialogDescription>
-        <DialogTitle className='sr-only'>Confirmation Dialog</DialogTitle>
-        <div className='relative'>
-          {step !== 'subject' && (
-            <Button
-              variant='ghost'
-              size='icon'
-              className='absolute left-4 top-4 z-10'
-              onClick={(e) => {
-                e.stopPropagation();
-                handleBack();
-              }}
-            >
-              <ArrowLeft className='w-4 h-4' />
-            </Button>
-          )}
-          <AnimatePresence
-            mode='wait'
-            initial={false}
-            onExitComplete={() => null}
+
+        <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
+        <DialogTitle className='sr-only'>Wizard Steps</DialogTitle>
+
+        <AnimatePresence
+          mode='wait'
+          initial={false}
+          onExitComplete={() => null}
+        >
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
           >
-            <motion.div
-              key={step}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-            >
-              {renderCurrentStep()}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+            {renderCurrentStep()}
+          </motion.div>
+        </AnimatePresence>
       </DialogContent>
     </Dialog>
   );
