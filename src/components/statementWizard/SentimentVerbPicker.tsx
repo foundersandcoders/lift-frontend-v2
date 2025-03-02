@@ -102,7 +102,7 @@ const SentimentVerbPicker: React.FC<SentimentVerbPickerProps> = ({
       currentCategory?.children && currentCategory.children.length > 0;
 
     return (
-      <div className='flex items-center gap-4 px-4 py-2 border-b bg-gray-100 overflow-x-auto'>
+      <div className='flex items-center gap-2 px-4 py-2 border-b bg-gray-100 overflow-x-auto flex-nowrap whitespace-nowrap'>
         {/* CASE 1: No category => show "All" + top-level categories */}
         {isAllSelected && (
           <>
@@ -113,7 +113,7 @@ const SentimentVerbPicker: React.FC<SentimentVerbPickerProps> = ({
               <Button
                 key={cat.id}
                 variant='outline'
-                className='flex items-center gap-1 text-sm'
+                className='flex items-center gap-1 text-sm whitespace-nowrap'
                 style={{
                   backgroundColor: cat.color,
                   color: getContrastColor(cat.color),
