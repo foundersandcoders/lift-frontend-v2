@@ -16,7 +16,8 @@ import { useEntries } from '../../hooks/useEntries';
 import { postNewEntry } from '../../api/entriesApi';
 import type { Entry, SetQuestion, Step } from '../../../types/entries';
 import { SubjectTiles } from './SubjectTiles';
-import { VerbTiles } from './VerbTiles';
+// import { VerbTiles } from './VerbTiles';
+import SentimentVerbPicker from './SentimentVerbPicker';
 import { PrivacySelector } from './PrivacySelector';
 import statementsCategories from '../../../data/statementsCategories.json';
 
@@ -139,7 +140,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     onClose();
   };
 
-  // --- Render functions for each step ---
+  // Render functions for each step
 
   const renderSubjectStep = () => {
     const question = getQuestion('subject');
@@ -192,12 +193,23 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     return (
       <StepContainer question={question}>
         <div className='flex flex-col h-[60vh] p-4 rounded-md'>
-          <VerbTiles
+          {/* <VerbTiles
             selectedVerb={selection.atoms.verb}
             onSelect={(verb) => {
               setSelection((prev) => ({
                 ...prev,
                 atoms: { ...prev.atoms, verb },
+              }));
+              handleNext('object');
+            }}
+          /> */}
+          <SentimentVerbPicker
+            selectedVerb={selection.atoms.verb}
+            onVerbSelect={(verb) => {
+              // Update the selection and move to the next step when a verb is selected.
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, verb: verb.name },
               }));
               handleNext('object');
             }}
