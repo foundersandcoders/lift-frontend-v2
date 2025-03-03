@@ -18,7 +18,7 @@
           "allowedVerbs": ["Share"]
         },
         "object": {
-          "question": "List the factors affecting your wellbeing.",
+          "question": "what?",
           "preset": false,
           "presetAnswer": null
         },

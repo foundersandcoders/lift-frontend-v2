@@ -18,6 +18,7 @@ import SentimentVerbPicker from './SentimentVerbPicker';
 import { PrivacySelector } from './PrivacySelector';
 import statementsCategories from '../../../data/statementsCategories.json';
 import StepContainer from './StepContainer';
+import nlp from 'compromise';
 
 interface StatementWizardProps {
   username: string;
@@ -185,9 +186,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           <SentimentVerbPicker
             selectedVerb={selection.atoms.verb}
             onVerbSelect={(verb) => {
+              // Convert verb.name to present tense and lowercase it.
+              const processedVerb = nlp(verb.name)
+                .verbs()
+                .toPresentTense()
+                .out('text')
+                .toLowerCase();
               setSelection((prev) => ({
                 ...prev,
-                atoms: { ...prev.atoms, verb: verb.name },
+                atoms: { ...prev.atoms, verb: processedVerb },
               }));
               handleNext('object');
             }}
@@ -316,7 +323,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const renderComplementStep = () => {
-    const subQuestion = 'Add Extra Detail?';
+    const subQuestion = 'Info';
     return (
       <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <div className='text-center p-4'>
