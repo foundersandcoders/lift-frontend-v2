@@ -1,7 +1,7 @@
 import { Resend } from "resend";
-import { Email } from "../../types/emails";
-const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
+import { Email } from "../../../../types/emails";
 
+const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
 const resend = new Resend(RESEND_KEY);
 
 export async function sendEmail(email: Email) {

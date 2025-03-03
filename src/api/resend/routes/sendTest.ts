@@ -1,7 +1,7 @@
-import { EmailTest } from '../../components/emails/Tester';
+import { EmailTest } from '../../../components/emails/TestEmail';
 import { Resend } from 'resend';
-const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
 
+const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
 const resend = new Resend(RESEND_KEY);
 
 const facTeam= {
