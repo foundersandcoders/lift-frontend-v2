@@ -193,6 +193,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const renderObjectStep = () => {
     const subQuestion = getSubQuestion('object');
     const nextStep: Step = presetQuestion ? 'privacy' : 'category';
+
     return (
       <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <div className='p-4 rounded-md'>
@@ -210,11 +211,12 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           />
         </div>
         <Button
-          className='w-full mt-4'
           onClick={() => selection.atoms.object.trim() && handleNext(nextStep)}
           disabled={!selection.atoms.object.trim()}
+          variant='pink'
+          className='mx-auto'
         >
-          Continue
+          Next
         </Button>
       </StepContainer>
     );
@@ -223,26 +225,60 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const renderCategoryStep = () => {
     const subQuestion = getSubQuestion('category');
     const categories = statementsCategories.categories || [];
+    const uncategorisedSelected =
+      !selection.category || selection.category === 'uncategorised';
+
     return (
       <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
         <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
           {categories.map((cat: { id: string; name: string }) => (
             <Button
               key={cat.id}
-              variant={selection.category === cat.id ? 'default' : 'outline'}
-              className='h-auto py-4 px-6 text-left flex flex-col items-start space-y-1 transition-all'
               onClick={() =>
                 setSelection((prev) => ({ ...prev, category: cat.id }))
               }
+              className={`
+                h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
+                ${
+                  selection.category === cat.id
+                    ? 'bg-blue-50 text-blue-600 border-blue-300'
+                    : 'bg-white text-gray-700 border-gray-300'
+                }
+              `}
+              variant={selection.category === cat.id ? 'default' : 'outline'}
             >
               <span className='font-medium'>{cat.name}</span>
             </Button>
           ))}
+
+          {/* Uncategorised button */}
+          <Button
+            onClick={() =>
+              setSelection((prev) => ({ ...prev, category: 'uncategorised' }))
+            }
+            className={`
+              h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
+              ${
+                uncategorisedSelected
+                  ? 'bg-blue-50 text-blue-600 border-blue-300'
+                  : 'bg-white text-gray-700 border-gray-300'
+              }
+            `}
+            variant={uncategorisedSelected ? 'default' : 'outline'}
+          >
+            <span className='font-medium'>Uncategorised</span>
+          </Button>
         </div>
+
         <Button
-          onClick={() => selection.category && handleNext('privacy')}
-          disabled={!selection.category}
-          className='w-full'
+          onClick={() => {
+            if (!selection.category) {
+              setSelection((prev) => ({ ...prev, category: 'uncategorised' }));
+            }
+            handleNext('privacy');
+          }}
+          variant='pink'
+          className='mx-auto'
         >
           Next
         </Button>

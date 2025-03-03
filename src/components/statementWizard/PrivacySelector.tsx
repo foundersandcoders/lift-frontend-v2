@@ -54,7 +54,7 @@ export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
           </div>
         </Button>
       </div>
-      <Button className='w-full' onClick={onComplete}>
+      <Button variant='pink' className='mx-auto' onClick={onComplete}>
         Create Statement
       </Button>
     </div>
