@@ -15,9 +15,6 @@ export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
 }) => {
   return (
     <div className='space-y-6'>
-      <h2 className='text-2xl font-semibold text-center'>
-        Who can see this statement?
-      </h2>
       <div className='space-y-4'>
         <Button
           variant='outline'
@@ -54,7 +51,7 @@ export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
           </div>
         </Button>
       </div>
-      <Button className='w-full' onClick={onComplete}>
+      <Button variant='pink' className='mx-auto' onClick={onComplete}>
         Create Statement
       </Button>
     </div>

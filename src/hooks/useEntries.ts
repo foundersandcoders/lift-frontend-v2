@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { StatementsContext } from '../context/StatementsContext';
+import { EntriesContext } from '../context/EntriesContext';
 
-export function useStatements() {
-  const context = useContext(StatementsContext);
+export function useEntries() {
+  const context = useContext(EntriesContext);
   if (!context) {
     throw new Error('useStatements must be used within a StatementsProvider');
   }

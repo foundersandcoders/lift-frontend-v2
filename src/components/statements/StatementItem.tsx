@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   XCircle,
 } from 'lucide-react';
-import type { Statement } from '../../../types/statements';
+import type { Entry } from '../../../types/entries';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -26,7 +26,7 @@ import ActionLine from './ActionLine';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 
 export interface StatementItemProps {
-  statement: Statement;
+  statement: Entry;
   isEditing: boolean;
   editingPart: 'subject' | 'verb' | 'object' | null;
   onPartClick: (
@@ -107,15 +107,18 @@ const StatementItem: React.FC<StatementItemProps> = ({
           >
             {editingPart === 'subject' ? (
               <SubjectSelector
-                value={statement.subject}
+                value={statement.atoms.subject}
                 onChange={(value) =>
                   onPartUpdate(statement.id, 'subject', value)
                 }
                 onAddDescriptor={() => {}}
-                username={statement.subject.split("'s")[0] || statement.subject}
+                username={
+                  statement.atoms.subject.split("'s")[0] ||
+                  statement.atoms.subject
+                }
               />
             ) : (
-              statement.subject
+              statement.atoms.subject
             )}
           </div>
           {/* Verb */}
@@ -131,7 +134,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 onClose={() => onPartClick('verb', '')}
               />
             ) : (
-              <span>{statement.verb}</span>
+              <span>{statement.atoms.verb}</span>
             )}
           </div>
           {/* Object */}
@@ -142,14 +145,14 @@ const StatementItem: React.FC<StatementItemProps> = ({
             {editingPart === 'object' ? (
               <Input
                 ref={objectInputRef}
-                value={statement.object}
+                value={statement.atoms.object}
                 onChange={(e) =>
                   onPartUpdate(statement.id, 'object', e.target.value)
                 }
                 className='w-full'
               />
             ) : (
-              statement.object
+              statement.atoms.object
             )}
           </div>
         </div>
@@ -184,7 +187,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
     >
       {/* Top row: statement, actions counter, etc. */}
       <div className='flex items-center justify-between'>
-        {/* Left side: privacy icon + statement text */}
+        {/* Left side: privacy icon + full statement text */}
         <div className='flex items-center space-x-2'>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -202,8 +205,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 : 'This statement is private'}
             </TooltipContent>
           </Tooltip>
-          <span>{`${statement.subject} ${statement.verb} ${statement.object}`}</span>
-          {/* Remove the resolved icon from here */}
+          {/* Construct full sentence from atoms */}
+          <span>{`${statement.atoms.subject} ${statement.atoms.verb} ${statement.atoms.object}`}</span>
         </div>
 
         {/* Right side: resolved icon, actions counter + dropdown */}
@@ -221,7 +224,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               </TooltipContent>
             </Tooltip>
           )}
-          {/* Actions counter - click to expand/collapse */}
+          {/* Actions counter */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
             className='cursor-pointer'
@@ -263,7 +266,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   </>
                 )}
               </DropdownMenuItem>
-              {/* Conditionally render the Reset option if onReset is provided */}
+              {/* Reset option if provided */}
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
                   <RotateCcw className='mr-2 h-4 w-4' />
@@ -277,7 +280,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
       {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
-        <div className='mt-2 '>
+        <div className='mt-2'>
           <ActionLine
             actions={statement.actions ?? []}
             onEditAction={(
