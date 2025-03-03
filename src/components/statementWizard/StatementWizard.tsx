@@ -90,7 +90,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       return 'Add additional statement if needed';
     }
     return (
-      presetQuestion?.steps?.[currentStep]?.question ||
+      // presetQuestion?.steps?.[currentStep]?.question ||
       defaultQuestions(username, selection)[currentStep]
     );
   };
