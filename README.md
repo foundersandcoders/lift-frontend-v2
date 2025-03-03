@@ -29,8 +29,8 @@ To get started with Beacon, ensure you have the following prerequisites installe
 Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/foundersandcoders/lift-frontend-v2.git
-cd lift-frontend-v2
+git clone https://github.com/yourusername/beacon.git
+cd beacon
 npm install
 ```
 
