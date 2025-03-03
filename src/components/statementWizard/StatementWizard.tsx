@@ -18,6 +18,7 @@ import SentimentVerbPicker from './SentimentVerbPicker';
 import { PrivacySelector } from './PrivacySelector';
 import statementsCategories from '../../../data/statementsCategories.json';
 import StepContainer from './StepContainer';
+import StatementPreview from './StatementPreview';
 import nlp from 'compromise';
 
 interface StatementWizardProps {
@@ -394,6 +395,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             {renderCurrentStep()}
           </motion.div>
         </AnimatePresence>
+        {/* Statement preview shows the statement being built */}
+        <StatementPreview selection={selection} />
       </DialogContent>
     </Dialog>
   );
