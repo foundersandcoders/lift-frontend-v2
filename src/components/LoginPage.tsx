@@ -39,10 +39,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
     <div className='min-h-screen flex items-center justify-center p-4 bg-gray-50'>
       <div className='bg-white shadow-lg rounded-lg p-8 max-w-md w-full'>
         <h1 className='text-3xl font-bold mb-6 text-center'>Welcome!</h1>
+
         <p className='mb-6 text-center text-gray-700'>
           Please enter your name and, optionally, your line manager's email to
           continue.
         </p>
+        
         <form onSubmit={handleSubmit} className='space-y-4'>
           <Input
             placeholder='Enter your name'
