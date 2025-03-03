@@ -30,7 +30,7 @@ const ActionForm: React.FC<ActionFormProps> = ({
 
   return (
     <div className='flex flex-col space-y-1'>
-      <div className='flex items-center cursor-pointer hover:bg-gray-100 border border-dashed border-gray-300 p-1 rounded'>
+      <div className='flex items-center cursor-pointer hover:bg-gray-100 gap-1 border border-dashed border-gray-300 p-1 rounded'>
         <Input
           placeholder='Action text'
           value={text}

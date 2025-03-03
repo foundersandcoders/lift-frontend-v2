@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { QuestionsContext, QuestionsContextType } from './QuestionsContext';
 import setQuestionsData from '../../data/setQuestions.json';
-import type { SetQuestion } from '../../types/statements';
+import type { SetQuestion } from '../../types/entries';
 
 export const QuestionsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,

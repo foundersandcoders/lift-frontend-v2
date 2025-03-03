@@ -1,17 +1,23 @@
-export interface Action {
-  id: string;
-  creationDate: string;
-  dueDate?: string;
-  text: string;
-  isResolved?: boolean;
-}
-export interface Statement {
-  id: string;
+export interface Atoms {
   subject: string;
   verb: string;
   object: string;
-  adverbial?: string;
+  adverbial?: string[];
+}
+
+export interface Action {
+  id: string;
+  creationDate: string;
+  byDate: string;
+  action: string;
+  completed: boolean;
+}
+
+export interface Entry {
+  id: string;
+  input: string; // The full statement as a single string (headline)
   isPublic: boolean;
+  atoms: Atoms; // Nested grammatical components
   actions?: Action[];
   category: string;
   presetId?: string;
@@ -81,4 +87,5 @@ export type Step =
   | 'verb'
   | 'object'
   | 'category'
-  | 'privacy';
+  | 'privacy'
+  | 'complement';

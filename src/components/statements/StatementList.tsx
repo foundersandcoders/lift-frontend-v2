@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useStatements } from '../../hooks/useStatements';
+import { useEntries } from '../../hooks/useEntries';
 import { ConfirmationDialog } from '../ui/confirmation-dialog';
-import type { Statement, SetQuestion } from '../../../types/statements';
+import type { Entry, SetQuestion } from '../../../types/entries';
 import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';
 import StatementWizard from '../statementWizard/StatementWizard';
 import { useQuestions } from '../../hooks/useQuestions';
 import statementsCategories from '../../../data/statementsCategories.json';
 import { formatCategoryName } from '../../../lib/utils';
-import { updateStatement } from '../../api/statementsApi';
+import { updateEntry } from '../../api/entriesApi';
 
 // Helper: group preset questions by their category.
 const groupQuestionsByCategory = (questions: SetQuestion[]) => {
@@ -23,8 +23,8 @@ const groupQuestionsByCategory = (questions: SetQuestion[]) => {
 };
 
 // Helper: group created statements by their category.
-const groupStatementsByCategory = (statements: Statement[]) => {
-  return statements.reduce<Record<string, Statement[]>>((acc, statement) => {
+const groupStatementsByCategory = (statements: Entry[]) => {
+  return statements.reduce<Record<string, Entry[]>>((acc, statement) => {
     const cat = statement.category || 'Uncategorized';
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(statement);
@@ -33,8 +33,8 @@ const groupStatementsByCategory = (statements: Statement[]) => {
 };
 
 const StatementList: React.FC<{ username: string }> = ({ username }) => {
-  const { data, setData } = useStatements();
-  const { statements } = data;
+  const { data, setData } = useEntries();
+  const { entries } = data;
 
   // Track which preset questions have been used.
   const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
@@ -56,17 +56,17 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
 
   // Group preset questions and created statements by category.
   const questionsByCategory = groupQuestionsByCategory(presetQuestions);
-  const statementsByCategory = groupStatementsByCategory(statements);
+  const statementsByCategory = groupStatementsByCategory(entries);
   // Get categories from your configuration.
   const categoriesList = statementsCategories.categories; // assumed array of { id: string; name: string }
 
   // Handler to toggle the resolved flag on a statement.
   const handleToggleResolved = (statementId: string) => {
-    const stmt = statements.find((s) => s.id === statementId);
+    const stmt = entries.find((s) => s.id === statementId);
     if (!stmt) return;
     const updated = { ...stmt, isResolved: !stmt.isResolved };
-    setData({ type: 'UPDATE_STATEMENT', payload: updated });
-    updateStatement(updated);
+    setData({ type: 'UPDATE_ENTRY', payload: updated });
+    updateEntry(updated);
   };
 
   // Handler to toggle the resolved flag on an action
@@ -74,18 +74,18 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     statementId: string,
     actionId: string
   ) => {
-    const statementToUpdate = statements.find((s) => s.id === statementId);
+    const statementToUpdate = entries.find((s) => s.id === statementId);
     if (!statementToUpdate || !statementToUpdate.actions) return;
 
     const updatedActions = statementToUpdate.actions.map((action) =>
       action.id === actionId
-        ? { ...action, isResolved: !action.isResolved }
+        ? { ...action, completed: !action.completed }
         : action
     );
 
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
-    updateStatement(updatedStatement);
+    setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+    updateEntry(updatedStatement);
   };
 
   // Callback: when a preset question is clicked, open the wizard.
@@ -95,7 +95,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   };
 
   // Callback: when the wizard completes (a new statement is created), mark the question as used.
-  const handleWizardComplete = (newStatement: Statement) => {
+  const handleWizardComplete = (newStatement: Entry) => {
     // Use newStatement in a no-op so it's not flagged as unused.
     void newStatement;
     if (selectedPresetQuestion) {
@@ -118,7 +118,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const handleDeleteConfirm = () => {
     if (deleteConfirmation.statementId) {
       setData({
-        type: 'DELETE_STATEMENT',
+        type: 'DELETE_ENTRY',
         payload: deleteConfirmation.statementId,
       });
     }
@@ -138,9 +138,9 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
 
   // Callback: Reset a preset-generated statement.
   const handleResetClick = (statementId: string) => {
-    const statementToReset = statements.find((s) => s.id === statementId);
+    const statementToReset = entries.find((s) => s.id === statementId);
     if (statementToReset && statementToReset.presetId) {
-      setData({ type: 'DELETE_STATEMENT', payload: statementId });
+      setData({ type: 'DELETE_ENTRY', payload: statementId });
       setUsedPresetQuestions((prev) =>
         prev.filter((id) => id !== statementToReset.presetId)
       );
@@ -152,27 +152,23 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     statementId: string,
     newAction: { text: string; dueDate?: string }
   ) => {
-    const statementToUpdate = statements.find((s) => s.id === statementId);
+    const statementToUpdate = entries.find((s) => s.id === statementId);
     if (!statementToUpdate) return;
+    const newActionMapped = {
+      id: Date.now().toString(),
+      creationDate: new Date().toISOString(),
+      byDate: newAction.dueDate || '',
+      action: newAction.text,
+      completed: false,
+    };
+
     const updatedActions = statementToUpdate.actions
-      ? [
-          ...statementToUpdate.actions,
-          {
-            id: Date.now().toString(),
-            creationDate: new Date().toISOString(),
-            ...newAction,
-          },
-        ]
-      : [
-          {
-            id: Date.now().toString(),
-            creationDate: new Date().toISOString(),
-            ...newAction,
-          },
-        ];
-    const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
-    updateStatement(updatedStatement);
+      ? [...statementToUpdate.actions, newActionMapped]
+      : [newActionMapped];
+
+    const updatedEntry = { ...statementToUpdate, actions: updatedActions };
+    setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
+    updateEntry(updatedEntry);
   };
 
   // Callback: Edit an existing action.
@@ -181,26 +177,33 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     actionId: string,
     updatedData: { text: string; dueDate?: string }
   ) => {
-    const statementToUpdate = statements.find((s) => s.id === statementId);
+    const statementToUpdate = entries.find((s) => s.id === statementId);
     if (!statementToUpdate || !statementToUpdate.actions) return;
     const updatedActions = statementToUpdate.actions.map((action) =>
-      action.id === actionId ? { ...action, ...updatedData } : action
+      action.id === actionId
+        ? {
+            ...action,
+            action: updatedData.text,
+            byDate: updatedData.dueDate || action.byDate,
+          }
+        : action
     );
+
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
-    updateStatement(updatedStatement);
+    setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+    updateEntry(updatedStatement);
   };
 
   // Callback: Delete an action.
   const handleDeleteAction = (statementId: string, actionId: string) => {
-    const statementToUpdate = statements.find((s) => s.id === statementId);
+    const statementToUpdate = entries.find((s) => s.id === statementId);
     if (!statementToUpdate || !statementToUpdate.actions) return;
     const updatedActions = statementToUpdate.actions.filter(
       (action) => action.id !== actionId
     );
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
-    setData({ type: 'UPDATE_STATEMENT', payload: updatedStatement });
-    updateStatement(updatedStatement);
+    setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+    updateEntry(updatedStatement);
   };
 
   // Render a category section given a category ID and label.
