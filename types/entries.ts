@@ -24,26 +24,6 @@ export interface Entry {
   isResolved?: boolean;
 }
 
-// export interface Action {
-//   id: string;
-//   creationDate: string;
-//   dueDate?: string;
-//   text: string;
-//   isResolved?: boolean;
-// }
-// export interface Statement {
-//   id: string;
-//   subject: string;
-//   verb: string;
-//   object: string;
-//   adverbial?: string;
-//   isPublic: boolean;
-//   actions?: Action[];
-//   category: string;
-//   presetId?: string;
-//   isResolved?: boolean;
-// }
-
 export interface Category {
   id: string;
   name: string;
@@ -107,4 +87,5 @@ export type Step =
   | 'verb'
   | 'object'
   | 'category'
-  | 'privacy';
+  | 'privacy'
+  | 'complement';

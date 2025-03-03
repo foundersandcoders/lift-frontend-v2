@@ -48,7 +48,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   // Define steps; skip 'category' if using a preset question.
   const steps: Step[] = isPreset
-    ? ['subject', 'verb', 'object', 'privacy']
+    ? ['subject', 'verb', 'object', 'privacy', 'complement']
     : ['subject', 'verb', 'object', 'category', 'privacy'];
 
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
@@ -57,6 +57,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     object: 'border-objectInput',
     category: 'border-black',
     privacy: 'border-privacySelector',
+    complement: 'border-gray-400',
   };
 
   const [step, setStep] = useState<Step>('subject');
@@ -83,9 +84,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   }, [presetQuestion, username]);
 
   // Get the sub-question for each step.
-  const getSubQuestion = (currentStep: Exclude<Step, 'closed'>) =>
-    presetQuestion?.steps?.[currentStep]?.question ||
-    defaultQuestions(username, selection)[currentStep];
+  const getSubQuestion = (currentStep: Exclude<Step, 'closed'>) => {
+    if (currentStep === 'complement') {
+      return 'Add additional statement if needed';
+    }
+    return (
+      presetQuestion?.steps?.[currentStep]?.question ||
+      defaultQuestions(username, selection)[currentStep]
+    );
+  };
 
   const handleBack = () => {
     const currentIndex = steps.indexOf(step);
@@ -295,8 +302,36 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           onChange={(isPublic) =>
             setSelection((prev) => ({ ...prev, isPublic }))
           }
-          onComplete={handleComplete}
+          onComplete={() => {
+            console.log('Privacy complete triggered');
+            if (isPreset) {
+              handleNext('complement');
+            } else {
+              handleComplete();
+            }
+          }}
         />
+      </StepContainer>
+    );
+  };
+
+  const renderComplementStep = () => {
+    const subQuestion = 'Add Extra Detail?';
+    return (
+      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
+        <div className='text-center p-4'>
+          <p className='text-lg'>
+            If you feel your statement didn't fully answer the question, you can
+            later add custom statements to complement it.
+          </p>
+        </div>
+        <Button
+          onClick={handleComplete}
+          variant='pink'
+          className='mx-auto mt-4'
+        >
+          Finish
+        </Button>
       </StepContainer>
     );
   };
@@ -313,6 +348,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         return renderCategoryStep();
       case 'privacy':
         return renderPrivacyStep();
+      case 'complement':
+        return renderComplementStep();
       default:
         return null;
     }
