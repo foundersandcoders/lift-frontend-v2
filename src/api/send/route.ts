@@ -1,27 +1,32 @@
-import { EmailTemplate } from '../../components/emails/EmailTemplate';
+import { EmailTest } from '../../components/emails/Tester';
 import { Resend } from 'resend';
+const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
 
-// const resend = new Resend(process.env.RESEND_API_KEY);
-const resend = new Resend("re_SDc7pz1Y_KgTU6WSyX1Ed5rtwNHsuFqnG");
+const resend = new Resend(RESEND_KEY);
+
+const facTeam= {
+  to: [
+    "alex@foundersandcoders.com",
+    "dan@foundersandcoders.com",
+    "jason@foundersandcoders.com"
+  ],
+  names: "Alex, Dan & Jason"
+}
 
 export async function POST() {
   try {
     const { data, error } = await resend.emails.send({
       from: ' <nudger@beacons.ink>',
-      to: [
-        "alex@foundersandcoders.com",
-        "dan@foundersandcoders.com",
-        "jason@foundersandcoders.com"
-      ],
+      to: facTeam.to,
       subject: "Our Very First Nudgemail",
-      react: EmailTemplate({ firstName: 'Alex, Dan & Jason' }),
+      react: EmailTest({ firstName: facTeam.names }),
     });
 
     if (error) {
-      return Response.json({ error }, { status: 500 });
-    }
-
-    return Response.json(data);
+      return Response.json( { error }, { status: 500 } )
+    } else {
+      return Response.json(data)
+    };
   } catch (error) {
     return Response.json({ error }, { status: 500 });
   }
