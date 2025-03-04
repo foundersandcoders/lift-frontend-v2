@@ -1,10 +1,13 @@
 export interface Email {
-  from: string, /* app email address */
-  to: string[], /* array containing employer email */
-  subject: string, /* derp */
-  html: string /* email body */ 
-}
+  // app email address
+  from: string,
 
-export interface EmailProps {
-  firstName: string;
+  // array containing employer email
+  to: string[],
+
+  // derp
+  subject: string,
+
+  // email body
+  html: string
 }

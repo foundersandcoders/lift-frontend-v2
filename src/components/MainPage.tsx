@@ -29,11 +29,9 @@ const MainPage: React.FC = () => {
       <h1 className='text-3xl font-bold mb-8 text-center'>
         Statement builder for {username}
       </h1>
-
       <div className='container mx-auto px-4'>
         <StatementList username={username} />
       </div>
-      
       {/* Floating Buttons Container */}
       <div className='fixed bottom-8 right-8 flex items-center space-x-4'>
         {/* Email Button on the left */}

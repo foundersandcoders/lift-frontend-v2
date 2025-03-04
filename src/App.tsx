@@ -23,7 +23,11 @@ const AppContent: React.FC = () => {
     // MainPage and Header receives the username from context.
     <>
       <Header />
-      { data.username ? (<MainPage />) : (<LoginPage onSubmit={handleLoginSubmit} />) }
+      {data.username ? (
+        <MainPage />
+      ) : (
+        <LoginPage onSubmit={handleLoginSubmit} />
+      )}
     </>
   );
 };
