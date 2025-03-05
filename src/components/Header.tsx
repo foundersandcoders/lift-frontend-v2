@@ -66,7 +66,7 @@ const Header: React.FC = () => {
                 {data.username ? (
                   <span className='mr-2'>Logged as: {data.username}</span>
                 ) : (
-                  <span className='mr-2'>Not logged</span>
+                  <span className='mr-2'>Not logged in</span>
                 )}
                 <SmallCircularQuestionCounter />
               </div>

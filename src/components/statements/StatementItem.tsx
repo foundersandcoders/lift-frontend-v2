@@ -13,7 +13,9 @@ import {
   RotateCcw,
   CheckCircle2,
   XCircle,
-  Mail,
+  // Mail,
+  MailPlus,
+  MailX,
 } from 'lucide-react';
 import type { Entry } from '../../../types/entries';
 import {
@@ -93,13 +95,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
           size='sm'
           onClick={() => onTogglePublic(statement.id)}
           className={`${
-            statement.isPublic
-              ? 'bg-green-50 text-green-500'
-              : 'bg-gray-50 text-gray-500'
+            statement.isPublic ? ' text-green-500' : ' text-red-700'
           } hover:bg-opacity-75 rounded-md px-3 py-2`}
         >
           {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
-          {statement.isPublic ? <Mail size={16} /> : <Mail size={16} />}
+          {statement.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </Button>
         <div className='flex flex-1 items-center space-x-2'>
           {/* Subject */}
@@ -195,11 +195,15 @@ const StatementItem: React.FC<StatementItemProps> = ({
             <TooltipTrigger asChild>
               <span
                 className={`inline-flex items-center justify-center ${
-                  statement.isPublic ? 'text-green-500' : 'text-gray-400'
+                  statement.isPublic ? 'text-green-500' : 'text-red-500'
                 }`}
               >
                 {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
-                {statement.isPublic ? <Mail size={16} /> : <Mail size={16} />}
+                {statement.isPublic ? (
+                  <MailPlus size={16} />
+                ) : (
+                  <MailX size={16} />
+                )}
               </span>
             </TooltipTrigger>
             <TooltipContent className='p-2 bg-black text-white rounded'>
@@ -259,12 +263,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
                 {statement.isResolved ? (
                   <>
-                    <XCircle className='mr-2 h-4 w-4' />
+                    <XCircle className='mr-2 h-4 w-4 text-red-500' />
                     Unresolve
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 className='mr-2 h-4 w-4' />
+                    <CheckCircle2 className='mr-2 h-4 w-4 text-green-500' />
                     Mark as Resolved
                   </>
                 )}
