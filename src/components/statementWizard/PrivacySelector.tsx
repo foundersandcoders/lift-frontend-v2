@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../ui/button';
 import { Eye, EyeOff } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 interface PrivacySelectorProps {
   isPublic: boolean;
@@ -24,7 +25,8 @@ export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
           onClick={() => onChange(false)}
         >
           <div className='flex items-center space-x-3'>
-            <EyeOff className='w-5 h-5' />
+            {/* <EyeOff className='w-5 h-5' /> */}
+            <Mail className='w-5 h-5  text-gray-500' />
             <div className='text-left'>
               <div className='font-medium'>Private</div>
               <div className='text-sm text-muted-foreground'>
@@ -41,7 +43,8 @@ export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
           onClick={() => onChange(true)}
         >
           <div className='flex items-center space-x-3'>
-            <Eye className='w-5 h-5' />
+            {/* <Eye className='w-5 h-5' /> */}
+            <Mail className='w-5 h-5  text-green-500' />
             <div className='text-left'>
               <div className='font-medium'>Public</div>
               <div className='text-sm text-muted-foreground'>
