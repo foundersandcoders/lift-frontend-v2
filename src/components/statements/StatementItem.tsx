@@ -7,12 +7,13 @@ import {
   Trash2,
   Edit2,
   Save,
-  Eye,
-  EyeOff,
+  // Eye,
+  // EyeOff,
   MoreVertical,
   RotateCcw,
   CheckCircle2,
   XCircle,
+  Mail,
 } from 'lucide-react';
 import type { Entry } from '../../../types/entries';
 import {
@@ -97,7 +98,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
               : 'bg-gray-50 text-gray-500'
           } hover:bg-opacity-75 rounded-md px-3 py-2`}
         >
-          {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />}
+          {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
+          {statement.isPublic ? <Mail size={16} /> : <Mail size={16} />}
         </Button>
         <div className='flex flex-1 items-center space-x-2'>
           {/* Subject */}
@@ -196,7 +198,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   statement.isPublic ? 'text-green-500' : 'text-gray-400'
                 }`}
               >
-                {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />}
+                {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
+                {statement.isPublic ? <Mail size={16} /> : <Mail size={16} />}
               </span>
             </TooltipTrigger>
             <TooltipContent className='p-2 bg-black text-white rounded'>

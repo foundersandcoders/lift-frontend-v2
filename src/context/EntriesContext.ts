@@ -5,6 +5,7 @@ export interface EntriesContextType {
   data: {
     entries: Entry[];
     username: string;
+    managerName: string;
     managerEmail: string;
   };
   setData: React.Dispatch<EntriesAction>;
@@ -12,6 +13,7 @@ export interface EntriesContextType {
 
 export type EntriesAction =
   | { type: 'SET_USERNAME'; payload: string }
+  | { type: 'SET_MANAGER_NAME'; payload: string }
   | { type: 'SET_MANAGER_EMAIL'; payload: string }
   | { type: 'SET_ENTRIES'; payload: Entry[] }
   | { type: 'ADD_ENTRY'; payload: Entry }

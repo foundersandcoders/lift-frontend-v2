@@ -12,6 +12,8 @@ const EntriesReducer = (
   switch (action.type) {
     case 'SET_USERNAME':
       return { ...data, username: action.payload };
+    case 'SET_MANAGER_NAME':
+      return { ...data, managerName: action.payload };
     case 'SET_MANAGER_EMAIL':
       return { ...data, managerEmail: action.payload };
     case 'SET_ENTRIES':
@@ -45,6 +47,7 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
   const [data, setData] = useReducer(EntriesReducer, {
     entries: [],
     username: '',
+    managerName: '',
     managerEmail: '',
   });
 
