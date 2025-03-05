@@ -10,9 +10,16 @@ import ShareEmailModal from './ShareEmailModal'; // Import the new modal
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
-  const { username } = data;
+  const { username, managerEmail, entries } = data;
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+
+  // Determine if email button should be disabled:
+  const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
+  const publicStatementsCount = entries.filter(
+    (entry) => entry.isPublic && !entry.isResolved
+  ).length;
+  const isEmailDisabled = !hasManagerEmail || publicStatementsCount === 0;
 
   // Handler to open the wizard for creating a new statement from scratch
   const handleNewStatement = () => {
@@ -34,11 +41,12 @@ const MainPage: React.FC = () => {
       </div>
       {/* Floating Buttons Container */}
       <div className='fixed bottom-8 right-8 flex items-center space-x-4'>
-        {/* Email Button on the left */}
+        {/* Email Button: Disabled if there's no manager email or no public statements */}
         <Button
           onClick={handleShareEmail}
           variant='outline'
           className='rounded-full p-3 shadow-lg bg-white hover:bg-gray-100'
+          disabled={isEmailDisabled}
         >
           <Mail className='w-6 h-6 text-brand-pink' />
         </Button>
