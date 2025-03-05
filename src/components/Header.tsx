@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/components/Header.tsx
+import React, { useState, useEffect } from 'react';
 import { useEntries } from '../hooks/useEntries';
 
 import {
@@ -18,22 +19,34 @@ import SmallCircularQuestionCounter from './ui/questionCounter/smallCircularQues
 import LargeCircularQuestionCounter from './ui/questionCounter/LargeCircularQuestionCounter';
 
 const Header: React.FC = () => {
-  // const { questions, setQuestions } = useQuestions();
   const { data, setData } = useEntries();
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  // Combined editing state for manager details
+  const [isEditingContact, setIsEditingContact] = useState(false);
   const [managerEmailInput, setManagerEmailInput] = useState(
     data.managerEmail || ''
   );
+  const [managerNameInput, setManagerNameInput] = useState(
+    data.managerName || ''
+  );
   const [emailError, setEmailError] = useState('');
 
-  const handleEmailSave = () => {
-    if (!validateEmail(managerEmailInput.trim())) {
+  // Sync local inputs with context when edit mode is activated.
+  useEffect(() => {
+    if (isEditingContact) {
+      setManagerEmailInput(data.managerEmail || '');
+      setManagerNameInput(data.managerName || '');
+    }
+  }, [isEditingContact, data.managerEmail, data.managerName]);
+
+  const handleSaveContact = () => {
+    if (managerEmailInput.trim() && !validateEmail(managerEmailInput.trim())) {
       setEmailError('Please enter a valid email address.');
       return;
     }
     setData({ type: 'SET_MANAGER_EMAIL', payload: managerEmailInput });
-    setIsEditingEmail(false);
+    setData({ type: 'SET_MANAGER_NAME', payload: managerNameInput });
+    setIsEditingContact(false);
     setEmailError('');
   };
 
@@ -45,7 +58,7 @@ const Header: React.FC = () => {
           <img src='/lift_logo.png' alt='Logo' className='h-10 mr-2' />
           <h1 className='text-2xl font-bold'>Beacons</h1>
         </div>
-        {/* Right side: Clickable container with border that opens the dialog */}
+        {/* Right side: User info & dashboard */}
         {data.username ? (
           <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
             <DialogTrigger asChild>
@@ -75,26 +88,38 @@ const Header: React.FC = () => {
                     {data.username || 'Not set'}
                   </div>
                 </div>
-                {/* Manager email section */}
+                {/* Manager contact section */}
                 <div className='mt-4'>
                   <div className='text-sm font-semibold text-gray-700 mb-1'>
-                    Your line's manager email:
+                    Your line manager's details:
                   </div>
-                  <div className='flex items-center space-x-2'>
-                    {isEditingEmail ? (
-                      <>
-                        <Input
-                          value={managerEmailInput}
-                          onChange={(e) => setManagerEmailInput(e.target.value)}
-                          placeholder='Enter new manager email'
-                          aria-label='Manager Email'
-                          className='w-full'
-                        />
+                  {isEditingContact ? (
+                    <div className='space-y-2'>
+                      <Input
+                        value={managerNameInput}
+                        onChange={(e) => setManagerNameInput(e.target.value)}
+                        placeholder="Enter manager's name (optional)"
+                        aria-label='Manager Name'
+                        className='w-full'
+                      />
+                      <Input
+                        value={managerEmailInput}
+                        onChange={(e) => setManagerEmailInput(e.target.value)}
+                        placeholder="Enter manager's email (optional)"
+                        aria-label='Manager Email'
+                        className='w-full'
+                      />
+                      {emailError && (
+                        <div className='text-red-500 text-xs mt-1'>
+                          {emailError}
+                        </div>
+                      )}
+                      <div className='flex space-x-2'>
                         <Button
-                          onClick={handleEmailSave}
+                          onClick={handleSaveContact}
                           variant='outline'
                           size='sm'
-                          aria-label='Save Email'
+                          aria-label='Save Contact'
                           disabled={
                             managerEmailInput.trim() !== '' &&
                             !validateEmail(managerEmailInput.trim())
@@ -104,8 +129,9 @@ const Header: React.FC = () => {
                         </Button>
                         <Button
                           onClick={() => {
-                            setIsEditingEmail(false);
+                            setIsEditingContact(false);
                             setManagerEmailInput(data.managerEmail || '');
+                            setManagerNameInput(data.managerName || '');
                             setEmailError('');
                           }}
                           variant='outline'
@@ -114,36 +140,34 @@ const Header: React.FC = () => {
                         >
                           <X size={16} />
                         </Button>
-                      </>
-                    ) : (
-                      <>
-                        <span className='text-sm text-gray-800'>
-                          {data.managerEmail || 'Not set'}
-                        </span>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              className='flex items-center justify-center rounded-full bg-white p-2 text-brand-pink'
-                              aria-label="Edit your line's manager email"
-                              onClick={() => setIsEditingEmail(true)}
-                            >
-                              <Edit2 size={16} />
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Edit your line's manager email
-                          </TooltipContent>
-                        </Tooltip>
-                      </>
-                    )}
-                  </div>
-                  {emailError && (
-                    <div className='text-red-500 text-xs mt-1'>
-                      {emailError}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className='flex items-center space-x-2'>
+                      <div className='text-sm text-gray-800'>
+                        {data.managerName ? data.managerName : 'Name not set'} |{' '}
+                        {data.managerEmail
+                          ? data.managerEmail
+                          : 'Email not set'}
+                      </div>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            className='flex items-center justify-center rounded-full bg-white p-2 text-brand-pink'
+                            aria-label="Edit your line manager's details"
+                            onClick={() => setIsEditingContact(true)}
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Edit your line manager's details
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   )}
                 </div>
-                {/* Question counter */}
+                {/* Progress section */}
                 <div>
                   <div className='text-sm font-semibold text-gray-700 mb-1'>
                     Your progress:
@@ -165,7 +189,6 @@ const Header: React.FC = () => {
             </DialogContent>
           </Dialog>
         ) : (
-          // Change: Render non-clickable container if there is no username.
           <div className='flex items-center border-2 border-white rounded-full px-4 py-2 cursor-default'>
             <span className='mr-2'>Not logged</span>
             <SmallCircularQuestionCounter />
