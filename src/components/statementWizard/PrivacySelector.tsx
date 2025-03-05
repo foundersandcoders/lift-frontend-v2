@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from '../ui/button';
-import { Eye, EyeOff } from 'lucide-react';
 import { Mail } from 'lucide-react';
 
 interface PrivacySelectorProps {
