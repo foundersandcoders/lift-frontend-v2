@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import StatementList from './statements/StatementList';
 import { useEntries } from '../hooks/useEntries';
 import { Button } from './ui/button';
@@ -42,14 +43,25 @@ const MainPage: React.FC = () => {
       {/* Floating Buttons Container */}
       <div className='fixed bottom-8 right-8 flex items-center space-x-4'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
-        <Button
-          onClick={handleShareEmail}
-          variant='outline'
-          className='rounded-full p-3 shadow-lg bg-white hover:bg-gray-100'
-          disabled={isEmailDisabled}
-        >
-          <Mail className='w-6 h-6 text-brand-pink' />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span>
+              <Button
+                onClick={handleShareEmail}
+                variant='outline'
+                className='rounded-full p-3 shadow-lg bg-white hover:bg-gray-100'
+                disabled={isEmailDisabled}
+              >
+                <Mail className='w-6 h-6 text-brand-pink' />
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className='bg-gray-800 text-white p-2 rounded'>
+            {isEmailDisabled
+              ? "Please add your line manager's email and ensure you have public statements to share."
+              : 'Send email to your line manager with your public statements.'}
+          </TooltipContent>
+        </Tooltip>
         {/* Create Your Own Statement Button */}
         <Button
           onClick={handleNewStatement}
