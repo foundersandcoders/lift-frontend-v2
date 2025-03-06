@@ -40,6 +40,16 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     ? ['subject', 'verb', 'object', 'privacy', 'complement']
     : ['subject', 'verb', 'object', 'category', 'privacy'];
 
+  //
+  const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
+    subject: 'border-yellow-500', // For example, yellow for subject
+    verb: 'border-green-500', // Green for verb
+    object: 'border-blue-500', // Blue for object
+    category: 'border-black',
+    privacy: 'border-purple-500', // Purple for privacy
+    complement: 'border-gray-400',
+  };
+
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [selection, setSelection] = useState<Entry>({
     id: '',
@@ -192,7 +202,9 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[600px] p-0 w-full border-8'>
+      <DialogContent
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${stepBorderColors[currentStep]}`}
+      >
         {presetQuestion && (
           <div className='px-4 py-3 bg-gray-200 border-b'>
             <h2 className='text-xl font-bold'>{presetQuestion.mainQuestion}</h2>
