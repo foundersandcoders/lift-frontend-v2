@@ -5,15 +5,12 @@ import { Mail } from 'lucide-react';
 interface PrivacySelectorProps {
   isPublic: boolean;
   onChange: (isPublic: boolean) => void;
-  onComplete: () => void;
   isSubmitting?: boolean;
 }
 
 export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
   isPublic,
   onChange,
-  onComplete,
-  isSubmitting = false,
 }) => {
   return (
     <div className='space-y-6'>
@@ -55,14 +52,6 @@ export const PrivacySelector: React.FC<PrivacySelectorProps> = ({
           </div>
         </Button>
       </div>
-      <Button
-        variant='pink'
-        className='mx-auto'
-        onClick={onComplete}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? 'Submitting...' : 'Create Statement'}
-      </Button>
     </div>
   );
 };

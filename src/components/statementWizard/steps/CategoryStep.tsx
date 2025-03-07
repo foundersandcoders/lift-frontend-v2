@@ -5,24 +5,20 @@ import { Button } from '../../ui/button';
 import statementsCategories from '../../../../data/statementsCategories.json';
 
 interface CategoryStepProps {
-  selection: string; // current category
-  onUpdate: (category: string) => void;
-  onNext: () => void;
-  onBack: () => void;
+  selection: string;
+  onUpdate: (val: string) => void;
 }
 
 export const CategoryStep: React.FC<CategoryStepProps> = ({
   selection,
   onUpdate,
-  onNext,
-  onBack,
 }) => {
   const subQuestion = `You can set a category for your statement`;
   const categories = statementsCategories.categories || [];
   const uncategorisedSelected = !selection || selection === 'uncategorised';
 
   return (
-    <StepContainer subQuestion={subQuestion} showBack onBack={onBack}>
+    <StepContainer subQuestion={subQuestion} showBack>
       <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
         {categories.map((cat: { id: string; name: string }) => (
           <Button
@@ -56,18 +52,6 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
           <span className='font-medium'>Uncategorised</span>
         </Button>
       </div>
-      <Button
-        onClick={() => {
-          if (!selection) {
-            onUpdate('uncategorised');
-          }
-          onNext();
-        }}
-        variant='pink'
-        className='mx-auto'
-      >
-        Next
-      </Button>
     </StepContainer>
   );
 };

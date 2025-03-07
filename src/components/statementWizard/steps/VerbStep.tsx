@@ -6,23 +6,19 @@ import nlp from 'compromise';
 
 interface VerbStepProps {
   subject: string;
-  selection: string; // the current verb value
-  onUpdate: (verb: string) => void;
-  onNext: () => void;
-  onBack: () => void;
+  selection: string;
+  onUpdate: (val: string) => void;
 }
 
 export const VerbStep: React.FC<VerbStepProps> = ({
   subject,
   selection,
   onUpdate,
-  onNext,
-  onBack,
 }) => {
   const subQuestion = `What's happening with ${subject}? How do they feel or what do they experience?`;
 
   return (
-    <StepContainer subQuestion={subQuestion} showBack onBack={onBack}>
+    <StepContainer subQuestion={subQuestion}>
       <div className='flex flex-col h-[60vh] p-4 rounded-md'>
         <SentimentVerbPicker
           selectedVerb={selection}
@@ -34,7 +30,6 @@ export const VerbStep: React.FC<VerbStepProps> = ({
               .out('text')
               .toLowerCase();
             onUpdate(processedVerb);
-            onNext();
           }}
         />
       </div>

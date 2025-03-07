@@ -1,6 +1,4 @@
-// src/components/statementWizard/steps/SubjectStep.tsx
 import React from 'react';
-import { Button } from '../../ui/button';
 import StepContainer from '../StepContainer';
 import { SubjectTiles } from '../SubjectTiles';
 import type { SetQuestion } from '../../../../types/entries';
@@ -8,10 +6,8 @@ import type { SetQuestion } from '../../../../types/entries';
 interface SubjectStepProps {
   username: string;
   presetQuestion?: SetQuestion;
-  selection: string; // the current subject value
-  onUpdate: (subject: string) => void;
-  onNext: () => void;
-  onBack?: () => void;
+  selection: string;
+  onUpdate: (val: string) => void;
 }
 
 export const SubjectStep: React.FC<SubjectStepProps> = ({
@@ -19,8 +15,6 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
   presetQuestion,
   selection,
   onUpdate,
-  onNext,
-  onBack,
 }) => {
   // Use a default subject question text
   const subQuestion = `This statement applies to ${username} or someone/something else?`;
@@ -28,25 +22,12 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
   const allowDescriptors = presetQuestion?.steps?.subject?.allowDescriptors;
 
   return (
-    <StepContainer
-      subQuestion={subQuestion}
-      showBack={!!onBack}
-      onBack={onBack}
-    >
+    <StepContainer subQuestion={subQuestion}>
       {allowDescriptors === false ? (
         <>
           <div className='text-center p-4 border rounded'>
             <p>{username}</p>
           </div>
-          <Button
-            onClick={() => {
-              onUpdate(username);
-              onNext();
-            }}
-            className='w-full'
-          >
-            Next
-          </Button>
         </>
       ) : (
         <SubjectTiles
@@ -55,7 +36,6 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
           selectedValue={selection}
           onSelect={(value) => {
             onUpdate(value);
-            onNext();
           }}
         />
       )}

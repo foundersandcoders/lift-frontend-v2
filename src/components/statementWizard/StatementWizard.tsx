@@ -18,6 +18,7 @@ import { CategoryStep } from './steps/CategoryStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
+import { Button } from '../ui/button';
 
 interface StatementWizardProps {
   username: string;
@@ -36,11 +37,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const isPreset = Boolean(presetQuestion);
 
   // Define steps: if preset, skip "category" and add "complement"
-  const steps: Step[] = isPreset
+  const steps: Exclude<Step, 'closed'>[] = isPreset
     ? ['subject', 'verb', 'object', 'privacy', 'complement']
     : ['subject', 'verb', 'object', 'category', 'privacy'];
 
-  //
+  // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
     subject: 'border-[var(--subject-selector)]',
     verb: 'border-[var(--verb-selector)]',
@@ -63,8 +64,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     },
     category: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // If using a preset that presets subject, set it to username
   useEffect(() => {
     if (presetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({
@@ -76,10 +77,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   const currentStep = steps[currentStepIndex];
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleComplete = async () => {
-    // Prevent multiple clicks if already submitting
     if (isSubmitting) return;
     setIsSubmitting(true);
     const { subject, verb, object, adverbial } = selection.atoms;
@@ -110,7 +108,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     }
   };
 
-  // Advance to the next step or finish if on the last step
   const goNext = () => {
     if (currentStepIndex < steps.length - 1) {
       setCurrentStepIndex((prev) => prev + 1);
@@ -127,6 +124,30 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     }
   };
 
+  // Optional: Define a validation function for the current step.
+  // This function should return true if the current step’s required data is valid.
+  const isStepValid = (step: Exclude<Step, 'closed'>): boolean => {
+    switch (step) {
+      case 'subject':
+        return selection.atoms.subject.trim().length > 0;
+      case 'verb':
+        return selection.atoms.verb.trim().length > 0;
+      case 'object':
+        return selection.atoms.object.trim().length > 0;
+      case 'category':
+        return selection.category.trim().length > 0;
+      case 'privacy':
+        // Always valid since it's a boolean toggle.
+        return true;
+      case 'complement':
+        // Complement is optional; consider it valid.
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  // Render the current step component without navigation buttons.
   const renderStep = () => {
     switch (currentStep) {
       case 'subject':
@@ -141,8 +162,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 atoms: { ...prev.atoms, subject: val },
               }))
             }
-            onNext={goNext}
-            onBack={goBack}
           />
         );
       case 'verb':
@@ -156,8 +175,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 atoms: { ...prev.atoms, verb: val },
               }))
             }
-            onNext={goNext}
-            onBack={goBack}
           />
         );
       case 'object':
@@ -172,8 +189,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 atoms: { ...prev.atoms, object: val },
               }))
             }
-            onNext={goNext}
-            onBack={goBack}
           />
         );
       case 'category':
@@ -186,13 +201,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 category: val,
               }))
             }
-            onNext={goNext}
-            onBack={goBack}
           />
         );
       case 'privacy':
-        return isPreset ? (
-          // In preset flow, privacy isn't final (next goes to complement)
+        return (
           <PrivacyStep
             isPublic={selection.isPublic}
             onUpdate={(val) =>
@@ -201,46 +213,26 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 isPublic: val,
               }))
             }
-            onNext={goNext}
-            onBack={goBack}
-            isSubmitting={isSubmitting}
-          />
-        ) : (
-          // In custom flow, privacy is the final step so we call handleComplete
-          <PrivacyStep
-            isPublic={selection.isPublic}
-            onUpdate={(val) =>
-              setSelection((prev) => ({
-                ...prev,
-                isPublic: val,
-              }))
-            }
-            onNext={handleComplete}
-            onBack={goBack}
-            isSubmitting={isSubmitting}
           />
         );
       case 'complement':
-        return (
-          <ComplementStep
-            onComplete={handleComplete}
-            onBack={goBack}
-            isSubmitting={isSubmitting}
-          />
-        );
+        return <ComplementStep />;
       default:
         return null;
     }
   };
 
+  // Helper function to get the border color class
+  const getBorderColor = (step: Exclude<Step, 'closed'>): string => {
+    return stepBorderColors[step];
+  };
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
-        className={`sm:max-w-[600px] p-0 w-full border-8 ${
-          currentStep !== 'closed'
-            ? stepBorderColors[currentStep as Exclude<Step, 'closed'>]
-            : ''
-        }`}
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${getBorderColor(
+          currentStep
+        )}`}
       >
         {presetQuestion && (
           <div className='px-4 py-3 bg-gray-200 border-b'>
@@ -261,6 +253,31 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           </motion.div>
         </AnimatePresence>
         <StatementPreview selection={selection} />
+        {/* Navigation Panel */}
+        <div className='flex justify-between p-4 border-t'>
+          <Button
+            onClick={goBack}
+            disabled={currentStepIndex === 0}
+            variant='pink'
+            className='mx-auto'
+          >
+            Back
+          </Button>
+          <Button
+            variant='pink'
+            className='mx-auto'
+            onClick={
+              currentStepIndex === steps.length - 1 ? handleComplete : goNext
+            }
+            disabled={!isStepValid(currentStep) || isSubmitting}
+          >
+            {isSubmitting
+              ? 'Submitting...'
+              : currentStepIndex === steps.length - 1
+              ? 'Create Statement'
+              : 'Next'}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
