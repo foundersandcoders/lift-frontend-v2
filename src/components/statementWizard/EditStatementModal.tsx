@@ -80,8 +80,6 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             presetQuestion={undefined}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
-            onNext={handleSave}
-            onBack={onClose}
           />
         );
       case 'verb':
@@ -90,8 +88,6 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             subject={statement.atoms.subject}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
-            onNext={handleSave}
-            onBack={onClose}
           />
         );
       case 'object':
@@ -101,8 +97,6 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             verb={statement.atoms.verb}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
-            onNext={handleSave}
-            onBack={onClose}
           />
         );
       case 'category':
@@ -110,8 +104,6 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
           <CategoryStep
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
-            onNext={handleSave}
-            onBack={onClose}
           />
         );
       case 'privacy':
@@ -119,8 +111,6 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
           <PrivacyStep
             isPublic={localValue as boolean}
             onUpdate={(val) => setLocalValue(val)}
-            onNext={handleSave}
-            onBack={onClose}
           />
         );
       default:
@@ -141,7 +131,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
           <Button onClick={handleSave} variant='pink'>
             Save
           </Button>
-          <Button onClick={onClose} variant='outline' className='ml-2'>
+          <Button onClick={onClose} variant='pink' className='ml-2'>
             Cancel
           </Button>
         </div>

@@ -7,8 +7,6 @@ import {
   Trash2,
   Edit2,
   Save,
-  // Eye,
-  // EyeOff,
   MoreVertical,
   RotateCcw,
   CheckCircle2,
