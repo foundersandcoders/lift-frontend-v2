@@ -42,12 +42,12 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   //
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
-    subject: 'border-yellow-500', // For example, yellow for subject
-    verb: 'border-green-500', // Green for verb
-    object: 'border-blue-500', // Blue for object
-    category: 'border-black',
-    privacy: 'border-purple-500', // Purple for privacy
-    complement: 'border-gray-400',
+    subject: 'border-[var(--subject-selector)]',
+    verb: 'border-[var(--verb-selector)]', // Uses the custom property --verb-selector
+    object: 'border-[var(--object-input)]', // Uses the custom property --object-input
+    category: 'border-black', // Or use another token if defined, e.g. 'border-[var(--category-selector)]'
+    privacy: 'border-[var(--privacy-selector)]', // Uses the custom property --privacy-selector
+    complement: 'border-gray-400', // Fallback or your custom variable for complement
   };
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
