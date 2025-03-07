@@ -49,23 +49,24 @@ export default {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // LIFT Brand Colors
+        // LIFT Brand Colors (using CSS variables for consistency)
         brand: {
-          pink: '#D600A8',
-          black: '#ED7112',
-          white: '#FFFFFF',
-          green: '#29E2A3',
-          teal: '#00A7A8',
-          blue: '#2235E2',
-          orange: '#EC5D2A',
-          yellow: '#FFCB00',
-          purple: '#7900D6',
-          darkPurple: '#4D1B9B',
+          pink: 'var(--brand-pink)',
+          black: 'var(--brand-black)',
+          white: 'var(--brand-white)',
+          green: 'var(--brand-green)',
+          teal: 'var(--brand-teal)',
+          blue: 'var(--brand-blue)',
+          orange: 'var(--brand-orange)',
+          yellow: 'var(--brand-yellow)',
+          purple: 'var(--brand-purple)',
+          darkPurple: 'var(--brand-darkPurple)',
         },
-        objectInput: '#bfdbfe', // Border for the object step screen
-        verbSelector: '#bbf7d0', // Border for the verb selector screen
-        subjectSelector: '#fef08a', // Background for the object input element
-        privacySelector: '#22c55e', // Border for the privacy selector screen
+        // Wizard/Step specific colors using CSS variables
+        objectInput: 'var(--object-input)',
+        verbSelector: 'var(--verb-selector)',
+        subjectSelector: 'var(--subject-selector)',
+        privacySelector: 'var(--privacy-selector)',
       },
       borderRadius: {
         lg: 'var(--radius)',
