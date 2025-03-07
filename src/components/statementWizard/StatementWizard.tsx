@@ -203,7 +203,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
-        className={`sm:max-w-[600px] p-0 w-full border-8 ${stepBorderColors[currentStep]}`}
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${
+          currentStep !== 'closed'
+            ? stepBorderColors[currentStep as Exclude<Step, 'closed'>]
+            : ''
+        }`}
       >
         {presetQuestion && (
           <div className='px-4 py-3 bg-gray-200 border-b'>
