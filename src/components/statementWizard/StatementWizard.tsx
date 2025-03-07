@@ -191,7 +191,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           />
         );
       case 'privacy':
-        return (
+        return isPreset ? (
+          // In preset flow, privacy isn't final (next goes to complement)
           <PrivacyStep
             isPublic={selection.isPublic}
             onUpdate={(val) =>
@@ -202,10 +203,31 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             }
             onNext={goNext}
             onBack={goBack}
+            isSubmitting={isSubmitting}
+          />
+        ) : (
+          // In custom flow, privacy is the final step so we call handleComplete
+          <PrivacyStep
+            isPublic={selection.isPublic}
+            onUpdate={(val) =>
+              setSelection((prev) => ({
+                ...prev,
+                isPublic: val,
+              }))
+            }
+            onNext={handleComplete}
+            onBack={goBack}
+            isSubmitting={isSubmitting}
           />
         );
       case 'complement':
-        return <ComplementStep onComplete={handleComplete} onBack={goBack} />;
+        return (
+          <ComplementStep
+            onComplete={handleComplete}
+            onBack={goBack}
+            isSubmitting={isSubmitting}
+          />
+        );
       default:
         return null;
     }
