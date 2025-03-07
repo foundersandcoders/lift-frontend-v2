@@ -43,11 +43,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   //
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
     subject: 'border-[var(--subject-selector)]',
-    verb: 'border-[var(--verb-selector)]', // Uses the custom property --verb-selector
-    object: 'border-[var(--object-input)]', // Uses the custom property --object-input
-    category: 'border-black', // Or use another token if defined, e.g. 'border-[var(--category-selector)]'
-    privacy: 'border-[var(--privacy-selector)]', // Uses the custom property --privacy-selector
-    complement: 'border-gray-400', // Fallback or your custom variable for complement
+    verb: 'border-[var(--verb-selector)]',
+    object: 'border-[var(--object-input)]',
+    category: 'border-black',
+    privacy: 'border-[var(--privacy-selector)]',
+    complement: 'border-gray-400',
   };
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -76,7 +76,12 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   const currentStep = steps[currentStepIndex];
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleComplete = async () => {
+    // Prevent multiple clicks if already submitting
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const { subject, verb, object, adverbial } = selection.atoms;
     const adverbialText =
       adverbial && adverbial.length > 0 ? adverbial.join(' ') : '';
@@ -93,10 +98,16 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         presetQuestion?.category || selection.category || 'Uncategorized',
     };
 
-    setData({ type: 'ADD_ENTRY', payload: newEntry });
-    await postNewEntry(newEntry);
-    onComplete(newEntry);
-    onClose();
+    try {
+      setData({ type: 'ADD_ENTRY', payload: newEntry });
+      await postNewEntry(newEntry);
+      onComplete(newEntry);
+      onClose();
+    } catch (error) {
+      console.error('Submission failed', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Advance to the next step or finish if on the last step
