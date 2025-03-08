@@ -2,6 +2,7 @@
 import React from 'react';
 import StepContainer from '../StepContainer';
 import { Input } from '../../ui/input';
+import { getVerbName } from '../../../../utils/verbUtils';
 
 interface ObjectStepProps {
   subject: string;
@@ -16,7 +17,9 @@ export const ObjectStep: React.FC<ObjectStepProps> = ({
   selection,
   onUpdate,
 }) => {
-  const subQuestion = `In what way does ${subject} ${verb}? What's the context?`;
+  const subQuestion = `In what way does ${subject} ${getVerbName(
+    verb
+  )}? What's the context?`;
 
   return (
     <StepContainer subQuestion={subQuestion} showBack>

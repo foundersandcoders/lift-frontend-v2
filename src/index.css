@@ -58,6 +58,9 @@
     --object-input-hover: #aecbf0;
     --privacy-selector: #22c55e;
     --privacy-selector-hover: #1ea07b;
+    --category-selector: #000000;
+    --category-selector-hover: #2c2c2c;
+    --complement: 'gray-400';
   }
 
   /* Dark Mode Overrides */

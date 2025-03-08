@@ -69,6 +69,17 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
     onClose();
   };
 
+  // Map each edit part to its corresponding Tailwind border class.
+  const borderClasses: Record<string, string> = {
+    subject: 'border-[var(--subject-selector)]',
+    verb: 'border-[var(--verb-selector)]',
+    object: 'border-[var(--object-input)]',
+    category: 'border-black',
+    privacy: 'border-[var(--privacy-selector)]',
+    complement: 'border-gray-400',
+  };
+  const borderClass = borderClasses[editPart] || 'border-gray-400';
+
   // Render the correct edit component based on the part to edit.
   const renderEditComponent = () => {
     switch (editPart) {
@@ -76,7 +87,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         return (
           <SubjectStep
             username={username}
-            // For editing mode, you don’t need a preset question
+            // For editing mode, it doesn't need a preset question
             presetQuestion={undefined}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
@@ -120,14 +131,16 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[600px] p-0 w-full'>
+      <DialogContent
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${borderClass}`}
+      >
         <DialogTitle>Edit {editPart}</DialogTitle>
         <DialogDescription className='sr-only'>
           Edit the {editPart} of your statement.
         </DialogDescription>
         {renderEditComponent()}
         {/* Optionally add a footer for explicit Save/Cancel */}
-        <div className='p-4 flex justify-end'>
+        <div className='p-4 flex justify-center'>
           <Button onClick={handleSave} variant='pink'>
             Save
           </Button>

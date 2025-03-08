@@ -37,7 +37,6 @@ export interface StatementItemProps {
   // When the green save icon is clicked, the updated entry (draft) is passed back
   onLocalSave: (updatedEntry: Entry) => void;
   onDelete: (statementId: string) => void;
-  onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
   onEditAction?: (
     statementId: string,
@@ -62,7 +61,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onPartClick,
   onLocalSave,
   onDelete,
-  onTogglePublic,
   onEditClick,
   onCancel,
   onEditAction = () => {},
@@ -77,6 +75,15 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
   // Local "draft" state to hold unsaved modifications.
   const [draft, setDraft] = React.useState<Entry>(statement);
+
+  // Local state to track if we are currently saving the draft. Will control the save button.
+  const [isSaving, setIsSaving] = React.useState(false);
+  // Compute if there are any changes compared to the original statement prop.
+  const hasChanged =
+    draft.atoms.subject !== statement.atoms.subject ||
+    draft.atoms.verb !== statement.atoms.verb ||
+    draft.atoms.object !== statement.atoms.object ||
+    draft.isPublic !== statement.isPublic;
 
   // Whenever the statement prop changes (or when not editing), re-sync the draft.
   useEffect(() => {
@@ -109,7 +116,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
           size='sm'
           onClick={() => {
             console.log('Privacy toggle clicked for statement:', draft.id);
-            onTogglePublic(draft.id);
+            setDraft((prev) => ({
+              ...prev,
+              isPublic: !prev.isPublic,
+            }));
           }}
           className={`rounded-md px-3 py-2 transition-colors ${
             draft.isPublic
@@ -171,18 +181,21 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
         <div className='flex items-center space-x-2 ml-auto'>
-          {/* Final Save button (green icon):
-              This commits the local draft to the database via onLocalSave */}
+          {/* Final Save button. This commits the local draft to the database via onLocalSave */}
           <Button
             variant='ghost'
             size='sm'
-            onClick={() => {
-              onLocalSave(draft);
+            onClick={async () => {
+              setIsSaving(true);
+              await onLocalSave(draft);
+              setIsSaving(false);
             }}
+            disabled={!hasChanged || isSaving}
             className='text-green-500 hover:text-green-700'
           >
             <Save size={16} />
           </Button>
+
           {/* Cancel button: resets draft and exits edit mode */}
           <Button
             variant='ghost'

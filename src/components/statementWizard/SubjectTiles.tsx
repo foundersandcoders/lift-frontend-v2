@@ -55,7 +55,7 @@ export const SubjectTiles: React.FC<SubjectTilesProps> = ({
       {tiles.map((tile) => (
         <Button
           key={tile.value}
-          variant={selectedValue === tile.value ? 'default' : 'outline'}
+          variant={'outline'}
           selected={selectedValue === tile.value}
           className={`h-auto py-4 px-6 text-left flex flex-col items-start space-y-1  
       

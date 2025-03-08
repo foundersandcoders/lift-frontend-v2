@@ -87,29 +87,6 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateEntry(updatedStatement);
   };
 
-  const handleTogglePublic = (statementId: string) => {
-    const stmt = entries.find((s) => s.id === statementId);
-    if (!stmt) return;
-    const updated = { ...stmt, isPublic: !stmt.isPublic };
-    setData({ type: 'UPDATE_ENTRY', payload: updated });
-    updateEntry(updated);
-  };
-
-  // const handleSave = (statementId: string) => {
-  //   // Find the statement from the entries
-  //   const stmt = entries.find((s) => s.id === statementId);
-  //   if (!stmt) return;
-
-  //   // Call the API to persist the updated statement
-  //   updateEntry(stmt)
-  //     .then(() => {
-  //       console.log(`Statement ${statementId} saved successfully.`);
-  //       // Optionally, show a success message or update local state further.
-  //     })
-  //     .catch((error) => {
-  //       console.error(`Error saving statement ${statementId}:`, error);
-  //     });
-  // };
   // Handler for when a statement's local save button is clicked.
   async function handleLocalSave(updatedEntry: Entry) {
     try {
@@ -291,7 +268,6 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                     setEditingStatementId(null);
                   }}
                   onDelete={handleDeleteClick}
-                  onTogglePublic={handleTogglePublic}
                   onEditClick={handleEditClick}
                   onAddAction={handleAddAction}
                   onEditAction={handleEditAction}
