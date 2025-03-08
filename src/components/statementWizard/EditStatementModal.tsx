@@ -140,11 +140,11 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         </DialogDescription>
         {renderEditComponent()}
         {/* Optionally add a footer for explicit Save/Cancel */}
-        <div className='p-4 flex justify-center'>
+        <div className='p-4 flex justify-center gap-4'>
           <Button onClick={handleSave} variant='pink'>
             Save
           </Button>
-          <Button onClick={onClose} variant='pink' className='ml-2'>
+          <Button onClick={onClose} variant='pink'>
             Cancel
           </Button>
         </div>

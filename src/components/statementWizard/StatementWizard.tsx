@@ -254,18 +254,18 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         </AnimatePresence>
         <StatementPreview selection={selection} />
         {/* Navigation Panel */}
-        <div className='flex justify-between p-4 border-t'>
+        <div className='flex justify-center p-4 gap-4'>
           <Button
             onClick={goBack}
             disabled={currentStepIndex === 0}
             variant='pink'
-            className='mx-auto'
+            // className='mx-auto'
           >
             Back
           </Button>
           <Button
             variant='pink'
-            className='mx-auto'
+            // className='mx-auto'
             onClick={
               currentStepIndex === steps.length - 1 ? handleComplete : goNext
             }
