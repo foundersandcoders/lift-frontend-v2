@@ -5,7 +5,7 @@ console.log('Backend API:', API_URL);
 
 export async function postNewEntry(entry: Entry): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/write`, {
+    const response = await fetch(`${API_URL}/write/beacon`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
