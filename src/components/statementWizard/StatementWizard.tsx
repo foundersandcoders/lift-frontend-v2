@@ -16,7 +16,7 @@ import type { Entry, SetQuestion, Step } from '../../../types/entries';
 import { SubjectTiles } from './SubjectTiles';
 import SentimentVerbPicker from './SentimentVerbPicker';
 import { PrivacySelector } from './PrivacySelector';
-import statementsCategories from '../../../data/statementsCategories.json';
+import statementsCategories from '../../../data/statementsCategories.json' with { type: 'json' };
 import StepContainer from './StepContainer';
 import nlp from 'compromise';
 

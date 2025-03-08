@@ -13,6 +13,8 @@ const facTeam= {
 }
 
 export async function POST() {
+  console.log(`Starting email POST`);
+  
   try {
     const { data, error } = await resend.emails.send({
       from: ' <nudger@beacons.ink>',
