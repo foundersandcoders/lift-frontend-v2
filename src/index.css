@@ -49,11 +49,15 @@
 
     --radius: 0.5rem;
 
-    /* Wizard/Step specific tokens */
+    /* Wizard/Step specific colors */
     --subject-selector: #fef08a;
+    --subject-selector-hover: #fce883;
     --verb-selector: #bbf7d0;
+    --verb-selector-hover: #a0d8f1;
     --object-input: #bfdbfe;
+    --object-input-hover: #aecbf0;
     --privacy-selector: #22c55e;
+    --privacy-selector-hover: #1ea07b;
   }
 
   /* Dark Mode Overrides */

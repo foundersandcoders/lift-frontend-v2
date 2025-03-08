@@ -4,9 +4,9 @@ import type React from 'react';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import categoryStructure from '../../../data/categoryStructure.json';
-import verbData from '../../../data/verbs.json';
-import type { Category, Verb } from '../../../types/entries';
+import categoryStructure from '../../../../data/categoryStructure.json';
+import verbData from '../../../../data/verbs.json';
+import type { Category, Verb } from '../../../../types/entries';
 
 interface VerbSelectorProps {
   onVerbSelect?: (verb: Verb) => void;
@@ -123,21 +123,25 @@ const VerbSelector: React.FC<VerbSelectorProps> = ({ onVerbSelect }) => {
     );
 
     return renderGrid(
-      verbs.map((verb) => (
-        <motion.button
-          key={verb.name}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className='p-4 rounded-lg shadow-md flex items-center justify-center text-center'
-          style={{
-            background: verb.color,
-            color: getContrastColor(verb.color),
-          }}
-          onClick={() => handleVerbSelect(verb)}
-        >
-          <span className='break-words'>{verb.name}</span>
-        </motion.button>
-      ))
+      verbs.map((verb) => {
+        // Use this to highlight the selected verb
+        //const isSelected = selectedVerb ? verb.id === selectedVerb.id : false;
+        return (
+          <motion.button
+            key={verb.id} // use verb.id as key
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className='p-4 rounded-lg shadow-md flex items-center justify-center text-center'
+            style={{
+              background: verb.color,
+              color: getContrastColor(verb.color),
+            }}
+            onClick={() => handleVerbSelect(verb)}
+          >
+            <span className='break-words'>{verb.name}</span>
+          </motion.button>
+        );
+      })
     );
   };
 

@@ -1,11 +1,10 @@
-// src/components/ui/subject-selector.tsx
 import React, { useState, useMemo } from 'react';
 import { Check, ChevronsUpDown, Plus } from 'lucide-react';
-import { cn } from '../../../lib/utils';
-import { Button } from './button';
-import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import { Input } from './input';
-import descriptorsData from '../../../data/descriptors.json';
+import { cn } from '../../../../lib/utils';
+import { Button } from '../../ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../../ui/popover';
+import { Input } from '../../ui/input';
+import descriptorsData from '../../../../data/descriptors.json';
 
 interface SubjectOption {
   label: string;
@@ -90,7 +89,7 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
                   }}
                   className={cn(
                     'flex w-full items-center px-2 py-2 hover:bg-gray-100 rounded',
-                    { 'bg-blue-200': option.value === value } // Selected background
+                    { 'bg-red-200': option.value === value } // Selected background
                   )}
                 >
                   <Check

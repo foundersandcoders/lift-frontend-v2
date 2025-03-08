@@ -16,6 +16,14 @@ export default {
     },
     extend: {
       colors: {
+        subjectSelector: 'var(--subject-selector)',
+        subjectSelectorHover: 'var(--subject-selector-hover)',
+        verbSelector: 'var(--verb-selector)',
+        verbSelectorHover: 'var(--verb-selector-hover)',
+        objectInput: 'var(--object-input)',
+        objectInputHover: 'var(--object-input-hover)',
+        privacySelector: 'var(--privacy-selector)',
+        privacySelectorHover: 'var(--privacy-selector-hover)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

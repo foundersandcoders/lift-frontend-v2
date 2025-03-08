@@ -1,6 +1,6 @@
 import React from 'react';
 import StepContainer from '../StepContainer';
-import { PrivacySelector } from '../PrivacySelector';
+import { PrivacySelector } from '../selectors/PrivacySelector';
 
 interface PrivacyStepProps {
   isPublic: boolean;

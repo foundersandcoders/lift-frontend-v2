@@ -1,5 +1,7 @@
 import React from 'react';
 import type { Entry } from '../../../types/entries';
+import { getVerbName } from '../../../utils/verbUtils';
+
 interface StatementPreviewProps {
   selection: Entry;
 }
@@ -18,7 +20,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
         )}
         {verb && (
           <span className={`px-2 py-1 rounded bg-verbSelector text-black`}>
-            {verb}
+            {getVerbName(verb)}
           </span>
         )}
         {object && (

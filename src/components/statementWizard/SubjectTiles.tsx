@@ -56,10 +56,17 @@ export const SubjectTiles: React.FC<SubjectTilesProps> = ({
         <Button
           key={tile.value}
           variant={selectedValue === tile.value ? 'default' : 'outline'}
-          className={`h-auto py-4 px-6 text-left flex flex-col items-start space-y-1 transition-all ${
-            selectedValue === tile.value ? 'bg-blue-200' : ''
-          }`}
+          selected={selectedValue === tile.value}
+          className={`h-auto py-4 px-6 text-left flex flex-col items-start space-y-1  
+      
+          `}
           onClick={() => onSelect(tile.value)}
+          style={
+            {
+              // Set the CSS variable to the subject selector color. This is used on buttonVariants.ts
+              '--tile-color': 'var(--subject-selector)',
+            } as React.CSSProperties
+          }
         >
           <span className='font-medium'>{tile.label}</span>
         </Button>

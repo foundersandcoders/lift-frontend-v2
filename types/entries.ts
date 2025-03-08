@@ -34,6 +34,7 @@ export interface Category {
 }
 
 export interface Verb {
+  id: string;
   name: string;
   popularity: number;
   categories: string[];

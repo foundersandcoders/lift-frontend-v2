@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import SubjectSelector from '../ui/subject-selector';
-import VerbSelector from '../ui/VerbSelector';
+import SubjectSelector from '../statementWizard/selectors/SubjectSelector';
+import VerbSelector from '../statementWizard/selectors/VerbSelector';
+import { getVerbName } from '../../../utils/verbUtils';
 import {
   Trash2,
   Edit2,
@@ -103,7 +104,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
           {/* Subject */}
           <div
             onClick={() => onPartClick('subject', statement.id)}
-            className='cursor-pointer px-2 py-1 rounded bg-blue-100 hover:bg-blue-200'
+            className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
           >
             {editingPart === 'subject' ? (
               <SubjectSelector
@@ -123,24 +124,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
           {/* Verb */}
           <div
-            className='cursor-pointer px-2 py-1 rounded bg-green-100 hover:bg-green-200'
+            className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
             onClick={() => onPartClick('verb', statement.id)}
           >
             {editingPart === 'verb' ? (
               <VerbSelector
                 onVerbSelect={(verb) =>
-                  onPartUpdate(statement.id, 'verb', verb.name)
+                  onPartUpdate(statement.id, 'verb', verb.id)
                 }
                 onClose={() => onPartClick('verb', '')}
               />
             ) : (
-              <span>{statement.atoms.verb}</span>
+              <span>{getVerbName(statement.atoms.verb)}</span>
             )}
           </div>
           {/* Object */}
           <div
             onClick={() => onPartClick('object', statement.id)}
-            className='cursor-pointer px-2 py-1 rounded bg-yellow-100 hover:bg-yellow-200'
+            className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
           >
             {editingPart === 'object' ? (
               <Input
@@ -211,7 +212,9 @@ const StatementItem: React.FC<StatementItemProps> = ({
             </TooltipContent>
           </Tooltip>
           {/* Construct full sentence from atoms */}
-          <span>{`${statement.atoms.subject} ${statement.atoms.verb} ${statement.atoms.object}`}</span>
+          <span>{`${statement.atoms.subject} ${getVerbName(
+            statement.atoms.verb
+          )} ${statement.atoms.object}`}</span>
         </div>
 
         {/* Right side: resolved icon, actions counter + dropdown */}

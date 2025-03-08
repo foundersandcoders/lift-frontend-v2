@@ -1,8 +1,7 @@
-// src/components/statementWizard/steps/VerbStep.tsx
 import React from 'react';
 import StepContainer from '../StepContainer';
 import SentimentVerbPicker from '../SentimentVerbPicker';
-import nlp from 'compromise';
+import type { Verb } from '../../../../types/entries';
 
 interface VerbStepProps {
   subject: string;
@@ -21,15 +20,9 @@ export const VerbStep: React.FC<VerbStepProps> = ({
     <StepContainer subQuestion={subQuestion}>
       <div className='flex flex-col h-[60vh] p-4 rounded-md'>
         <SentimentVerbPicker
-          selectedVerb={selection}
-          onVerbSelect={(verb) => {
-            // Process verb to present tense and lowercase it
-            const processedVerb = nlp(verb.name)
-              .verbs()
-              .toPresentTense()
-              .out('text')
-              .toLowerCase();
-            onUpdate(processedVerb);
+          selectedVerbId={selection}
+          onVerbSelect={(verb: Verb) => {
+            onUpdate(verb.id);
           }}
         />
       </div>
