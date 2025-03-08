@@ -18,8 +18,7 @@ export type EntriesAction =
   | { type: 'SET_ENTRIES'; payload: Entry[] }
   | { type: 'ADD_ENTRY'; payload: Entry }
   | { type: 'UPDATE_ENTRY'; payload: Entry }
-  | { type: 'DELETE_ENTRY'; payload: string }
-  | { type: 'MARK_ENTRY_SAVED'; payload: string };
+  | { type: 'DELETE_ENTRY'; payload: string };
 
 export const EntriesContext = createContext<EntriesContextType | undefined>(
   undefined

@@ -24,7 +24,7 @@ const VerbGrid: React.FC<VerbGridProps> = ({
     <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 p-4 overflow-auto'>
       {sortedVerbs.map((verb) => {
         const tileColor = getVerbColor(verb, rootCategory);
-        console.log('Verb name:', verb.name, ' SelectedVerb:', selectedVerbId);
+
         const isSelected = verb.id === selectedVerbId;
         return (
           <Button

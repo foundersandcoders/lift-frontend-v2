@@ -19,17 +19,12 @@ const EntriesReducer = (
     case 'SET_ENTRIES':
       return { ...data, entries: action.payload };
     case 'ADD_ENTRY':
-      return {
-        ...data,
-        entries: [...data.entries, { ...action.payload, dirty: true }],
-      };
+      return { ...data, entries: [...data.entries, action.payload] };
     case 'UPDATE_ENTRY':
       return {
         ...data,
         entries: data.entries.map((entry) =>
-          entry.id === action.payload.id
-            ? { ...action.payload, dirty: true }
-            : entry
+          entry.id === action.payload.id ? action.payload : entry
         ),
       };
     case 'DELETE_ENTRY':
@@ -37,15 +32,6 @@ const EntriesReducer = (
         ...data,
         entries: data.entries.filter((entry) => entry.id !== action.payload),
       };
-    case 'MARK_ENTRY_SAVED': {
-      // action.payload is the entry id that has been saved successfully
-      return {
-        ...data,
-        entries: data.entries.map((entry) =>
-          entry.id === action.payload ? { ...entry, dirty: false } : entry
-        ),
-      };
-    }
     default:
       return data;
   }

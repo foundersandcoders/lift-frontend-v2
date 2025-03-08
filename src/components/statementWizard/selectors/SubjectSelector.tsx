@@ -70,15 +70,6 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         {/* Options List */}
         <ul className='max-h-60 overflow-y-auto'>
           {options.map((option) => {
-            // Log each option's value, the current selected value, and the comparison result.
-            console.log(
-              'Rendering option:',
-              option.value,
-              'Current value:',
-              value,
-              'Selected:',
-              option.value === value
-            );
             return (
               <li key={option.value}>
                 <button

@@ -95,21 +95,35 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateEntry(updated);
   };
 
-  const handleSave = (statementId: string) => {
-    // Find the statement from the entries
-    const stmt = entries.find((s) => s.id === statementId);
-    if (!stmt) return;
+  // const handleSave = (statementId: string) => {
+  //   // Find the statement from the entries
+  //   const stmt = entries.find((s) => s.id === statementId);
+  //   if (!stmt) return;
 
-    // Call the API to persist the updated statement
-    updateEntry(stmt)
-      .then(() => {
-        console.log(`Statement ${statementId} saved successfully.`);
-        // Optionally, show a success message or update local state further.
-      })
-      .catch((error) => {
-        console.error(`Error saving statement ${statementId}:`, error);
-      });
-  };
+  //   // Call the API to persist the updated statement
+  //   updateEntry(stmt)
+  //     .then(() => {
+  //       console.log(`Statement ${statementId} saved successfully.`);
+  //       // Optionally, show a success message or update local state further.
+  //     })
+  //     .catch((error) => {
+  //       console.error(`Error saving statement ${statementId}:`, error);
+  //     });
+  // };
+  // Handler for when a statement's local save button is clicked.
+  async function handleLocalSave(updatedEntry: Entry) {
+    try {
+      // Call the backend API with the updated entry.
+      await updateEntry(updatedEntry);
+      // Update the context with the new entry.
+      setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
+      // Exit editing mode for this statement.
+      setEditingStatementId(null);
+    } catch (error) {
+      console.error('Error saving statement to DB:', error);
+      // Optionally display an error message to the user.
+    }
+  }
 
   const handlePresetQuestionSelect = (presetQuestion: SetQuestion) => {
     setSelectedPresetQuestion(presetQuestion);
@@ -164,19 +178,19 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     }
   };
 
-  const handlePartUpdate = (
-    statementId: string,
-    part: 'subject' | 'verb' | 'object',
-    value: string
-  ) => {
-    const updatedEntries = entries.map((entry) =>
-      entry.id === statementId
-        ? { ...entry, atoms: { ...entry.atoms, [part]: value } }
-        : entry
-    );
-    // Update only context
-    setData({ type: 'SET_ENTRIES', payload: updatedEntries });
-  };
+  // const handlePartUpdate = (
+  //   statementId: string,
+  //   part: 'subject' | 'verb' | 'object',
+  //   value: string
+  // ) => {
+  //   const updatedEntries = entries.map((entry) =>
+  //     entry.id === statementId
+  //       ? { ...entry, atoms: { ...entry.atoms, [part]: value } }
+  //       : entry
+  //   );
+  //   // Update only context
+  //   setData({ type: 'SET_ENTRIES', payload: updatedEntries });
+  // };
 
   const handleResetClick = (statementId: string) => {
     const statementToReset = entries.find((s) => s.id === statementId);
@@ -271,8 +285,11 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                   isEditing={statement.id === editingStatementId}
                   editingPart={null}
                   onPartClick={handlePartClick}
-                  onPartUpdate={handlePartUpdate}
-                  onSave={handleSave}
+                  onLocalSave={handleLocalSave}
+                  onCancel={() => {
+                    // Exit edit mode for this statement.
+                    setEditingStatementId(null);
+                  }}
                   onDelete={handleDeleteClick}
                   onTogglePublic={handleTogglePublic}
                   onEditClick={handleEditClick}
@@ -336,7 +353,6 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           username={username}
           onUpdate={(updatedStatement) => {
             setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
-            updateEntry(updatedStatement);
           }}
           onClose={() => setEditModalData(null)}
         />

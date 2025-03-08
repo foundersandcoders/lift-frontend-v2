@@ -12,7 +12,6 @@ import {
   RotateCcw,
   CheckCircle2,
   XCircle,
-  // Mail,
   MailPlus,
   MailX,
 } from 'lucide-react';
@@ -35,12 +34,8 @@ export interface StatementItemProps {
     part: 'subject' | 'verb' | 'object',
     statementId: string
   ) => void;
-  onPartUpdate: (
-    statementId: string,
-    part: 'subject' | 'verb' | 'object',
-    value: string
-  ) => void;
-  onSave: (statementId: string) => void;
+  // When the green save icon is clicked, the updated entry (draft) is passed back
+  onLocalSave: (updatedEntry: Entry) => void;
   onDelete: (statementId: string) => void;
   onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
@@ -49,6 +44,7 @@ export interface StatementItemProps {
     actionId: string,
     updated: { text: string; dueDate?: string }
   ) => void;
+  onCancel?: (statementId: string) => void;
   onDeleteAction?: (statementId: string, actionId: string) => void;
   onAddAction?: (
     statementId: string,
@@ -64,11 +60,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
   isEditing,
   editingPart,
   onPartClick,
-  onPartUpdate,
-  onSave,
+  onLocalSave,
   onDelete,
   onTogglePublic,
   onEditClick,
+  onCancel,
   onEditAction = () => {},
   onDeleteAction = () => {},
   onAddAction = () => {},
@@ -79,11 +75,30 @@ const StatementItem: React.FC<StatementItemProps> = ({
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
   const objectInputRef = useRef<HTMLInputElement>(null);
 
+  // Local "draft" state to hold unsaved modifications.
+  const [draft, setDraft] = React.useState<Entry>(statement);
+
+  // Whenever the statement prop changes (or when not editing), re-sync the draft.
+  useEffect(() => {
+    setDraft(statement);
+  }, [statement]);
+
   useEffect(() => {
     if (editingPart === 'object' && objectInputRef.current) {
       objectInputRef.current.focus();
     }
   }, [editingPart]);
+
+  // Local function to update a specific part in the draft.
+  const updatePart = (part: 'subject' | 'verb' | 'object', value: string) => {
+    setDraft((prev) => ({
+      ...prev,
+      atoms: {
+        ...prev.atoms,
+        [part]: value,
+      },
+    }));
+  };
 
   if (isEditing) {
     return (
@@ -93,88 +108,101 @@ const StatementItem: React.FC<StatementItemProps> = ({
           variant='ghost'
           size='sm'
           onClick={() => {
-            console.log('Privacy toggle clicked for statement:', statement.id);
-            onTogglePublic(statement.id);
+            console.log('Privacy toggle clicked for statement:', draft.id);
+            onTogglePublic(draft.id);
           }}
           className={`rounded-md px-3 py-2 transition-colors ${
-            statement.isPublic
+            draft.isPublic
               ? 'bg-green-100 text-green-700 hover:bg-green-200'
               : 'bg-red-100 text-red-700 hover:bg-red-200'
           }`}
         >
-          {statement.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
+          {draft.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </Button>
 
         <div className='flex flex-1 items-center space-x-2'>
           {/* Subject */}
           <div
-            onClick={() => onPartClick('subject', statement.id)}
+            onClick={() => onPartClick('subject', draft.id)}
             className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
           >
             {editingPart === 'subject' ? (
               <SubjectSelector
-                value={statement.atoms.subject}
-                onChange={(value) =>
-                  onPartUpdate(statement.id, 'subject', value)
-                }
+                value={draft.atoms.subject}
+                onChange={(value) => updatePart('subject', value)}
                 onAddDescriptor={() => {}}
                 username={
-                  statement.atoms.subject.split("'s")[0] ||
-                  statement.atoms.subject
+                  draft.atoms.subject.split("'s")[0] || draft.atoms.subject
                 }
               />
             ) : (
-              statement.atoms.subject
+              draft.atoms.subject
             )}
           </div>
           {/* Verb */}
           <div
             className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
-            onClick={() => onPartClick('verb', statement.id)}
+            onClick={() => onPartClick('verb', draft.id)}
           >
             {editingPart === 'verb' ? (
               <VerbSelector
-                onVerbSelect={(verb) =>
-                  onPartUpdate(statement.id, 'verb', verb.id)
-                }
+                onVerbSelect={(verb) => updatePart('verb', verb.id)}
                 onClose={() => onPartClick('verb', '')}
               />
             ) : (
-              <span>{getVerbName(statement.atoms.verb)}</span>
+              <span>{getVerbName(draft.atoms.verb)}</span>
             )}
           </div>
           {/* Object */}
           <div
-            onClick={() => onPartClick('object', statement.id)}
+            onClick={() => onPartClick('object', draft.id)}
             className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
           >
             {editingPart === 'object' ? (
               <Input
                 ref={objectInputRef}
-                value={statement.atoms.object}
-                onChange={(e) =>
-                  onPartUpdate(statement.id, 'object', e.target.value)
-                }
+                value={draft.atoms.object}
+                onChange={(e) => updatePart('object', e.target.value)}
                 className='w-full'
               />
             ) : (
-              statement.atoms.object
+              draft.atoms.object
             )}
           </div>
         </div>
         <div className='flex items-center space-x-2 ml-auto'>
+          {/* Final Save button (green icon):
+              This commits the local draft to the database via onLocalSave */}
           <Button
             variant='ghost'
             size='sm'
-            onClick={() => onSave(statement.id)}
+            onClick={() => {
+              onLocalSave(draft);
+            }}
             className='text-green-500 hover:text-green-700'
           >
             <Save size={16} />
           </Button>
+          {/* Cancel button: resets draft and exits edit mode */}
           <Button
             variant='ghost'
             size='sm'
-            onClick={() => onDelete(statement.id)}
+            onClick={() => {
+              // Reset local draft to original statement passed from parent.
+              setDraft(statement);
+              // Call the onCancel prop if provided.
+              if (onCancel) {
+                onCancel(statement.id);
+              }
+            }}
+            className='text-gray-500 hover:text-gray-700'
+          >
+            Cancel
+          </Button>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={() => onDelete(draft.id)}
             className='text-red-500 hover:text-red-700'
           >
             <Trash2 size={16} />
@@ -184,7 +212,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
     );
   }
 
-  // Static view when not in editing mode with grouped Edit and Delete
+  // Static view when not in editing mode.
   return (
     <div
       className={`bg-white border rounded-md p-3 space-y-2 shadow-sm ${
@@ -202,7 +230,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   statement.isPublic ? 'text-green-500' : 'text-red-500'
                 }`}
               >
-                {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
                 {statement.isPublic ? (
                   <MailPlus size={16} />
                 ) : (
@@ -216,7 +243,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 : 'This statement is private'}
             </TooltipContent>
           </Tooltip>
-          {/* Construct full sentence from atoms */}
           <span>{`${statement.atoms.subject} ${getVerbName(
             statement.atoms.verb
           )} ${statement.atoms.object}`}</span>
@@ -224,7 +250,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
         {/* Right side: resolved icon, actions counter + dropdown */}
         <div className='flex items-center space-x-4'>
-          {/* Resolved icon */}
           {statement.isResolved && (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -237,7 +262,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
               </TooltipContent>
             </Tooltip>
           )}
-          {/* Actions counter */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
             className='cursor-pointer'
@@ -265,7 +289,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
-              {/* Toggle Resolved */}
               <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
                 {statement.isResolved ? (
                   <>
@@ -279,7 +302,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   </>
                 )}
               </DropdownMenuItem>
-              {/* Reset option if provided */}
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
                   <RotateCcw className='mr-2 h-4 w-4' />
@@ -291,7 +313,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </div>
       </div>
 
-      {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
         <div className='mt-2'>
           <ActionLine
