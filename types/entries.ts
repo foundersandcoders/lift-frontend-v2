@@ -22,6 +22,7 @@ export interface Entry {
   category: string;
   presetId?: string;
   isResolved?: boolean;
+  dirty?: boolean; // Indicates if the entry has been edited but not saved
 }
 
 export interface Category {

@@ -92,14 +92,19 @@ const StatementItem: React.FC<StatementItemProps> = ({
         <Button
           variant='ghost'
           size='sm'
-          onClick={() => onTogglePublic(statement.id)}
-          className={`${
-            statement.isPublic ? ' text-green-500' : ' text-red-700'
-          } hover:bg-opacity-75 rounded-md px-3 py-2`}
+          onClick={() => {
+            console.log('Privacy toggle clicked for statement:', statement.id);
+            onTogglePublic(statement.id);
+          }}
+          className={`rounded-md px-3 py-2 transition-colors ${
+            statement.isPublic
+              ? 'bg-green-100 text-green-700 hover:bg-green-200'
+              : 'bg-red-100 text-red-700 hover:bg-red-200'
+          }`}
         >
-          {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
           {statement.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </Button>
+
         <div className='flex flex-1 items-center space-x-2'>
           {/* Subject */}
           <div

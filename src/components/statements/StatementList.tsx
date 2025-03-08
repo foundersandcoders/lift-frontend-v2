@@ -87,6 +87,30 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateEntry(updatedStatement);
   };
 
+  const handleTogglePublic = (statementId: string) => {
+    const stmt = entries.find((s) => s.id === statementId);
+    if (!stmt) return;
+    const updated = { ...stmt, isPublic: !stmt.isPublic };
+    setData({ type: 'UPDATE_ENTRY', payload: updated });
+    updateEntry(updated);
+  };
+
+  const handleSave = (statementId: string) => {
+    // Find the statement from the entries
+    const stmt = entries.find((s) => s.id === statementId);
+    if (!stmt) return;
+
+    // Call the API to persist the updated statement
+    updateEntry(stmt)
+      .then(() => {
+        console.log(`Statement ${statementId} saved successfully.`);
+        // Optionally, show a success message or update local state further.
+      })
+      .catch((error) => {
+        console.error(`Error saving statement ${statementId}:`, error);
+      });
+  };
+
   const handlePresetQuestionSelect = (presetQuestion: SetQuestion) => {
     setSelectedPresetQuestion(presetQuestion);
     setIsWizardOpen(true);
@@ -138,6 +162,20 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     if (statementToEdit) {
       setEditModalData({ statement: statementToEdit, editPart: part });
     }
+  };
+
+  const handlePartUpdate = (
+    statementId: string,
+    part: 'subject' | 'verb' | 'object',
+    value: string
+  ) => {
+    const updatedEntries = entries.map((entry) =>
+      entry.id === statementId
+        ? { ...entry, atoms: { ...entry.atoms, [part]: value } }
+        : entry
+    );
+    // Update only context
+    setData({ type: 'SET_ENTRIES', payload: updatedEntries });
   };
 
   const handleResetClick = (statementId: string) => {
@@ -233,10 +271,10 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                   isEditing={statement.id === editingStatementId}
                   editingPart={null}
                   onPartClick={handlePartClick}
-                  onPartUpdate={() => {}}
-                  onSave={() => {}}
+                  onPartUpdate={handlePartUpdate}
+                  onSave={handleSave}
                   onDelete={handleDeleteClick}
-                  onTogglePublic={() => {}}
+                  onTogglePublic={handleTogglePublic}
                   onEditClick={handleEditClick}
                   onAddAction={handleAddAction}
                   onEditAction={handleEditAction}
