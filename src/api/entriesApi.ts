@@ -25,7 +25,7 @@ export async function postNewEntry(entry: Entry): Promise<void> {
 
 export async function updateEntry(entry: Entry): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/updateEntry`, {
+    const response = await fetch(`${API_URL}/edit/beacon`, {
       method: 'PUT', // or PATCH, depending on your backend implementation
       headers: {
         'Content-Type': 'application/json',
