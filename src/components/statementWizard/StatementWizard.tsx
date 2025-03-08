@@ -1,24 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import nlp from 'compromise';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+} from '../ui/dialog.tsx';
+import { Button } from '../ui/button.tsx';
+import { Input } from '../ui/input.tsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEntries } from '../../hooks/useEntries';
-import { postNewEntry } from '../../api/entriesApi';
-import type { Entry, SetQuestion, Step } from '../../../types/entries';
-import { SubjectTiles } from './SubjectTiles';
-import SentimentVerbPicker from './SentimentVerbPicker';
-import { PrivacySelector } from './PrivacySelector';
+import { useEntries } from '../../hooks/useEntries.ts';
+import { postNewEntry } from '../../api/entriesApi.ts';
+import type { Entry, SetQuestion, Step } from '../../../types/entries.ts';
+import { SubjectTiles } from './SubjectTiles.tsx';
+import SentimentVerbPicker from './SentimentVerbPicker.tsx';
+import { PrivacySelector } from './PrivacySelector.tsx';
 import statementsCategories from '../../../data/statementsCategories.json' with { type: 'json' };
-import StepContainer from './StepContainer';
-import nlp from 'compromise';
+import StepContainer from './StepContainer.tsx';
 
 interface StatementWizardProps {
   username: string;
@@ -33,7 +33,9 @@ const defaultQuestions = (username: string, selection: Entry) => ({
   verb: `What's happening with ${selection.atoms.subject}? How do they feel or what do they experience?`,
   object: `In what way does ${
     selection.atoms.subject
-  } ${selection.atoms.verb.toLowerCase()}? What's the context?`,
+  } ${
+    selection.atoms.verb.toLowerCase()
+  }? What's the context?`,
   category: `You can set a category for your statement`,
   privacy: `Who can see this statement?`,
 });
