@@ -11,14 +11,16 @@ import {
 import { Button } from '../ui/button.tsx';
 import { Input } from '../ui/input.tsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEntries } from '../../hooks/useEntries.ts';
-import { postNewEntry } from '../../api/entriesApi.ts';
-import type { Entry, SetQuestion, Step } from '../../../types/entries.ts';
-import { SubjectTiles } from './SubjectTiles.tsx';
-import SentimentVerbPicker from './SentimentVerbPicker.tsx';
-import { PrivacySelector } from './PrivacySelector.tsx';
-import statementsCategories from '../../../data/statementsCategories.json' with { type: 'json' };
-import StepContainer from './StepContainer.tsx';
+import { useEntries } from '../../hooks/useEntries';
+import { postNewEntry } from '../../api/entriesApi';
+import type { Entry, SetQuestion, Step } from '../../../types/entries';
+import { SubjectTiles } from './SubjectTiles';
+import SentimentVerbPicker from './SentimentVerbPicker';
+import { PrivacySelector } from './PrivacySelector';
+import statementsCategories from '../../../data/statementsCategories.json';
+import StepContainer from './StepContainer';
+import StatementPreview from './StatementPreview';
+import nlp from 'compromise';
 
 interface StatementWizardProps {
   username: string;
@@ -92,7 +94,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       return 'Add additional statement if needed';
     }
     return (
-      presetQuestion?.steps?.[currentStep]?.question ||
+      // presetQuestion?.steps?.[currentStep]?.question ||
       defaultQuestions(username, selection)[currentStep]
     );
   };
@@ -396,6 +398,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             {renderCurrentStep()}
           </motion.div>
         </AnimatePresence>
+        {/* Statement preview shows the statement being built */}
+        <StatementPreview selection={selection} />
       </DialogContent>
     </Dialog>
   );

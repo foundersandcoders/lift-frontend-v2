@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import StatementList from './statements/StatementList';
 import { useEntries } from '../hooks/useEntries';
 import { Button } from './ui/button';
@@ -10,9 +11,16 @@ import ShareEmailModal from './ShareEmailModal'; // Import the new modal
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
-  const { username } = data;
+  const { username, managerEmail, entries } = data;
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+
+  // Determine if email button should be disabled:
+  const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
+  const publicStatementsCount = entries.filter(
+    (entry) => entry.isPublic && !entry.isResolved
+  ).length;
+  const isEmailDisabled = !hasManagerEmail || publicStatementsCount === 0;
 
   // Handler to open the wizard for creating a new statement from scratch
   const handleNewStatement = () => {
@@ -29,21 +37,31 @@ const MainPage: React.FC = () => {
       <h1 className='text-3xl font-bold mb-8 text-center'>
         Statement builder for {username}
       </h1>
-
       <div className='container mx-auto px-4'>
         <StatementList username={username} />
       </div>
-      
       {/* Floating Buttons Container */}
       <div className='fixed bottom-8 right-8 flex items-center space-x-4'>
-        {/* Email Button on the left */}
-        <Button
-          onClick={handleShareEmail}
-          variant='outline'
-          className='rounded-full p-3 shadow-lg bg-white hover:bg-gray-100'
-        >
-          <Mail className='w-6 h-6 text-brand-pink' />
-        </Button>
+        {/* Email Button: Disabled if there's no manager email or no public statements */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span>
+              <Button
+                onClick={handleShareEmail}
+                variant='outline'
+                className='rounded-full p-3 shadow-lg bg-white hover:bg-gray-100'
+                disabled={isEmailDisabled}
+              >
+                <Mail className='w-6 h-6 text-brand-pink' />
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className='bg-gray-800 text-white p-2 rounded'>
+            {isEmailDisabled
+              ? "Please add your line manager's email and ensure you have public statements to share."
+              : 'Send email to your line manager with your public statements.'}
+          </TooltipContent>
+        </Tooltip>
         {/* Create Your Own Statement Button */}
         <Button
           onClick={handleNewStatement}

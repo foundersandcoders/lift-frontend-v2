@@ -13,9 +13,14 @@ import { QuestionsProvider } from './context/QuestionsProvider';
 const AppContent: React.FC = () => {
   const { data, setData } = useEntries();
 
-  const handleLoginSubmit = (username: string, managerEmail: string) => {
+  const handleLoginSubmit = (
+    username: string,
+    managerName: string,
+    managerEmail: string
+  ) => {
     // Dispatch an action to update the username in context.
     setData({ type: 'SET_USERNAME', payload: username });
+    setData({ type: 'SET_MANAGER_NAME', payload: managerName });
     setData({ type: 'SET_MANAGER_EMAIL', payload: managerEmail });
   };
 
@@ -23,7 +28,11 @@ const AppContent: React.FC = () => {
     // MainPage and Header receives the username from context.
     <>
       <Header />
-      { data.username ? (<MainPage />) : (<LoginPage onSubmit={handleLoginSubmit} />) }
+      {data.username ? (
+        <MainPage />
+      ) : (
+        <LoginPage onSubmit={handleLoginSubmit} />
+      )}
     </>
   );
 };
