@@ -8,11 +8,11 @@ interface ComplementStepProps {
 
 export const ComplementStep: React.FC<ComplementStepProps> = ({
   currentStep = 5,
-  totalSteps = 5
+  totalSteps = 5,
 }) => {
   const subQuestion = 'Add additional statement if needed';
   return (
-    <StepContainer 
+    <StepContainer
       subQuestion={subQuestion}
       currentStep={currentStep}
       totalSteps={totalSteps}
@@ -20,7 +20,7 @@ export const ComplementStep: React.FC<ComplementStepProps> = ({
       <div className='text-center p-4'>
         <p className='text-lg'>
           If you feel your statement didn't fully answer the question, you can
-          later add custom statements to complement it.
+          later create your own statements to complement it.
         </p>
       </div>
     </StepContainer>

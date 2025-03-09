@@ -14,6 +14,13 @@
         "icon": "🌟",
         "children": [
           {
+            "id": "communication",
+            "name": "Communication",
+            "displayName": "Communication",
+            "color": "#007BFF",
+            "icon": "💬"
+          },
+          {
             "id": "support_assistance",
             "name": "Support & Assistance",
             "displayName": "Support & Assistance",
@@ -104,6 +111,20 @@
                 "icon": "🔗"
               }
             ]
+          },
+          {
+            "id": "leadership",
+            "name": "Leadership",
+            "displayName": "Leadership",
+            "color": "#8A2BE2",
+            "icon": "👑"
+          },
+          {
+            "id": "achievement",
+            "name": "Achievement",
+            "displayName": "Achievement",
+            "color": "#F1C40F",
+            "icon": "🏆"
           }
         ]
       },

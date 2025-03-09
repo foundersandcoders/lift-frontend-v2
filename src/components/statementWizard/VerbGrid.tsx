@@ -21,7 +21,7 @@ const VerbGrid: React.FC<VerbGridProps> = ({
 }) => {
   const sortedVerbs = [...verbs].sort((a, b) => a.name.localeCompare(b.name));
   return (
-    <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 p-4 overflow-auto'>
+    <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 p-4 overflow-auto border'>
       {sortedVerbs.map((verb) => {
         const tileColor = getVerbColor(verb, rootCategory);
 
@@ -30,7 +30,7 @@ const VerbGrid: React.FC<VerbGridProps> = ({
           <Button
             key={verb.name}
             onClick={() => onVerbSelect(verb)}
-            variant={'outline'}
+            variant={'outlineVerbs'}
             selected={isSelected}
             className='flex items-center justify-center p-4 rounded-lg shadow-md'
             style={
