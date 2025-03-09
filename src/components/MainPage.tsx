@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Plus, Mail } from 'lucide-react';
 import StatementWizard from './statementWizard/StatementWizard';
 import ShareEmailModal from './ShareEmailModal'; // Import the new modal
+import TestStatementButton from './test/TestButton';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
@@ -71,6 +72,7 @@ const MainPage: React.FC = () => {
           <Plus className='w-6 h-6' />
           <span className='text-lg'>Create your own statement</span>
         </Button>
+        <TestStatementButton />
       </div>
 
       {/* Conditionally render the wizard modal */}

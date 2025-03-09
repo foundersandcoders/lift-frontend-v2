@@ -62,6 +62,9 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     statement: Entry;
     editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
   } | null>(null);
+  
+  // Keep a backup of the original entries when entering edit mode
+  const [originalEntries, setOriginalEntries] = useState<{[id: string]: Entry}>({});
 
   const handleToggleResolved = (statementId: string) => {
     const stmt = entries.find((s) => s.id === statementId);
@@ -92,8 +95,17 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     try {
       // Call the backend API with the updated entry.
       await updateEntry(updatedEntry);
+      
       // Update the context with the new entry.
       setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
+      
+      // Remove from originalEntries since we've saved
+      setOriginalEntries(prev => {
+        const newEntries = {...prev};
+        delete newEntries[updatedEntry.id];
+        return newEntries;
+      });
+      
       // Exit editing mode for this statement.
       setEditingStatementId(null);
     } catch (error) {
@@ -141,6 +153,16 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
 
   // Single edit option: when user clicks "Edit" in the dropdown
   const handleEditClick = (statementId: string) => {
+    // Store the original entry for possible reversion later
+    const entryToEdit = entries.find(e => e.id === statementId);
+    if (entryToEdit) {
+      setOriginalEntries(prev => ({
+        ...prev,
+        [statementId]: JSON.parse(JSON.stringify(entryToEdit))
+      }));
+    }
+    
+    // Enable edit mode
     setEditingStatementId(statementId);
   };
 
@@ -264,7 +286,23 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                   onPartClick={handlePartClick}
                   onLocalSave={handleLocalSave}
                   onCancel={() => {
-                    // Exit edit mode for this statement.
+                    // If we have the original, restore it
+                    if (originalEntries[statement.id]) {
+                      // Restore the original entry from our backup
+                      setData({
+                        type: 'UPDATE_ENTRY',
+                        payload: originalEntries[statement.id]
+                      });
+                      
+                      // Remove from originalEntries
+                      setOriginalEntries(prev => {
+                        const newEntries = {...prev};
+                        delete newEntries[statement.id];
+                        return newEntries;
+                      });
+                    }
+                    
+                    // Exit edit mode
                     setEditingStatementId(null);
                   }}
                   onDelete={handleDeleteClick}
@@ -328,7 +366,17 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           editPart={editModalData.editPart}
           username={username}
           onUpdate={(updatedStatement) => {
-            setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+            // If we're in editing mode for this statement:
+            if (editingStatementId === updatedStatement.id) {
+              // Only update the UI representation without saving to backend
+              // This allows the save button to detect changes and become active
+              setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+            } else {
+              // If we're not in edit mode, save directly when modal is closed
+              setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+              // Also update backend
+              updateEntry(updatedStatement);
+            }
           }}
           onClose={() => setEditModalData(null)}
         />

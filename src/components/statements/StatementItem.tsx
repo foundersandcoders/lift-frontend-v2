@@ -1,8 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { Input } from '../ui/input';
+import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
-import SubjectSelector from '../statementWizard/selectors/SubjectSelector';
-import VerbSelector from '../statementWizard/selectors/VerbSelector';
 import { getVerbName } from '../../../utils/verbUtils';
 import {
   Trash2,
@@ -58,7 +55,6 @@ export interface StatementItemProps {
 const StatementItem: React.FC<StatementItemProps> = ({
   statement,
   isEditing,
-  editingPart,
   onPartClick,
   onLocalSave,
   onDelete,
@@ -72,41 +68,76 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onToggleActionResolved = () => {},
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
-  const objectInputRef = useRef<HTMLInputElement>(null);
 
   // Local "draft" state to hold unsaved modifications.
   const [draft, setDraft] = React.useState<Entry>(statement);
 
-  // Local state to track if we are currently saving the draft. Will control the save button.
+  // initialDraft freezes the original values when editing begins.
+  const [initialDraft, setInitialDraft] = React.useState<Entry>(statement);
+
+  // Local state to track if we are currently saving the draft.
   const [isSaving, setIsSaving] = React.useState(false);
-  // Compute if there are any changes compared to the original statement prop.
-  const hasChanged =
-    draft.atoms.subject !== statement.atoms.subject ||
-    draft.atoms.verb !== statement.atoms.verb ||
-    draft.atoms.object !== statement.atoms.object ||
-    draft.isPublic !== statement.isPublic;
 
-  // Whenever the statement prop changes (or when not editing), re-sync the draft.
+  // First useEffect: Capture changes in edit mode status
   useEffect(() => {
-    setDraft(statement);
-  }, [statement]);
+    // Create a deep copy of the statement to avoid reference issues
+    const statementCopy = JSON.parse(JSON.stringify(statement));
 
-  useEffect(() => {
-    if (editingPart === 'object' && objectInputRef.current) {
-      objectInputRef.current.focus();
+    if (isEditing) {
+      // Only capture initial state when entering edit mode
+      // This will be our reference point for comparison
+      setInitialDraft(statementCopy);
+    } else {
+      // Reset both states when exiting edit mode
+      setInitialDraft(statementCopy);
+      setDraft(statementCopy);
     }
-  }, [editingPart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]); // Intentionally excluding statement to avoid resetting initialDraft
 
-  // Local function to update a specific part in the draft.
+  // Second useEffect: Always keep draft updated with latest statement to reflect modal changes
+  useEffect(() => {
+    if (isEditing) {
+      // When statement changes while in edit mode, update the draft
+      // This happens when the modal updates the statement
+      setDraft(JSON.parse(JSON.stringify(statement)));
+    }
+  }, [
+    statement,
+    // We're specifically tracking these properties to ensure we detect changes
+    // from the modal even if the statement reference doesn't change
+    statement.atoms.subject,
+    statement.atoms.verb,
+    statement.atoms.object,
+    statement.isPublic,
+    isEditing,
+  ]);
+
+  // Uncomment and use this if you need to update parts directly instead of using the modal
+  /*
   const updatePart = (part: 'subject' | 'verb' | 'object', value: string) => {
-    setDraft((prev) => ({
-      ...prev,
-      atoms: {
-        ...prev.atoms,
-        [part]: value,
-      },
-    }));
+    // Create a new draft object to ensure React detects the change
+    setDraft((prevDraft) => {
+      const newDraft = JSON.parse(JSON.stringify(prevDraft));
+      newDraft.atoms[part] = value;
+      return newDraft;
+    });
   };
+  */
+
+  // Compute if draft has changed from the initial state
+  const hasSubjectChanged = draft.atoms.subject !== initialDraft.atoms.subject;
+  const hasVerbChanged = draft.atoms.verb !== initialDraft.atoms.verb;
+  const hasObjectChanged = draft.atoms.object !== initialDraft.atoms.object;
+  const hasPrivacyChanged = draft.isPublic !== initialDraft.isPublic;
+
+  const hasChanged =
+    hasSubjectChanged ||
+    hasVerbChanged ||
+    hasObjectChanged ||
+    hasPrivacyChanged;
+
+  // Enable save button when any part of the statement has been changed
 
   if (isEditing) {
     return (
@@ -116,11 +147,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
           variant='ghost'
           size='sm'
           onClick={() => {
-            console.log('Privacy toggle clicked for statement:', draft.id);
-            setDraft((prev) => ({
-              ...prev,
-              isPublic: !prev.isPublic,
-            }));
+            // Create a new draft object to ensure React detects the change
+            setDraft((prevDraft) => {
+              const newDraft = JSON.parse(JSON.stringify(prevDraft));
+              newDraft.isPublic = !prevDraft.isPublic;
+              return newDraft;
+            });
           }}
           className={`rounded-md px-3 py-2 transition-colors ${
             draft.isPublic
@@ -134,55 +166,37 @@ const StatementItem: React.FC<StatementItemProps> = ({
         <div className='flex flex-1 items-center space-x-2'>
           {/* Subject */}
           <div
-            onClick={() => onPartClick('subject', draft.id)}
+            onClick={() => {
+              // Just call onPartClick to open the modal, and don't try to edit inline
+              onPartClick('subject', draft.id);
+            }}
             className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
           >
-            {editingPart === 'subject' ? (
-              <SubjectSelector
-                value={draft.atoms.subject}
-                onChange={(value) => updatePart('subject', value)}
-                onAddDescriptor={() => {}}
-                username={
-                  draft.atoms.subject.split("'s")[0] || draft.atoms.subject
-                }
-              />
-            ) : (
-              draft.atoms.subject
-            )}
+            {draft.atoms.subject}
           </div>
           {/* Verb */}
           <div
+            onClick={() => {
+              // Just call onPartClick to open the modal, and don't try to edit inline
+              onPartClick('verb', draft.id);
+            }}
             className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
-            onClick={() => onPartClick('verb', draft.id)}
           >
-            {editingPart === 'verb' ? (
-              <VerbSelector
-                onVerbSelect={(verb) => updatePart('verb', verb.id)}
-                onClose={() => onPartClick('verb', '')}
-              />
-            ) : (
-              <span>{getVerbName(draft.atoms.verb)}</span>
-            )}
+            <span>{getVerbName(draft.atoms.verb)}</span>
           </div>
           {/* Object */}
           <div
-            onClick={() => onPartClick('object', draft.id)}
+            onClick={() => {
+              // Just call onPartClick to open the modal, and don't try to edit inline
+              onPartClick('object', draft.id);
+            }}
             className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
           >
-            {editingPart === 'object' ? (
-              <Input
-                ref={objectInputRef}
-                value={draft.atoms.object}
-                onChange={(e) => updatePart('object', e.target.value)}
-                className='w-full'
-              />
-            ) : (
-              draft.atoms.object
-            )}
+            {draft.atoms.object}
           </div>
         </div>
         <div className='flex items-center space-x-2 ml-auto'>
-          {/* This button needs a span wrapper to always show the tooltip */}
+          {/* Save button with tooltip */}
           <Tooltip>
             <TooltipTrigger asChild>
               <span className='inline-block'>
@@ -195,7 +209,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                     setIsSaving(false);
                   }}
                   disabled={!hasChanged || isSaving}
-                  className='text-green-500 hover:text-green-700 px-2'
+                  className='text-green-500 hover:text-green-700 px-4 py-2'
                 >
                   <Save size={16} />
                 </Button>
@@ -206,35 +220,42 @@ const StatementItem: React.FC<StatementItemProps> = ({
             </TooltipContent>
           </Tooltip>
 
+          {/* Cancel button with PenOff icon and tooltip */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => {
-                  setDraft(statement);
-                  if (onCancel) onCancel(statement.id);
-                }}
-                className='text-red-500 hover:text-red-700 px-2'
-              >
-                <PenOff size={16} />
-              </Button>
+              <span className='inline-block'>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={() => {
+                    // Deep clone to avoid reference issues
+                    setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                    if (onCancel) onCancel(statement.id);
+                  }}
+                  className='text-red-500 hover:text-red-700 px-4 py-2'
+                >
+                  <PenOff size={16} />
+                </Button>
+              </span>
             </TooltipTrigger>
             <TooltipContent className='p-2 bg-black text-white rounded'>
               Cancel editing
             </TooltipContent>
           </Tooltip>
 
+          {/* Delete button with tooltip */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => onDelete(draft.id)}
-                className='text-red-500 hover:text-red-700 px-2'
-              >
-                <Trash2 size={16} />
-              </Button>
+              <span className='inline-block'>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={() => onDelete(draft.id)}
+                  className='text-red-500 hover:text-red-700 px-4 py-2'
+                >
+                  <Trash2 size={16} />
+                </Button>
+              </span>
             </TooltipTrigger>
             <TooltipContent className='p-2 bg-black text-white rounded'>
               Delete statement
@@ -252,9 +273,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
         statement.isResolved ? 'border-green-500' : 'border-gray-200'
       }`}
     >
-      {/* Top row: statement, actions counter, etc. */}
       <div className='flex items-center justify-between'>
-        {/* Left side: privacy icon + full statement text */}
         <div className='flex items-center space-x-2'>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -280,8 +299,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
             statement.atoms.verb
           )} ${statement.atoms.object}`}</span>
         </div>
-
-        {/* Right side: resolved icon, actions counter + dropdown */}
         <div className='flex items-center space-x-4'>
           {statement.isResolved && (
             <Tooltip>

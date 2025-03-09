@@ -65,6 +65,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
     } else {
       updatedStatement = statement;
     }
+    // Send the updated statement to the parent via onUpdate callback
     onUpdate(updatedStatement);
     onClose();
   };
