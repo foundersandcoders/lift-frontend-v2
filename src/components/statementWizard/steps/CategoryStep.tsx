@@ -7,11 +7,15 @@ import statementsCategories from '../../../../data/statementsCategories.json';
 interface CategoryStepProps {
   selection: string;
   onUpdate: (val: string) => void;
+  currentStep?: number;
+  totalSteps?: number;
 }
 
 export const CategoryStep: React.FC<CategoryStepProps> = ({
   selection,
   onUpdate,
+  currentStep = 4,
+  totalSteps = 5,
 }) => {
   const subQuestion = `You can set a category for your statement`;
   const categories = statementsCategories.categories || [];
@@ -21,7 +25,12 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
     selection.toLowerCase() === 'uncategorized';
 
   return (
-    <StepContainer subQuestion={subQuestion} showBack>
+    <StepContainer 
+      subQuestion={subQuestion} 
+      showBack
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+    >
       <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
         {categories.map((cat: { id: string; name: string }) => (
           <Button

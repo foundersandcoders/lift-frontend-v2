@@ -46,7 +46,7 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {headerTitle && (
-        <div className='bg-brand-pink p-4 flex items-center justify-between sm:rounded-t-lg'>
+        <div className='bg-brand-pink p-2 flex items-center justify-between sm:rounded-t-lg'>
           <DialogPrimitive.Title className='text-xl font-semibold text-white'>
             {headerTitle}
           </DialogPrimitive.Title>

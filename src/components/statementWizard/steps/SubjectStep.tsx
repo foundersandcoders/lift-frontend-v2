@@ -8,6 +8,8 @@ interface SubjectStepProps {
   presetQuestion?: SetQuestion;
   selection: string;
   onUpdate: (val: string) => void;
+  currentStep?: number;
+  totalSteps?: number;
 }
 
 export const SubjectStep: React.FC<SubjectStepProps> = ({
@@ -15,6 +17,8 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
   presetQuestion,
   selection,
   onUpdate,
+  currentStep = 1,
+  totalSteps = 5,
 }) => {
   // Use a default subject question text
   const subQuestion = `This statement applies to ${username} or someone/something else?`;
@@ -22,7 +26,11 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
   const allowDescriptors = presetQuestion?.steps?.subject?.allowDescriptors;
 
   return (
-    <StepContainer subQuestion={subQuestion}>
+    <StepContainer 
+      subQuestion={subQuestion}
+      currentStep={currentStep}
+      totalSteps={totalSteps}
+    >
       {allowDescriptors === false ? (
         <>
           <div className='text-center p-4 border rounded'>
