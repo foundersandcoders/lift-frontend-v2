@@ -14,6 +14,7 @@ import {
   XCircle,
   MailPlus,
   MailX,
+  PenOff,
 } from 'lucide-react';
 import type { Entry } from '../../../types/entries';
 import {
@@ -181,45 +182,64 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
         <div className='flex items-center space-x-2 ml-auto'>
-          {/* Final Save button. This commits the local draft to the database via onLocalSave */}
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={async () => {
-              setIsSaving(true);
-              await onLocalSave(draft);
-              setIsSaving(false);
-            }}
-            disabled={!hasChanged || isSaving}
-            className='text-green-500 hover:text-green-700'
-          >
-            <Save size={16} />
-          </Button>
+          {/* This button needs a span wrapper to always show the tooltip */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className='inline-block'>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={async () => {
+                    setIsSaving(true);
+                    await onLocalSave(draft);
+                    setIsSaving(false);
+                  }}
+                  disabled={!hasChanged || isSaving}
+                  className='text-green-500 hover:text-green-700 px-2'
+                >
+                  <Save size={16} />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              Save changes
+            </TooltipContent>
+          </Tooltip>
 
-          {/* Cancel button: resets draft and exits edit mode */}
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => {
-              // Reset local draft to original statement passed from parent.
-              setDraft(statement);
-              // Call the onCancel prop if provided.
-              if (onCancel) {
-                onCancel(statement.id);
-              }
-            }}
-            className='text-gray-500 hover:text-gray-700'
-          >
-            Cancel
-          </Button>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => onDelete(draft.id)}
-            className='text-red-500 hover:text-red-700'
-          >
-            <Trash2 size={16} />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => {
+                  setDraft(statement);
+                  if (onCancel) onCancel(statement.id);
+                }}
+                className='text-red-500 hover:text-red-700 px-2'
+              >
+                <PenOff size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              Cancel editing
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => onDelete(draft.id)}
+                className='text-red-500 hover:text-red-700 px-2'
+              >
+                <Trash2 size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              Delete statement
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     );
