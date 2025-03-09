@@ -287,12 +287,19 @@ const StatementItem: React.FC<StatementItemProps> = ({
   // Static view when not in editing mode.
   return (
     <div
-      className={`border rounded-md p-3 space-y-2 ${
+      className={`border rounded-md p-3 space-y-2 relative ${
         statement.isResolved 
           ? 'bg-gray-100 border-gray-300 opacity-80' 
           : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
+      {/* Archived badge - positioned in top right corner */}
+      {statement.isResolved && (
+        <span className="absolute -top-2 -right-2 bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+          Archived
+        </span>
+      )}
+      
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-2'>
           {/* Privacy status icon */}
@@ -324,16 +331,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 statement.atoms.verb
               )} ${statement.atoms.object}`}
             </span>
-            
-            {/* Only show badges if needed */}
-            {statement.isResolved && (
-              <div className="flex mt-1">
-                {/* Archived badge */}
-                <span className="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full">
-                  Archived
-                </span>
-              </div>
-            )}
           </div>
         </div>
         <div className='flex items-center space-x-4'>
@@ -390,6 +387,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 )}
               </DropdownMenuItem>
 
+              
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
                   <RotateCcw className='mr-2 h-4 w-4' />

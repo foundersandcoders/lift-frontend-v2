@@ -12,6 +12,7 @@ import statementsCategories from '../../../data/statementsCategories.json';
 import { formatCategoryName } from '../../../lib/utils';
 import { updateEntry } from '../../api/entriesApi';
 import { EditStatementModal } from '../statementWizard/EditStatementModal';
+import { BellOff, ChevronUp, ChevronDown } from 'lucide-react';
 
 const groupQuestionsByCategory = (questions: SetQuestion[]) => {
   return questions.reduce<Record<string, SetQuestion[]>>((acc, question) => {
@@ -36,9 +37,11 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { entries } = data;
 
   const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
-  const { questions } = useQuestions();
+  const { questions, setQuestions } = useQuestions();
+  
+  // Get available preset questions (not used and not in snoozed section)
   const presetQuestions = questions.filter(
-    (q) => !usedPresetQuestions.includes(q.id)
+    (q) => !usedPresetQuestions.includes(q.id) && !q.isSnoozed
   );
 
   const questionsByCategory = groupQuestionsByCategory(presetQuestions);
@@ -66,12 +69,47 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // Keep a backup of the original entries when entering edit mode
   const [originalEntries, setOriginalEntries] = useState<{[id: string]: Entry}>({});
 
+  // Handle toggling the resolved state (archive/unarchive)
   const handleToggleResolved = (statementId: string) => {
     const stmt = entries.find((s) => s.id === statementId);
     if (!stmt) return;
     const updated = { ...stmt, isResolved: !stmt.isResolved };
     setData({ type: 'UPDATE_ENTRY', payload: updated });
     updateEntry(updated);
+  };
+  
+  
+  // Handle toggling the snoozed state for questions
+  const handleToggleQuestionSnooze = (questionId: string) => {
+    // Find the question in the questions array
+    const questionToToggle = questions.find(q => q.id === questionId);
+    if (!questionToToggle) return;
+    
+    // Create a new array with the updated question
+    const updatedQuestions = questions.map(q => {
+      if (q.id === questionId) {
+        if (q.isSnoozed) {
+          // Unsnooze - restore to original category if available
+          return {
+            ...q,
+            isSnoozed: false,
+            category: q.originalCategory || q.category
+          };
+        } else {
+          // Snooze - store original category and move to snoozed
+          return {
+            ...q,
+            isSnoozed: true,
+            originalCategory: q.category,
+            category: 'snoozed'
+          };
+        }
+      }
+      return q;
+    });
+    
+    // Update the questions in context
+    setQuestions(updatedQuestions);
   };
 
   const handleToggleActionResolved = (
@@ -254,10 +292,17 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateEntry(updatedStatement);
   };
 
+  // State for managing the visibility of the snoozed section
+  const [isSnoozedQuestionsSectionExpanded, setIsSnoozedQuestionsSectionExpanded] = useState(false);
+  
   const renderCategorySection = (catId: string, catLabel: string) => {
+    // Don't render the snoozed category in the normal flow
+    if (catId === 'snoozed') return null;
+    
     const presetForCat = questionsByCategory[catId] || [];
     const statementsForCat = statementsByCategory[catId] || [];
     if (presetForCat.length === 0 && statementsForCat.length === 0) return null;
+    
     return (
       <div key={catId} className='mb-8'>
         <h3 className='text-lg font-semibold mb-2'>
@@ -270,6 +315,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                 <QuestionCard
                   presetQuestion={presetQuestion}
                   onSelect={handlePresetQuestionSelect}
+                  onToggleSnooze={handleToggleQuestionSnooze}
                 />
               </li>
             ))}
@@ -327,6 +373,49 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
       </div>
     );
   };
+  
+  
+  // Special renderer for the snoozed questions section
+  const renderSnoozedQuestionsSection = () => {
+    // Filter questions to get snoozed ones
+    const snoozedQuestions = questions.filter(q => q.isSnoozed);
+    if (snoozedQuestions.length === 0) return null;
+    
+    return (
+      <div className='mb-8 mt-4 border-t pt-4'>
+        <div 
+          className='flex items-center justify-between cursor-pointer py-2 px-3 bg-blue-50 rounded-md mb-2'
+          onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
+        >
+          <h3 className='text-lg font-semibold flex items-center text-blue-700'>
+            <BellOff className='h-5 w-5 mr-2' />
+            Snoozed Questions ({snoozedQuestions.length})
+          </h3>
+          <div className='text-blue-600'>
+            {isSnoozedQuestionsSectionExpanded ? (
+              <ChevronUp className='h-5 w-5' />
+            ) : (
+              <ChevronDown className='h-5 w-5' />
+            )}
+          </div>
+        </div>
+        
+        {isSnoozedQuestionsSectionExpanded && (
+          <ul className='space-y-2 mt-4 pl-4 border-l-2 border-blue-100'>
+            {snoozedQuestions.map((question) => (
+              <li key={`snoozed-${question.id}`}>
+                <QuestionCard
+                  presetQuestion={question}
+                  onSelect={() => {/* Disabled for snoozed questions */}}
+                  onToggleSnooze={handleToggleQuestionSnooze}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
 
   const definedCategories = categoriesList;
   const definedCategoryIds = definedCategories.map((c) => c.id);
@@ -340,10 +429,15 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   return (
     <>
       <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
+        {/* Regular categories */}
         {definedCategories.map((cat) =>
           renderCategorySection(cat.id, cat.name)
         )}
         {extraCategoryIds.map((catId) => renderCategorySection(catId, catId))}
+        
+        {/* Snoozed sections */}
+        {renderSnoozedQuestionsSection()}
+        
         <ConfirmationDialog
           isOpen={deleteConfirmation.isOpen}
           onClose={handleDeleteCancel}

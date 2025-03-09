@@ -59,6 +59,8 @@ export interface SetQuestion {
   id: string;
   mainQuestion: string;
   category?: string;
+  isSnoozed?: boolean;
+  originalCategory?: string; // Store the original category when snoozed
   steps: {
     subject: SetQuestionStep;
     verb: SetQuestionStep;
