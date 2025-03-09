@@ -1,11 +1,16 @@
 import React from 'react';
 import { useAnsweredCount } from '../../../hooks/useAnsweredCount';
+import { cn } from '../../../../lib/utils';
 
-const QuestionCounter: React.FC = () => {
+interface QuestionCounterProps {
+  className?: string;
+}
+
+const QuestionCounter: React.FC<QuestionCounterProps> = ({ className }) => {
   const { answered, total } = useAnsweredCount(); // Extract values
 
   return (
-    <div className='text-sm text-gray-700'>
+    <div className={cn('text-sm text-gray-700', className)}>
       {answered} / {total} questions answered
     </div>
   );

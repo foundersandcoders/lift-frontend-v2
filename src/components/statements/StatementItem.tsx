@@ -147,8 +147,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
       <div className='flex items-center space-x-2 bg-gray-100 p-2 rounded'>
         {/* Privacy toggle button */}
         <Button
-          variant='ghost'
-          size='sm'
+          variant={draft.isPublic ? 'success' : 'warning'}
+          size='compact'
           onClick={() => {
             // Create a new draft object to ensure React detects the change
             setDraft((prevDraft) => {
@@ -157,11 +157,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               return newDraft;
             });
           }}
-          className={`rounded-md px-3 py-2 transition-colors ${
-            draft.isPublic
-              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-              : 'bg-red-100 text-red-700 hover:bg-red-200'
-          }`}
+          className='p-2 transition-colors shadow-sm'
         >
           {draft.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </Button>
@@ -207,9 +203,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
             }}
             className='cursor-pointer px-2 py-1 text-xs rounded border border-gray-300 bg-gray-50 hover:bg-gray-100 flex items-center'
           >
-            <span className="mr-1">📁</span>
-            {draft.category && draft.category.toLowerCase() !== 'uncategorized' && draft.category.toLowerCase() !== 'uncategorised' 
-              ? draft.category 
+            <span className='mr-1'>📁</span>
+            {draft.category &&
+            draft.category.toLowerCase() !== 'uncategorized' &&
+            draft.category.toLowerCase() !== 'uncategorised'
+              ? draft.category
               : 'Uncategorized'}
           </div>
         </div>
@@ -219,15 +217,15 @@ const StatementItem: React.FC<StatementItemProps> = ({
             <TooltipTrigger asChild>
               <span className='inline-block'>
                 <Button
-                  variant='ghost'
-                  size='sm'
+                  variant='success'
+                  size='compact'
                   onClick={async () => {
                     setIsSaving(true);
                     await onLocalSave(draft);
                     setIsSaving(false);
                   }}
                   disabled={!hasChanged || isSaving}
-                  className='text-green-500 hover:text-green-700 px-4 py-2'
+                  className='shadow-sm p-2'
                 >
                   <Save size={16} />
                 </Button>
@@ -243,14 +241,14 @@ const StatementItem: React.FC<StatementItemProps> = ({
             <TooltipTrigger asChild>
               <span className='inline-block'>
                 <Button
-                  variant='ghost'
-                  size='sm'
+                  variant='outline'
+                  size='compact'
                   onClick={() => {
                     // Deep clone to avoid reference issues
                     setDraft(JSON.parse(JSON.stringify(initialDraft)));
                     if (onCancel) onCancel(statement.id);
                   }}
-                  className='text-red-500 hover:text-red-700 px-4 py-2'
+                  className='p-2'
                 >
                   <PenOff size={16} />
                 </Button>
@@ -266,10 +264,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
             <TooltipTrigger asChild>
               <span className='inline-block'>
                 <Button
-                  variant='ghost'
-                  size='sm'
+                  variant='destructive'
+                  size='compact'
                   onClick={() => onDelete(draft.id)}
-                  className='text-red-500 hover:text-red-700 px-4 py-2'
+                  className='shadow-sm p-2'
                 >
                   <Trash2 size={16} />
                 </Button>
@@ -288,18 +286,19 @@ const StatementItem: React.FC<StatementItemProps> = ({
   return (
     <div
       className={`border rounded-md p-3 space-y-2 relative ${
-        statement.isResolved 
-          ? 'bg-gray-100 border-gray-300 opacity-80' 
+        statement.isResolved
+          ? 'bg-gray-100 border-gray-300 opacity-80'
           : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
       {/* Archived badge - positioned in top right corner */}
       {statement.isResolved && (
-        <span className="absolute -top-2 -right-2 bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+        <span className='absolute -top-2 -right-2 bg-gray-200 text-gray-600 text-xs gap-1 px-2 py-0.5 rounded-full flex'>
+          <Archive size={14} />
           Archived
         </span>
       )}
-      
+
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-2'>
           {/* Privacy status icon */}
@@ -323,9 +322,9 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 : 'This statement is private'}
             </TooltipContent>
           </Tooltip>
-          
+
           {/* Statement text with archived styling if needed */}
-          <div className="flex flex-col">
+          <div className='flex flex-col'>
             <span className={statement.isResolved ? 'text-gray-500' : ''}>
               {`${statement.atoms.subject} ${getVerbName(
                 statement.atoms.verb
@@ -387,7 +386,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 )}
               </DropdownMenuItem>
 
-              
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
                   <RotateCcw className='mr-2 h-4 w-4' />

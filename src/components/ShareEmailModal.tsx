@@ -227,24 +227,24 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
           <div className='mt-6 flex justify-center gap-4'>
             <Button
-              variant='pink'
+              variant='default'
               onClick={handleSendEmail}
               disabled={
                 isSending || publicStatements.length === 0 || !managerEmail
               }
-              className='px-6'
+              className='shadow-sm'
             >
               {isSending ? (
                 <>
                   <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                  Sending...
+                  <span>Sending...</span>
                 </>
               ) : (
-                'Send Email'
+                <span>Send Email</span>
               )}
             </Button>
-            <Button variant='pink' onClick={onClose} className='px-6'>
-              Close
+            <Button variant='outline' onClick={onClose}>
+              <span>Close</span>
             </Button>
           </div>
         </div>

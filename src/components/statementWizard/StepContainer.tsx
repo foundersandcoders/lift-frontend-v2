@@ -20,7 +20,7 @@ const StepContainer: React.FC<StepContainerProps> = ({
   <div className='p-2 space-y-4'>
     <div className='flex items-center'>
       {showBack && onBack && (
-        <Button variant='ghost' size='icon' onClick={onBack} className='mr-2'>
+        <Button variant='outline' size='compact' onClick={onBack} className='mr-2 p-2'>
           <ArrowLeft className='w-4 h-4' />
         </Button>
       )}

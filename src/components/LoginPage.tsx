@@ -83,11 +83,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
 
           <Button
             type='submit'
-            variant='pink'
-            className='mx-auto'
+            variant='default'
+            className='mx-auto shadow-sm w-full mt-6'
             disabled={isSubmitDisabled}
           >
-            Continue
+            <span>Continue</span>
           </Button>
         </form>
       </div>
