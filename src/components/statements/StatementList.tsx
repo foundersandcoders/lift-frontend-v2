@@ -168,7 +168,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
 
   // Callback for inline part clicks to open the modal:
   const handlePartClick = (
-    part: 'subject' | 'verb' | 'object',
+    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
     statementId: string
   ) => {
     const statementToEdit = entries.find((s) => s.id === statementId);

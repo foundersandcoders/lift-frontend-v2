@@ -8,7 +8,8 @@ import {
   MoreVertical,
   RotateCcw,
   CheckCircle2,
-  XCircle,
+  Archive,
+  ArchiveRestore,
   MailPlus,
   MailX,
   PenOff,
@@ -27,9 +28,9 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 export interface StatementItemProps {
   statement: Entry;
   isEditing: boolean;
-  editingPart: 'subject' | 'verb' | 'object' | null;
+  editingPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | null;
   onPartClick: (
-    part: 'subject' | 'verb' | 'object',
+    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
     statementId: string
   ) => void;
   // When the green save icon is clicked, the updated entry (draft) is passed back
@@ -130,12 +131,14 @@ const StatementItem: React.FC<StatementItemProps> = ({
   const hasVerbChanged = draft.atoms.verb !== initialDraft.atoms.verb;
   const hasObjectChanged = draft.atoms.object !== initialDraft.atoms.object;
   const hasPrivacyChanged = draft.isPublic !== initialDraft.isPublic;
+  const hasCategoryChanged = draft.category !== initialDraft.category;
 
   const hasChanged =
     hasSubjectChanged ||
     hasVerbChanged ||
     hasObjectChanged ||
-    hasPrivacyChanged;
+    hasPrivacyChanged ||
+    hasCategoryChanged;
 
   // Enable save button when any part of the statement has been changed
 
@@ -163,36 +166,51 @@ const StatementItem: React.FC<StatementItemProps> = ({
           {draft.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </Button>
 
-        <div className='flex flex-1 items-center space-x-2'>
-          {/* Subject */}
-          <div
-            onClick={() => {
-              // Just call onPartClick to open the modal, and don't try to edit inline
-              onPartClick('subject', draft.id);
-            }}
-            className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
-          >
-            {draft.atoms.subject}
+        <div className='flex flex-1 items-center flex-wrap gap-2'>
+          <div className='flex space-x-2 flex-wrap'>
+            {/* Subject */}
+            <div
+              onClick={() => {
+                // Just call onPartClick to open the modal, and don't try to edit inline
+                onPartClick('subject', draft.id);
+              }}
+              className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
+            >
+              {draft.atoms.subject}
+            </div>
+            {/* Verb */}
+            <div
+              onClick={() => {
+                // Just call onPartClick to open the modal, and don't try to edit inline
+                onPartClick('verb', draft.id);
+              }}
+              className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
+            >
+              <span>{getVerbName(draft.atoms.verb)}</span>
+            </div>
+            {/* Object */}
+            <div
+              onClick={() => {
+                // Just call onPartClick to open the modal, and don't try to edit inline
+                onPartClick('object', draft.id);
+              }}
+              className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
+            >
+              {draft.atoms.object}
+            </div>
           </div>
-          {/* Verb */}
+          {/* Category */}
           <div
             onClick={() => {
-              // Just call onPartClick to open the modal, and don't try to edit inline
-              onPartClick('verb', draft.id);
+              // Open the category modal
+              onPartClick('category', draft.id);
             }}
-            className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
+            className='cursor-pointer px-2 py-1 text-xs rounded border border-gray-300 bg-gray-50 hover:bg-gray-100 flex items-center'
           >
-            <span>{getVerbName(draft.atoms.verb)}</span>
-          </div>
-          {/* Object */}
-          <div
-            onClick={() => {
-              // Just call onPartClick to open the modal, and don't try to edit inline
-              onPartClick('object', draft.id);
-            }}
-            className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
-          >
-            {draft.atoms.object}
+            <span className="mr-1">📁</span>
+            {draft.category && draft.category.toLowerCase() !== 'uncategorized' && draft.category.toLowerCase() !== 'uncategorised' 
+              ? draft.category 
+              : 'Uncategorized'}
           </div>
         </div>
         <div className='flex items-center space-x-2 ml-auto'>
@@ -269,18 +287,21 @@ const StatementItem: React.FC<StatementItemProps> = ({
   // Static view when not in editing mode.
   return (
     <div
-      className={`bg-white border rounded-md p-3 space-y-2 shadow-sm ${
-        statement.isResolved ? 'border-green-500' : 'border-gray-200'
+      className={`border rounded-md p-3 space-y-2 ${
+        statement.isResolved 
+          ? 'bg-gray-100 border-gray-300 opacity-80' 
+          : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-2'>
+          {/* Privacy status icon */}
           <Tooltip>
             <TooltipTrigger asChild>
               <span
                 className={`inline-flex items-center justify-center ${
                   statement.isPublic ? 'text-green-500' : 'text-red-500'
-                }`}
+                } ${statement.isResolved ? 'opacity-70' : ''}`}
               >
                 {statement.isPublic ? (
                   <MailPlus size={16} />
@@ -295,9 +316,25 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 : 'This statement is private'}
             </TooltipContent>
           </Tooltip>
-          <span>{`${statement.atoms.subject} ${getVerbName(
-            statement.atoms.verb
-          )} ${statement.atoms.object}`}</span>
+          
+          {/* Statement text with archived styling if needed */}
+          <div className="flex flex-col">
+            <span className={statement.isResolved ? 'text-gray-500' : ''}>
+              {`${statement.atoms.subject} ${getVerbName(
+                statement.atoms.verb
+              )} ${statement.atoms.object}`}
+            </span>
+            
+            {/* Only show badges if needed */}
+            {statement.isResolved && (
+              <div className="flex mt-1">
+                {/* Archived badge */}
+                <span className="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded-full">
+                  Archived
+                </span>
+              </div>
+            )}
+          </div>
         </div>
         <div className='flex items-center space-x-4'>
           {statement.isResolved && (
@@ -342,16 +379,17 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
                 {statement.isResolved ? (
                   <>
-                    <XCircle className='mr-2 h-4 w-4 text-red-500' />
-                    Unresolve
+                    <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
+                    Unarchive
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 className='mr-2 h-4 w-4 text-green-500' />
-                    Mark as Resolved
+                    <Archive className='mr-2 h-4 w-4 text-green-500' />
+                    Archive
                   </>
                 )}
               </DropdownMenuItem>
+
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
                   <RotateCcw className='mr-2 h-4 w-4' />

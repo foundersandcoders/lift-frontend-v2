@@ -75,7 +75,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
     subject: 'border-[var(--subject-selector)]',
     verb: 'border-[var(--verb-selector)]',
     object: 'border-[var(--object-input)]',
-    category: 'border-black',
+    category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
     complement: 'border-gray-400',
   };
@@ -92,10 +92,28 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             presetQuestion={{
               id: 'editing',
               category: statement.category || 'wellbeing',
-              question: '', // Not needed for editing
+              mainQuestion: '', // Not needed for editing
               steps: {
                 subject: {
+                  question: '',
+                  preset: false,
+                  presetAnswer: null,
                   allowDescriptors: true
+                },
+                verb: {
+                  question: '',
+                  preset: false,
+                  presetAnswer: null
+                },
+                object: {
+                  question: '',
+                  preset: false,
+                  presetAnswer: null
+                },
+                privacy: {
+                  question: '',
+                  preset: false,
+                  presetAnswer: null
                 }
               }
             }}
@@ -152,7 +170,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         {/* Optionally add a footer for explicit Save/Cancel */}
         <div className='p-4 flex justify-center gap-4'>
           <Button onClick={handleSave} variant='pink'>
-            Save
+            OK
           </Button>
           <Button onClick={onClose} variant='pink'>
             Cancel
