@@ -11,8 +11,9 @@ import { useQuestions } from '../../hooks/useQuestions';
 import statementsCategories from '../../../data/statementsCategories.json';
 import { formatCategoryName } from '../../../lib/utils';
 import { updateEntry } from '../../api/entriesApi';
+import { EditStatementModal } from '../statementWizard/EditStatementModal';
+import { BellOff, ChevronUp, ChevronDown } from 'lucide-react';
 
-// Helper: group preset questions by their category.
 const groupQuestionsByCategory = (questions: SetQuestion[]) => {
   return questions.reduce<Record<string, SetQuestion[]>>((acc, question) => {
     const cat = question.category || 'Uncategorized';
@@ -22,7 +23,6 @@ const groupQuestionsByCategory = (questions: SetQuestion[]) => {
   }, {});
 };
 
-// Helper: group created statements by their category.
 const groupStatementsByCategory = (statements: Entry[]) => {
   return statements.reduce<Record<string, Entry[]>>((acc, statement) => {
     const cat = statement.category || 'Uncategorized';
@@ -36,31 +36,40 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   const { data, setData } = useEntries();
   const { entries } = data;
 
-  // Track which preset questions have been used.
   const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
-  // Delete confirmation state.
+  const { questions, setQuestions } = useQuestions();
+  
+  // Get available preset questions (not used and not in snoozed section)
+  const presetQuestions = questions.filter(
+    (q) => !usedPresetQuestions.includes(q.id) && !q.isSnoozed
+  );
+
+  const questionsByCategory = groupQuestionsByCategory(presetQuestions);
+  const statementsByCategory = groupStatementsByCategory(entries);
+  const categoriesList = statementsCategories.categories;
+
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     isOpen: boolean;
     statementId: string | null;
   }>({ isOpen: false, statementId: null });
-  // Wizard state.
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [selectedPresetQuestion, setSelectedPresetQuestion] =
     useState<SetQuestion | null>(null);
 
-  // Preset questions from context.
-  const { questions } = useQuestions();
-  const presetQuestions = questions.filter(
-    (q) => !usedPresetQuestions.includes(q.id)
+  // State for editing mode:
+  const [editingStatementId, setEditingStatementId] = useState<string | null>(
+    null
   );
+  // State for opening the modal for a specific part:
+  const [editModalData, setEditModalData] = useState<{
+    statement: Entry;
+    editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
+  } | null>(null);
+  
+  // Keep a backup of the original entries when entering edit mode
+  const [originalEntries, setOriginalEntries] = useState<{[id: string]: Entry}>({});
 
-  // Group preset questions and created statements by category.
-  const questionsByCategory = groupQuestionsByCategory(presetQuestions);
-  const statementsByCategory = groupStatementsByCategory(entries);
-  // Get categories from your configuration.
-  const categoriesList = statementsCategories.categories; // assumed array of { id: string; name: string }
-
-  // Handler to toggle the resolved flag on a statement.
+  // Handle toggling the resolved state (archive/unarchive)
   const handleToggleResolved = (statementId: string) => {
     const stmt = entries.find((s) => s.id === statementId);
     if (!stmt) return;
@@ -68,35 +77,87 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setData({ type: 'UPDATE_ENTRY', payload: updated });
     updateEntry(updated);
   };
+  
+  
+  // Handle toggling the snoozed state for questions
+  const handleToggleQuestionSnooze = (questionId: string) => {
+    // Find the question in the questions array
+    const questionToToggle = questions.find(q => q.id === questionId);
+    if (!questionToToggle) return;
+    
+    // Create a new array with the updated question
+    const updatedQuestions = questions.map(q => {
+      if (q.id === questionId) {
+        if (q.isSnoozed) {
+          // Unsnooze - restore to original category if available
+          return {
+            ...q,
+            isSnoozed: false,
+            category: q.originalCategory || q.category
+          };
+        } else {
+          // Snooze - store original category and move to snoozed
+          return {
+            ...q,
+            isSnoozed: true,
+            originalCategory: q.category,
+            category: 'snoozed'
+          };
+        }
+      }
+      return q;
+    });
+    
+    // Update the questions in context
+    setQuestions(updatedQuestions);
+  };
 
-  // Handler to toggle the resolved flag on an action
   const handleToggleActionResolved = (
     statementId: string,
     actionId: string
   ) => {
     const statementToUpdate = entries.find((s) => s.id === statementId);
     if (!statementToUpdate || !statementToUpdate.actions) return;
-
     const updatedActions = statementToUpdate.actions.map((action) =>
       action.id === actionId
         ? { ...action, completed: !action.completed }
         : action
     );
-
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
     setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
     updateEntry(updatedStatement);
   };
 
-  // Callback: when a preset question is clicked, open the wizard.
+  // Handler for when a statement's local save button is clicked.
+  async function handleLocalSave(updatedEntry: Entry) {
+    try {
+      // Call the backend API with the updated entry.
+      await updateEntry(updatedEntry);
+      
+      // Update the context with the new entry.
+      setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
+      
+      // Remove from originalEntries since we've saved
+      setOriginalEntries(prev => {
+        const newEntries = {...prev};
+        delete newEntries[updatedEntry.id];
+        return newEntries;
+      });
+      
+      // Exit editing mode for this statement.
+      setEditingStatementId(null);
+    } catch (error) {
+      console.error('Error saving statement to DB:', error);
+      // Optionally display an error message to the user.
+    }
+  }
+
   const handlePresetQuestionSelect = (presetQuestion: SetQuestion) => {
     setSelectedPresetQuestion(presetQuestion);
     setIsWizardOpen(true);
   };
 
-  // Callback: when the wizard completes (a new statement is created), mark the question as used.
   const handleWizardComplete = (newStatement: Entry) => {
-    // Use newStatement in a no-op so it's not flagged as unused.
     void newStatement;
     if (selectedPresetQuestion) {
       setUsedPresetQuestions((prev) => [...prev, selectedPresetQuestion.id]);
@@ -110,7 +171,6 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setSelectedPresetQuestion(null);
   };
 
-  // Callback: delete a statement.
   const handleDeleteClick = (statementId: string) => {
     setDeleteConfirmation({ isOpen: true, statementId });
   };
@@ -129,14 +189,46 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     setDeleteConfirmation({ isOpen: false, statementId: null });
   };
 
-  // Callback: placeholder for editing a statement.
+  // Single edit option: when user clicks "Edit" in the dropdown
   const handleEditClick = (statementId: string) => {
-    alert(
-      `Edit functionality for statement ${statementId} is not implemented yet.`
-    );
+    // Store the original entry for possible reversion later
+    const entryToEdit = entries.find(e => e.id === statementId);
+    if (entryToEdit) {
+      setOriginalEntries(prev => ({
+        ...prev,
+        [statementId]: JSON.parse(JSON.stringify(entryToEdit))
+      }));
+    }
+    
+    // Enable edit mode
+    setEditingStatementId(statementId);
   };
 
-  // Callback: Reset a preset-generated statement.
+  // Callback for inline part clicks to open the modal:
+  const handlePartClick = (
+    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
+    statementId: string
+  ) => {
+    const statementToEdit = entries.find((s) => s.id === statementId);
+    if (statementToEdit) {
+      setEditModalData({ statement: statementToEdit, editPart: part });
+    }
+  };
+
+  // const handlePartUpdate = (
+  //   statementId: string,
+  //   part: 'subject' | 'verb' | 'object',
+  //   value: string
+  // ) => {
+  //   const updatedEntries = entries.map((entry) =>
+  //     entry.id === statementId
+  //       ? { ...entry, atoms: { ...entry.atoms, [part]: value } }
+  //       : entry
+  //   );
+  //   // Update only context
+  //   setData({ type: 'SET_ENTRIES', payload: updatedEntries });
+  // };
+
   const handleResetClick = (statementId: string) => {
     const statementToReset = entries.find((s) => s.id === statementId);
     if (statementToReset && statementToReset.presetId) {
@@ -147,7 +239,6 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     }
   };
 
-  // Callback: Add a new action to a statement.
   const handleAddAction = (
     statementId: string,
     newAction: { text: string; dueDate?: string }
@@ -161,17 +252,14 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
       action: newAction.text,
       completed: false,
     };
-
     const updatedActions = statementToUpdate.actions
       ? [...statementToUpdate.actions, newActionMapped]
       : [newActionMapped];
-
     const updatedEntry = { ...statementToUpdate, actions: updatedActions };
     setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
     updateEntry(updatedEntry);
   };
 
-  // Callback: Edit an existing action.
   const handleEditAction = (
     statementId: string,
     actionId: string,
@@ -188,13 +276,11 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           }
         : action
     );
-
     const updatedStatement = { ...statementToUpdate, actions: updatedActions };
     setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
     updateEntry(updatedStatement);
   };
 
-  // Callback: Delete an action.
   const handleDeleteAction = (statementId: string, actionId: string) => {
     const statementToUpdate = entries.find((s) => s.id === statementId);
     if (!statementToUpdate || !statementToUpdate.actions) return;
@@ -206,11 +292,17 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateEntry(updatedStatement);
   };
 
-  // Render a category section given a category ID and label.
+  // State for managing the visibility of the snoozed section
+  const [isSnoozedQuestionsSectionExpanded, setIsSnoozedQuestionsSectionExpanded] = useState(false);
+  
   const renderCategorySection = (catId: string, catLabel: string) => {
+    // Don't render the snoozed category in the normal flow
+    if (catId === 'snoozed') return null;
+    
     const presetForCat = questionsByCategory[catId] || [];
     const statementsForCat = statementsByCategory[catId] || [];
     if (presetForCat.length === 0 && statementsForCat.length === 0) return null;
+    
     return (
       <div key={catId} className='mb-8'>
         <h3 className='text-lg font-semibold mb-2'>
@@ -223,6 +315,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                 <QuestionCard
                   presetQuestion={presetQuestion}
                   onSelect={handlePresetQuestionSelect}
+                  onToggleSnooze={handleToggleQuestionSnooze}
                 />
               </li>
             ))}
@@ -234,13 +327,31 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
               <li key={statement.id}>
                 <StatementItem
                   statement={statement}
-                  isEditing={false}
+                  isEditing={statement.id === editingStatementId}
                   editingPart={null}
-                  onPartClick={() => {}}
-                  onPartUpdate={() => {}}
-                  onSave={() => {}}
+                  onPartClick={handlePartClick}
+                  onLocalSave={handleLocalSave}
+                  onCancel={() => {
+                    // If we have the original, restore it
+                    if (originalEntries[statement.id]) {
+                      // Restore the original entry from our backup
+                      setData({
+                        type: 'UPDATE_ENTRY',
+                        payload: originalEntries[statement.id]
+                      });
+                      
+                      // Remove from originalEntries
+                      setOriginalEntries(prev => {
+                        const newEntries = {...prev};
+                        delete newEntries[statement.id];
+                        return newEntries;
+                      });
+                    }
+                    
+                    // Exit edit mode
+                    setEditingStatementId(null);
+                  }}
                   onDelete={handleDeleteClick}
-                  onTogglePublic={() => {}}
                   onEditClick={handleEditClick}
                   onAddAction={handleAddAction}
                   onEditAction={handleEditAction}
@@ -262,8 +373,50 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
       </div>
     );
   };
+  
+  
+  // Special renderer for the snoozed questions section
+  const renderSnoozedQuestionsSection = () => {
+    // Filter questions to get snoozed ones
+    const snoozedQuestions = questions.filter(q => q.isSnoozed);
+    if (snoozedQuestions.length === 0) return null;
+    
+    return (
+      <div className='mb-8 mt-4 border-t pt-4'>
+        <div 
+          className='flex items-center justify-between cursor-pointer py-2 px-3 bg-blue-50 rounded-md mb-2'
+          onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
+        >
+          <h3 className='text-lg font-semibold flex items-center text-blue-700'>
+            <BellOff className='h-5 w-5 mr-2' />
+            Snoozed Questions ({snoozedQuestions.length})
+          </h3>
+          <div className='text-blue-600'>
+            {isSnoozedQuestionsSectionExpanded ? (
+              <ChevronUp className='h-5 w-5' />
+            ) : (
+              <ChevronDown className='h-5 w-5' />
+            )}
+          </div>
+        </div>
+        
+        {isSnoozedQuestionsSectionExpanded && (
+          <ul className='space-y-2 mt-4 pl-4 border-l-2 border-blue-100'>
+            {snoozedQuestions.map((question) => (
+              <li key={`snoozed-${question.id}`}>
+                <QuestionCard
+                  presetQuestion={question}
+                  onSelect={() => {/* Disabled for snoozed questions */}}
+                  onToggleSnooze={handleToggleQuestionSnooze}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
 
-  // Render sections for defined categories and any extra categories.
   const definedCategories = categoriesList;
   const definedCategoryIds = definedCategories.map((c) => c.id);
   const extraCategoryIds = Array.from(
@@ -276,10 +429,15 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   return (
     <>
       <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
+        {/* Regular categories */}
         {definedCategories.map((cat) =>
           renderCategorySection(cat.id, cat.name)
         )}
         {extraCategoryIds.map((catId) => renderCategorySection(catId, catId))}
+        
+        {/* Snoozed sections */}
+        {renderSnoozedQuestionsSection()}
+        
         <ConfirmationDialog
           isOpen={deleteConfirmation.isOpen}
           onClose={handleDeleteCancel}
@@ -294,6 +452,27 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           presetQuestion={selectedPresetQuestion}
           onComplete={handleWizardComplete}
           onClose={handleWizardClose}
+        />
+      )}
+      {editModalData && (
+        <EditStatementModal
+          statement={editModalData.statement}
+          editPart={editModalData.editPart}
+          username={username}
+          onUpdate={(updatedStatement) => {
+            // If we're in editing mode for this statement:
+            if (editingStatementId === updatedStatement.id) {
+              // Only update the UI representation without saving to backend
+              // This allows the save button to detect changes and become active
+              setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+            } else {
+              // If we're not in edit mode, save directly when modal is closed
+              setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+              // Also update backend
+              updateEntry(updatedStatement);
+            }
+          }}
+          onClose={() => setEditModalData(null)}
         />
       )}
     </>

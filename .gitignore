@@ -27,3 +27,5 @@ allcode.txt
 .env.*
 .env.development
 .aider*
+
+CLAUDE.md

@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* Base Colors */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Brand colours from LIFT Guidelines */
+    /* Brand Colours (from LIFT Guidelines) */
     --brand-pink: #d600a8;
     --brand-black: #ed7112;
     --brand-white: #ffffff;
@@ -25,7 +26,7 @@
     --brand-purple: #7900d6;
     --brand-darkPurple: #4d1b9b;
 
-    /* Set primary, secondary and accent using the brand colours */
+    /* Primary, Secondary, Accent, etc. using brand colours */
     --primary: var(--brand-pink);
     --primary-foreground: var(--brand-white);
 
@@ -35,7 +36,7 @@
     --accent: var(--brand-blue);
     --accent-foreground: var(--brand-white);
 
-    /* Retain existing variables for muted, destructive etc. */
+    /* Additional tokens */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
@@ -47,8 +48,22 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Wizard/Step specific colors */
+    --subject-selector: #fef08a;
+    --subject-selector-hover: #fce883;
+    --verb-selector: #bbf7d0;
+    --verb-selector-hover: #a0d8f1;
+    --object-input: #bfdbfe;
+    --object-input-hover: #aecbf0;
+    --privacy-selector: #22c55e;
+    --privacy-selector-hover: #1ea07b;
+    --category-selector: #000000;
+    --category-selector-hover: #2c2c2c;
+    --complement: 'gray-400';
   }
 
+  /* Dark Mode Overrides */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -78,9 +93,8 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
   }
-}
 
-@layer base {
+  /* Global Base Styles */
   * {
     @apply border-border;
   }

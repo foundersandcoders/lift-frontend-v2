@@ -34,6 +34,7 @@ export interface Category {
 }
 
 export interface Verb {
+  id: string;
   name: string;
   popularity: number;
   categories: string[];
@@ -58,6 +59,8 @@ export interface SetQuestion {
   id: string;
   mainQuestion: string;
   category?: string;
+  isSnoozed?: boolean;
+  originalCategory?: string; // Store the original category when snoozed
   steps: {
     subject: SetQuestionStep;
     verb: SetQuestionStep;

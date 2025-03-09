@@ -9,12 +9,12 @@ import VerbGrid from './VerbGrid';
 import { getAllDescendants } from '../../../utils/categoryUtils';
 
 interface SentimentVerbPickerProps {
-  selectedVerb: string;
+  selectedVerbId: string;
   onVerbSelect: (verb: Verb) => void;
 }
 
 const SentimentVerbPicker: React.FC<SentimentVerbPickerProps> = ({
-  selectedVerb,
+  selectedVerbId,
   onVerbSelect,
 }) => {
   // Use a navigation stack (path) to track filter levels.
@@ -63,7 +63,7 @@ const SentimentVerbPicker: React.FC<SentimentVerbPickerProps> = ({
       <VerbGrid
         verbs={filteredVerbs}
         rootCategory={rootCategory}
-        selectedVerb={selectedVerb}
+        selectedVerbId={selectedVerbId}
         onVerbSelect={onVerbSelect}
       />
     </div>

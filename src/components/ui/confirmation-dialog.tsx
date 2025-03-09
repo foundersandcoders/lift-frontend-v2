@@ -34,16 +34,16 @@ export function ConfirmationDialog({
         </div>
         <DialogFooter className='p-4 bg-gray-50 sm:rounded-b-lg'>
           {singleButton ? (
-            <Button variant='outline' onClick={onConfirm}>
-              OK
+            <Button variant='default' onClick={onConfirm} className="inline-flex items-center">
+              <span>OK</span>
             </Button>
           ) : (
             <>
-              <Button variant='outline' onClick={onClose}>
-                Cancel
+              <Button variant='outline' onClick={onClose} className="inline-flex items-center">
+                <span>Cancel</span>
               </Button>
-              <Button variant='destructive' onClick={onConfirm}>
-                Delete
+              <Button variant='destructive' onClick={onConfirm} className="inline-flex items-center">
+                <span>Delete</span>
               </Button>
             </>
           )}

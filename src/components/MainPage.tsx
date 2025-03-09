@@ -8,18 +8,22 @@ import { Button } from './ui/button';
 import { Plus, Mail } from 'lucide-react';
 import StatementWizard from './statementWizard/StatementWizard';
 import ShareEmailModal from './ShareEmailModal'; // Import the new modal
+import TestStatementButton from './test/TestButton';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
-  const { username, managerEmail, entries } = data;
+  const { username, managerName, managerEmail, entries } = data;
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
 
   // Determine if email button should be disabled:
   const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
+  // Include all public statements (including archived ones)
   const publicStatementsCount = entries.filter(
-    (entry) => entry.isPublic && !entry.isResolved
+    (entry) => entry.isPublic
   ).length;
+  
+  // Email button should be disabled if no manager email or no public statements
   const isEmailDisabled = !hasManagerEmail || publicStatementsCount === 0;
 
   // Handler to open the wizard for creating a new statement from scratch
@@ -35,7 +39,10 @@ const MainPage: React.FC = () => {
   return (
     <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12'>
       <h1 className='text-3xl font-bold mb-8 text-center'>
-        Statement builder for {username}
+        {managerName 
+          ? `${username} would like to share with ${managerName}`
+          : `${username}'s statements for sharing`
+        }
       </h1>
       <div className='container mx-auto px-4'>
         <StatementList username={username} />
@@ -57,9 +64,11 @@ const MainPage: React.FC = () => {
             </span>
           </TooltipTrigger>
           <TooltipContent className='bg-gray-800 text-white p-2 rounded'>
-            {isEmailDisabled
-              ? "Please add your line manager's email and ensure you have public statements to share."
-              : 'Send email to your line manager with your public statements.'}
+            {!hasManagerEmail
+              ? "Please add your manager's email address first."
+              : publicStatementsCount === 0
+              ? "Please create at least one public statement to share."
+              : 'Send email with your public statements.'}
           </TooltipContent>
         </Tooltip>
         {/* Create Your Own Statement Button */}
@@ -71,6 +80,7 @@ const MainPage: React.FC = () => {
           <Plus className='w-6 h-6' />
           <span className='text-lg'>Create your own statement</span>
         </Button>
+        <TestStatementButton />
       </div>
 
       {/* Conditionally render the wizard modal */}

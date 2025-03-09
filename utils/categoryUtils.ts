@@ -1,4 +1,13 @@
 import type { Category } from '../types/entries';
+import categoryStructure from '../data/categoryStructure.json';
+
+/**
+ * Gets the root category from the category structure.
+ * This is a private helper function used within this module only.
+ */
+function getCategoryRoot(): Category {
+  return categoryStructure.root as Category;
+}
 
 /**
  * Recursively searches for a category node with the given name.
@@ -35,7 +44,7 @@ export function getAllDescendants(node: Category): string[] {
  */
 export function getVerbColor(
   verb: { categories: string[] },
-  root: Category
+  root: Category = getCategoryRoot()
 ): string {
   for (const catName of verb.categories) {
     const cat = findCategoryByName(root, catName);

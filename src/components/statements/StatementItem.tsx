@@ -1,19 +1,18 @@
-import React, { useRef, useEffect } from 'react';
-import { Input } from '../ui/input';
+import React, { useEffect } from 'react';
 import { Button } from '../ui/button';
-import SubjectSelector from '../ui/subject-selector';
-import VerbSelector from '../ui/VerbSelector';
+import { getVerbName } from '../../../utils/verbUtils';
 import {
   Trash2,
   Edit2,
   Save,
-  // Eye,
-  // EyeOff,
   MoreVertical,
   RotateCcw,
   CheckCircle2,
-  XCircle,
-  Mail,
+  Archive,
+  ArchiveRestore,
+  MailPlus,
+  MailX,
+  PenOff,
 } from 'lucide-react';
 import type { Entry } from '../../../types/entries';
 import {
@@ -29,25 +28,21 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
 export interface StatementItemProps {
   statement: Entry;
   isEditing: boolean;
-  editingPart: 'subject' | 'verb' | 'object' | null;
+  editingPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | null;
   onPartClick: (
-    part: 'subject' | 'verb' | 'object',
+    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
     statementId: string
   ) => void;
-  onPartUpdate: (
-    statementId: string,
-    part: 'subject' | 'verb' | 'object',
-    value: string
-  ) => void;
-  onSave: (statementId: string) => void;
+  // When the green save icon is clicked, the updated entry (draft) is passed back
+  onLocalSave: (updatedEntry: Entry) => void;
   onDelete: (statementId: string) => void;
-  onTogglePublic: (statementId: string) => void;
   onEditClick: (statementId: string) => void;
   onEditAction?: (
     statementId: string,
     actionId: string,
     updated: { text: string; dueDate?: string }
   ) => void;
+  onCancel?: (statementId: string) => void;
   onDeleteAction?: (statementId: string, actionId: string) => void;
   onAddAction?: (
     statementId: string,
@@ -61,13 +56,11 @@ export interface StatementItemProps {
 const StatementItem: React.FC<StatementItemProps> = ({
   statement,
   isEditing,
-  editingPart,
   onPartClick,
-  onPartUpdate,
-  onSave,
+  onLocalSave,
   onDelete,
-  onTogglePublic,
   onEditClick,
+  onCancel,
   onEditAction = () => {},
   onDeleteAction = () => {},
   onAddAction = () => {},
@@ -76,130 +69,251 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onToggleActionResolved = () => {},
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
-  const objectInputRef = useRef<HTMLInputElement>(null);
 
+  // Local "draft" state to hold unsaved modifications.
+  const [draft, setDraft] = React.useState<Entry>(statement);
+
+  // initialDraft freezes the original values when editing begins.
+  const [initialDraft, setInitialDraft] = React.useState<Entry>(statement);
+
+  // Local state to track if we are currently saving the draft.
+  const [isSaving, setIsSaving] = React.useState(false);
+
+  // First useEffect: Capture changes in edit mode status
   useEffect(() => {
-    if (editingPart === 'object' && objectInputRef.current) {
-      objectInputRef.current.focus();
+    // Create a deep copy of the statement to avoid reference issues
+    const statementCopy = JSON.parse(JSON.stringify(statement));
+
+    if (isEditing) {
+      // Only capture initial state when entering edit mode
+      // This will be our reference point for comparison
+      setInitialDraft(statementCopy);
+    } else {
+      // Reset both states when exiting edit mode
+      setInitialDraft(statementCopy);
+      setDraft(statementCopy);
     }
-  }, [editingPart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]); // Intentionally excluding statement to avoid resetting initialDraft
+
+  // Second useEffect: Always keep draft updated with latest statement to reflect modal changes
+  useEffect(() => {
+    if (isEditing) {
+      // When statement changes while in edit mode, update the draft
+      // This happens when the modal updates the statement
+      setDraft(JSON.parse(JSON.stringify(statement)));
+    }
+  }, [
+    statement,
+    // We're specifically tracking these properties to ensure we detect changes
+    // from the modal even if the statement reference doesn't change
+    statement.atoms.subject,
+    statement.atoms.verb,
+    statement.atoms.object,
+    statement.isPublic,
+    isEditing,
+  ]);
+
+  // Uncomment and use this if you need to update parts directly instead of using the modal
+  /*
+  const updatePart = (part: 'subject' | 'verb' | 'object', value: string) => {
+    // Create a new draft object to ensure React detects the change
+    setDraft((prevDraft) => {
+      const newDraft = JSON.parse(JSON.stringify(prevDraft));
+      newDraft.atoms[part] = value;
+      return newDraft;
+    });
+  };
+  */
+
+  // Compute if draft has changed from the initial state
+  const hasSubjectChanged = draft.atoms.subject !== initialDraft.atoms.subject;
+  const hasVerbChanged = draft.atoms.verb !== initialDraft.atoms.verb;
+  const hasObjectChanged = draft.atoms.object !== initialDraft.atoms.object;
+  const hasPrivacyChanged = draft.isPublic !== initialDraft.isPublic;
+  const hasCategoryChanged = draft.category !== initialDraft.category;
+
+  const hasChanged =
+    hasSubjectChanged ||
+    hasVerbChanged ||
+    hasObjectChanged ||
+    hasPrivacyChanged ||
+    hasCategoryChanged;
+
+  // Enable save button when any part of the statement has been changed
 
   if (isEditing) {
     return (
       <div className='flex items-center space-x-2 bg-gray-100 p-2 rounded'>
         {/* Privacy toggle button */}
         <Button
-          variant='ghost'
-          size='sm'
-          onClick={() => onTogglePublic(statement.id)}
-          className={`${
-            statement.isPublic
-              ? 'bg-green-50 text-green-500'
-              : 'bg-gray-50 text-gray-500'
-          } hover:bg-opacity-75 rounded-md px-3 py-2`}
+          variant={draft.isPublic ? 'success' : 'warning'}
+          size='compact'
+          onClick={() => {
+            // Create a new draft object to ensure React detects the change
+            setDraft((prevDraft) => {
+              const newDraft = JSON.parse(JSON.stringify(prevDraft));
+              newDraft.isPublic = !prevDraft.isPublic;
+              return newDraft;
+            });
+          }}
+          className='p-2 transition-colors shadow-sm'
         >
-          {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
-          {statement.isPublic ? <Mail size={16} /> : <Mail size={16} />}
+          {draft.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </Button>
-        <div className='flex flex-1 items-center space-x-2'>
-          {/* Subject */}
-          <div
-            onClick={() => onPartClick('subject', statement.id)}
-            className='cursor-pointer px-2 py-1 rounded bg-blue-100 hover:bg-blue-200'
-          >
-            {editingPart === 'subject' ? (
-              <SubjectSelector
-                value={statement.atoms.subject}
-                onChange={(value) =>
-                  onPartUpdate(statement.id, 'subject', value)
-                }
-                onAddDescriptor={() => {}}
-                username={
-                  statement.atoms.subject.split("'s")[0] ||
-                  statement.atoms.subject
-                }
-              />
-            ) : (
-              statement.atoms.subject
-            )}
+
+        <div className='flex flex-1 items-center flex-wrap gap-2'>
+          <div className='flex space-x-2 flex-wrap'>
+            {/* Subject */}
+            <div
+              onClick={() => {
+                // Just call onPartClick to open the modal, and don't try to edit inline
+                onPartClick('subject', draft.id);
+              }}
+              className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
+            >
+              {draft.atoms.subject}
+            </div>
+            {/* Verb */}
+            <div
+              onClick={() => {
+                // Just call onPartClick to open the modal, and don't try to edit inline
+                onPartClick('verb', draft.id);
+              }}
+              className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
+            >
+              <span>{getVerbName(draft.atoms.verb)}</span>
+            </div>
+            {/* Object */}
+            <div
+              onClick={() => {
+                // Just call onPartClick to open the modal, and don't try to edit inline
+                onPartClick('object', draft.id);
+              }}
+              className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
+            >
+              {draft.atoms.object}
+            </div>
           </div>
-          {/* Verb */}
+          {/* Category */}
           <div
-            className='cursor-pointer px-2 py-1 rounded bg-green-100 hover:bg-green-200'
-            onClick={() => onPartClick('verb', statement.id)}
+            onClick={() => {
+              // Open the category modal
+              onPartClick('category', draft.id);
+            }}
+            className='cursor-pointer px-2 py-1 text-xs rounded border border-gray-300 bg-gray-50 hover:bg-gray-100 flex items-center'
           >
-            {editingPart === 'verb' ? (
-              <VerbSelector
-                onVerbSelect={(verb) =>
-                  onPartUpdate(statement.id, 'verb', verb.name)
-                }
-                onClose={() => onPartClick('verb', '')}
-              />
-            ) : (
-              <span>{statement.atoms.verb}</span>
-            )}
-          </div>
-          {/* Object */}
-          <div
-            onClick={() => onPartClick('object', statement.id)}
-            className='cursor-pointer px-2 py-1 rounded bg-yellow-100 hover:bg-yellow-200'
-          >
-            {editingPart === 'object' ? (
-              <Input
-                ref={objectInputRef}
-                value={statement.atoms.object}
-                onChange={(e) =>
-                  onPartUpdate(statement.id, 'object', e.target.value)
-                }
-                className='w-full'
-              />
-            ) : (
-              statement.atoms.object
-            )}
+            <span className='mr-1'>📁</span>
+            {draft.category &&
+            draft.category.toLowerCase() !== 'uncategorized' &&
+            draft.category.toLowerCase() !== 'uncategorised'
+              ? draft.category
+              : 'Uncategorized'}
           </div>
         </div>
         <div className='flex items-center space-x-2 ml-auto'>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => onSave(statement.id)}
-            className='text-green-500 hover:text-green-700'
-          >
-            <Save size={16} />
-          </Button>
-          <Button
-            variant='ghost'
-            size='sm'
-            onClick={() => onDelete(statement.id)}
-            className='text-red-500 hover:text-red-700'
-          >
-            <Trash2 size={16} />
-          </Button>
+          {/* Save button with tooltip */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className='inline-block'>
+                <Button
+                  variant='success'
+                  size='compact'
+                  onClick={async () => {
+                    setIsSaving(true);
+                    await onLocalSave(draft);
+                    setIsSaving(false);
+                  }}
+                  disabled={!hasChanged || isSaving}
+                  className='shadow-sm p-2'
+                >
+                  <Save size={16} />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              Save changes
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Cancel button with PenOff icon and tooltip */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className='inline-block'>
+                <Button
+                  variant='outline'
+                  size='compact'
+                  onClick={() => {
+                    // Deep clone to avoid reference issues
+                    setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                    if (onCancel) onCancel(statement.id);
+                  }}
+                  className='p-2'
+                >
+                  <PenOff size={16} />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              Cancel editing
+            </TooltipContent>
+          </Tooltip>
+
+          {/* Delete button with tooltip */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className='inline-block'>
+                <Button
+                  variant='destructive'
+                  size='compact'
+                  onClick={() => onDelete(draft.id)}
+                  className='shadow-sm p-2'
+                >
+                  <Trash2 size={16} />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent className='p-2 bg-black text-white rounded'>
+              Delete statement
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     );
   }
 
-  // Static view when not in editing mode with grouped Edit and Delete
+  // Static view when not in editing mode.
   return (
     <div
-      className={`bg-white border rounded-md p-3 space-y-2 shadow-sm ${
-        statement.isResolved ? 'border-green-500' : 'border-gray-200'
+      className={`border rounded-md p-3 space-y-2 relative ${
+        statement.isResolved
+          ? 'bg-gray-100 border-gray-300 opacity-80'
+          : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
-      {/* Top row: statement, actions counter, etc. */}
+      {/* Archived badge - positioned in top right corner */}
+      {statement.isResolved && (
+        <span className='absolute -top-2 -right-2 bg-gray-200 text-gray-600 text-xs gap-1 px-2 py-0.5 rounded-full flex'>
+          <Archive size={14} />
+          Archived
+        </span>
+      )}
+
       <div className='flex items-center justify-between'>
-        {/* Left side: privacy icon + full statement text */}
         <div className='flex items-center space-x-2'>
+          {/* Privacy status icon */}
           <Tooltip>
             <TooltipTrigger asChild>
               <span
                 className={`inline-flex items-center justify-center ${
-                  statement.isPublic ? 'text-green-500' : 'text-gray-400'
-                }`}
+                  statement.isPublic ? 'text-green-500' : 'text-red-500'
+                } ${statement.isResolved ? 'opacity-70' : ''}`}
               >
-                {/* {statement.isPublic ? <Eye size={16} /> : <EyeOff size={16} />} */}
-                {statement.isPublic ? <Mail size={16} /> : <Mail size={16} />}
+                {statement.isPublic ? (
+                  <MailPlus size={16} />
+                ) : (
+                  <MailX size={16} />
+                )}
               </span>
             </TooltipTrigger>
             <TooltipContent className='p-2 bg-black text-white rounded'>
@@ -208,13 +322,17 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 : 'This statement is private'}
             </TooltipContent>
           </Tooltip>
-          {/* Construct full sentence from atoms */}
-          <span>{`${statement.atoms.subject} ${statement.atoms.verb} ${statement.atoms.object}`}</span>
-        </div>
 
-        {/* Right side: resolved icon, actions counter + dropdown */}
+          {/* Statement text with archived styling if needed */}
+          <div className='flex flex-col'>
+            <span className={statement.isResolved ? 'text-gray-500' : ''}>
+              {`${statement.atoms.subject} ${getVerbName(
+                statement.atoms.verb
+              )} ${statement.atoms.object}`}
+            </span>
+          </div>
+        </div>
         <div className='flex items-center space-x-4'>
-          {/* Resolved icon */}
           {statement.isResolved && (
             <Tooltip>
               <TooltipTrigger asChild>
@@ -227,7 +345,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
               </TooltipContent>
             </Tooltip>
           )}
-          {/* Actions counter */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
             className='cursor-pointer'
@@ -255,21 +372,20 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
-              {/* Toggle Resolved */}
               <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
                 {statement.isResolved ? (
                   <>
-                    <XCircle className='mr-2 h-4 w-4' />
-                    Unresolve
+                    <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
+                    Unarchive
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 className='mr-2 h-4 w-4' />
-                    Mark as Resolved
+                    <Archive className='mr-2 h-4 w-4 text-green-500' />
+                    Archive
                   </>
                 )}
               </DropdownMenuItem>
-              {/* Reset option if provided */}
+
               {onReset && (
                 <DropdownMenuItem onClick={() => onReset(statement.id)}>
                   <RotateCcw className='mr-2 h-4 w-4' />
@@ -281,7 +397,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </div>
       </div>
 
-      {/* Inline actions preview if expanded */}
       {isActionsExpanded && (
         <div className='mt-2'>
           <ActionLine

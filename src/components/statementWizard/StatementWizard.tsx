@@ -1,25 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEntries } from '../../hooks/useEntries';
 import { postNewEntry } from '../../api/entriesApi';
 import type { Entry, SetQuestion, Step } from '../../../types/entries';
-import { SubjectTiles } from './SubjectTiles';
-import SentimentVerbPicker from './SentimentVerbPicker';
-import { PrivacySelector } from './PrivacySelector';
-import statementsCategories from '../../../data/statementsCategories.json';
-import StepContainer from './StepContainer';
+import { SubjectStep } from './steps/SubjectStep';
+import { VerbStep } from './steps/VerbStep';
+import { ObjectStep } from './steps/ObjectStep';
+import { CategoryStep } from './steps/CategoryStep';
+import { PrivacyStep } from './steps/PrivacyStep';
+import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
-import nlp from 'compromise';
+import { Button } from '../ui/button';
 
 interface StatementWizardProps {
   username: string;
@@ -27,17 +26,6 @@ interface StatementWizardProps {
   onComplete: (newStatement: Entry) => void;
   onClose: () => void;
 }
-
-// Default sub-questions for each step
-const defaultQuestions = (username: string, selection: Entry) => ({
-  subject: `This statement applies to ${username} or someone/something else?`,
-  verb: `What's happening with ${selection.atoms.subject}? How do they feel or what do they experience?`,
-  object: `In what way does ${
-    selection.atoms.subject
-  } ${selection.atoms.verb.toLowerCase()}? What's the context?`,
-  category: `You can set a category for your statement`,
-  privacy: `Who can see this statement?`,
-});
 
 const StatementWizard: React.FC<StatementWizardProps> = ({
   username,
@@ -48,21 +36,22 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const { setData } = useEntries();
   const isPreset = Boolean(presetQuestion);
 
-  // Define steps; skip 'category' if using a preset question.
-  const steps: Step[] = isPreset
+  // Define steps: if preset, skip "category" and add "complement"
+  const steps: Exclude<Step, 'closed'>[] = isPreset
     ? ['subject', 'verb', 'object', 'privacy', 'complement']
     : ['subject', 'verb', 'object', 'category', 'privacy'];
 
+  // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
-    subject: 'border-subjectSelector',
-    verb: 'border-verbSelector',
-    object: 'border-objectInput',
+    subject: 'border-[var(--subject-selector)]',
+    verb: 'border-[var(--verb-selector)]',
+    object: 'border-[var(--object-input)]',
     category: 'border-black',
-    privacy: 'border-privacySelector',
+    privacy: 'border-[var(--privacy-selector)]',
     complement: 'border-gray-400',
   };
 
-  const [step, setStep] = useState<Step>('subject');
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [selection, setSelection] = useState<Entry>({
     id: '',
     input: '',
@@ -75,41 +64,33 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     },
     category: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Initialize default values based on whether this is a preset or custom statement
   useEffect(() => {
+    // For preset questions, set the subject if a preset is specified
     if (presetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({
         ...prev,
         atoms: { ...prev.atoms, subject: username },
       }));
+    } else {
+      // For custom statements, set defaults:
+      setSelection((prev) => ({
+        ...prev,
+        // Set default subject to username
+        atoms: { ...prev.atoms, subject: username },
+        // Set default category to 'uncategorised'
+        category: 'uncategorised',
+      }));
     }
   }, [presetQuestion, username]);
 
-  // Get the sub-question for each step.
-  const getSubQuestion = (currentStep: Exclude<Step, 'closed'>) => {
-    if (currentStep === 'complement') {
-      return 'Add additional statement if needed';
-    }
-    return (
-      // presetQuestion?.steps?.[currentStep]?.question ||
-      defaultQuestions(username, selection)[currentStep]
-    );
-  };
-
-  const handleBack = () => {
-    const currentIndex = steps.indexOf(step);
-    if (currentIndex > 0) {
-      setStep(steps[currentIndex - 1]);
-    } else {
-      onClose();
-    }
-  };
-
-  const handleNext = (nextStep: Step) => {
-    setStep(nextStep);
-  };
+  const currentStep = steps[currentStepIndex];
 
   const handleComplete = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     const { subject, verb, object, adverbial } = selection.atoms;
     const adverbialText =
       adverbial && adverbial.length > 0 ? adverbial.join(' ') : '';
@@ -122,281 +103,218 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       id: Date.now().toString(),
       input: fullInput,
       presetId: presetQuestion ? presetQuestion.id : undefined,
+      // Ensure consistent casing for uncategorized - capital 'U'
       category:
-        presetQuestion?.category || selection.category || 'Uncategorized',
+        presetQuestion?.category || 
+        (selection.category === 'uncategorised' ? 'Uncategorized' : selection.category) || 
+        'Uncategorized',
     };
 
-    setData({ type: 'ADD_ENTRY', payload: newEntry });
-    await postNewEntry(newEntry);
-    onComplete(newEntry);
-    onClose();
-  };
-
-  // Render steps
-  const renderSubjectStep = () => {
-    const subQuestion = getSubQuestion('subject');
-    const allowDescriptors = presetQuestion?.steps?.subject?.allowDescriptors;
-    if (allowDescriptors === false) {
-      return (
-        <StepContainer subQuestion={subQuestion}>
-          <div className='text-center p-4 border rounded'>
-            <p>{username}</p>
-          </div>
-          <Button
-            onClick={() => {
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, subject: username },
-              }));
-              handleNext('verb');
-            }}
-            className='w-full'
-          >
-            Next
-          </Button>
-        </StepContainer>
-      );
+    try {
+      setData({ type: 'ADD_ENTRY', payload: newEntry });
+      await postNewEntry(newEntry);
+      onComplete(newEntry);
+      onClose();
+    } catch (error) {
+      console.error('Submission failed', error);
+    } finally {
+      setIsSubmitting(false);
     }
-    return (
-      <StepContainer subQuestion={subQuestion}>
-        <SubjectTiles
-          username={username}
-          activePresetQuestion={presetQuestion}
-          selectedValue={selection.atoms.subject}
-          onSelect={(value) => {
-            const newSubject =
-              presetQuestion && !presetQuestion.steps.subject.allowDescriptors
-                ? username
-                : value;
-            setSelection((prev) => ({
-              ...prev,
-              atoms: { ...prev.atoms, subject: newSubject },
-            }));
-            handleNext('verb');
-          }}
-        />
-      </StepContainer>
-    );
   };
 
-  const renderVerbStep = () => {
-    const subQuestion = getSubQuestion('verb');
-    return (
-      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
-        <div className='flex flex-col h-[60vh] p-4 rounded-md'>
-          <SentimentVerbPicker
-            selectedVerb={selection.atoms.verb}
-            onVerbSelect={(verb) => {
-              // Convert verb.name to present tense and lowercase it.
-              const processedVerb = nlp(verb.name)
-                .verbs()
-                .toPresentTense()
-                .out('text')
-                .toLowerCase();
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, verb: processedVerb },
-              }));
-              handleNext('object');
-            }}
-          />
-        </div>
-      </StepContainer>
-    );
+  const goNext = () => {
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStepIndex((prev) => prev + 1);
+    } else {
+      handleComplete();
+    }
   };
 
-  const renderObjectStep = () => {
-    const subQuestion = getSubQuestion('object');
-    const nextStep: Step = presetQuestion ? 'privacy' : 'category';
-
-    return (
-      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
-        <div className='p-4 rounded-md'>
-          <Input
-            autoFocus
-            placeholder='Type your answer...'
-            value={selection.atoms.object}
-            onChange={(e) =>
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, object: e.target.value },
-              }))
-            }
-            className='text-lg p-4 rounded'
-          />
-        </div>
-        <Button
-          onClick={() => selection.atoms.object.trim() && handleNext(nextStep)}
-          disabled={!selection.atoms.object.trim()}
-          variant='pink'
-          className='mx-auto'
-        >
-          Next
-        </Button>
-      </StepContainer>
-    );
+  const goBack = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex((prev) => prev - 1);
+    } else {
+      onClose();
+    }
   };
 
-  const renderCategoryStep = () => {
-    const subQuestion = getSubQuestion('category');
-    const categories = statementsCategories.categories || [];
-    const uncategorisedSelected =
-      !selection.category || selection.category === 'uncategorised';
-
-    return (
-      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
-        <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
-          {categories.map((cat: { id: string; name: string }) => (
-            <Button
-              key={cat.id}
-              onClick={() =>
-                setSelection((prev) => ({ ...prev, category: cat.id }))
-              }
-              className={`
-                h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
-                ${
-                  selection.category === cat.id
-                    ? 'bg-blue-50 text-blue-600 border-blue-300'
-                    : 'bg-white text-gray-700 border-gray-300'
-                }
-              `}
-              variant={selection.category === cat.id ? 'default' : 'outline'}
-            >
-              <span className='font-medium'>{cat.name}</span>
-            </Button>
-          ))}
-
-          {/* Uncategorised button */}
-          <Button
-            onClick={() =>
-              setSelection((prev) => ({ ...prev, category: 'uncategorised' }))
-            }
-            className={`
-              h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
-              ${
-                uncategorisedSelected
-                  ? 'bg-blue-50 text-blue-600 border-blue-300'
-                  : 'bg-white text-gray-700 border-gray-300'
-              }
-            `}
-            variant={uncategorisedSelected ? 'default' : 'outline'}
-          >
-            <span className='font-medium'>Uncategorised</span>
-          </Button>
-        </div>
-
-        <Button
-          onClick={() => {
-            if (!selection.category) {
-              setSelection((prev) => ({ ...prev, category: 'uncategorised' }));
-            }
-            handleNext('privacy');
-          }}
-          variant='pink'
-          className='mx-auto'
-        >
-          Next
-        </Button>
-      </StepContainer>
-    );
-  };
-
-  const renderPrivacyStep = () => {
-    const subQuestion = getSubQuestion('privacy');
-    return (
-      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
-        <PrivacySelector
-          isPublic={selection.isPublic}
-          onChange={(isPublic) =>
-            setSelection((prev) => ({ ...prev, isPublic }))
-          }
-          onComplete={() => {
-            console.log('Privacy complete triggered');
-            if (isPreset) {
-              handleNext('complement');
-            } else {
-              handleComplete();
-            }
-          }}
-        />
-      </StepContainer>
-    );
-  };
-
-  const renderComplementStep = () => {
-    const subQuestion = 'Info';
-    return (
-      <StepContainer subQuestion={subQuestion} showBack onBack={handleBack}>
-        <div className='text-center p-4'>
-          <p className='text-lg'>
-            If you feel your statement didn't fully answer the question, you can
-            later add custom statements to complement it.
-          </p>
-        </div>
-        <Button
-          onClick={handleComplete}
-          variant='pink'
-          className='mx-auto mt-4'
-        >
-          Finish
-        </Button>
-      </StepContainer>
-    );
-  };
-
-  const renderCurrentStep = () => {
+  // Optional: Define a validation function for the current step.
+  // This function should return true if the current step’s required data is valid.
+  const isStepValid = (step: Exclude<Step, 'closed'>): boolean => {
     switch (step) {
       case 'subject':
-        return renderSubjectStep();
+        return selection.atoms.subject.trim().length > 0;
       case 'verb':
-        return renderVerbStep();
+        return selection.atoms.verb.trim().length > 0;
       case 'object':
-        return renderObjectStep();
+        return selection.atoms.object.trim().length > 0;
       case 'category':
-        return renderCategoryStep();
+        return selection.category.trim().length > 0;
       case 'privacy':
-        return renderPrivacyStep();
+        // Always valid since it's a boolean toggle.
+        return true;
       case 'complement':
-        return renderComplementStep();
+        // Complement is optional; consider it valid.
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  // Render the current step component without navigation buttons.
+  const renderStep = () => {
+    // Calculate currentStep and totalSteps
+    const currentStepNumber = currentStepIndex + 1;
+    const totalSteps = steps.length;
+
+    switch (currentStep) {
+      case 'subject':
+        return (
+          <SubjectStep
+            username={username}
+            presetQuestion={presetQuestion}
+            selection={selection.atoms.subject}
+            onUpdate={(val) =>
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, subject: val },
+              }))
+            }
+            currentStep={currentStepNumber}
+            totalSteps={totalSteps}
+          />
+        );
+      case 'verb':
+        return (
+          <VerbStep
+            subject={selection.atoms.subject}
+            selection={selection.atoms.verb}
+            onUpdate={(val) =>
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, verb: val },
+              }))
+            }
+            currentStep={currentStepNumber}
+            totalSteps={totalSteps}
+          />
+        );
+      case 'object':
+        return (
+          <ObjectStep
+            subject={selection.atoms.subject}
+            verb={selection.atoms.verb}
+            selection={selection.atoms.object}
+            onUpdate={(val) =>
+              setSelection((prev) => ({
+                ...prev,
+                atoms: { ...prev.atoms, object: val },
+              }))
+            }
+            currentStep={currentStepNumber}
+            totalSteps={totalSteps}
+          />
+        );
+      case 'category':
+        return (
+          <CategoryStep
+            selection={selection.category}
+            onUpdate={(val) =>
+              setSelection((prev) => ({
+                ...prev,
+                category: val,
+              }))
+            }
+            currentStep={currentStepNumber}
+            totalSteps={totalSteps}
+          />
+        );
+      case 'privacy':
+        return (
+          <PrivacyStep
+            isPublic={selection.isPublic}
+            onUpdate={(val) =>
+              setSelection((prev) => ({
+                ...prev,
+                isPublic: val,
+              }))
+            }
+            currentStep={currentStepNumber}
+            totalSteps={totalSteps}
+          />
+        );
+      case 'complement':
+        return (
+          <ComplementStep
+            currentStep={currentStepNumber}
+            totalSteps={totalSteps}
+          />
+        );
       default:
         return null;
     }
   };
 
+  // Helper function to get the border color class
+  const getBorderColor = (step: Exclude<Step, 'closed'>): string => {
+    return stepBorderColors[step];
+  };
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
-        className={`sm:max-w-[600px] p-0 w-full border-8 ${
-          stepBorderColors[step as Exclude<Step, 'closed'>]
-        }`}
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${getBorderColor(
+          currentStep
+        )}`}
       >
-        {/* Top header: only render if there's a preset question */}
         {presetQuestion && (
-          <div className='px-4 py-3 bg-gray-200 border-b'>
-            <h2 className='text-xl font-bold'>{presetQuestion.mainQuestion}</h2>
+          <div className='px-4 py-4 border-b'>
+            <div className='flex items-center'>
+              <h2 className='text-xl font-bold text-gray-800'>{presetQuestion.mainQuestion}</h2>
+            </div>
           </div>
         )}
-
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
         <DialogTitle className='sr-only'>Wizard Steps</DialogTitle>
-
-        <AnimatePresence
-          mode='wait'
-          initial={false}
-          onExitComplete={() => null}
-        >
+        <AnimatePresence mode='wait' initial={false}>
           <motion.div
-            key={step}
+            key={currentStep}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
           >
-            {renderCurrentStep()}
+            {renderStep()}
           </motion.div>
         </AnimatePresence>
-        {/* Statement preview shows the statement being built */}
-        <StatementPreview selection={selection} />
+        {/* Navigation Panel */}
+        <div className='flex justify-center p-4 pb-3 mb-0 gap-4'>
+          <Button
+            onClick={goBack}
+            disabled={currentStepIndex === 0}
+            variant='outline'
+            className='shadow-sm'
+          >
+            <span>Back</span>
+          </Button>
+          <Button
+            variant='default'
+            className='shadow-sm'
+            onClick={
+              currentStepIndex === steps.length - 1 ? handleComplete : goNext
+            }
+            disabled={!isStepValid(currentStep) || isSubmitting}
+          >
+            <span>
+              {isSubmitting
+                ? 'Submitting...'
+                : currentStepIndex === steps.length - 1
+                ? 'Create Statement'
+                : 'Next'}
+            </span>
+          </Button>
+        </div>
+        <StatementPreview selection={{...selection, currentStep}} />
       </DialogContent>
     </Dialog>
   );
