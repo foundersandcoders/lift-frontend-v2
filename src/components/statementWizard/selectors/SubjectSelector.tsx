@@ -16,6 +16,7 @@ interface SubjectSelectorProps {
   onChange: (value: string) => void;
   onAddDescriptor: (descriptor: string) => void;
   username: string;
+  category?: string; // Add category prop
 }
 
 const SubjectSelector: React.FC<SubjectSelectorProps> = ({
@@ -23,18 +24,24 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
   onChange,
   onAddDescriptor,
   username,
+  category = 'wellbeing', // Default to wellbeing if no category provided
 }) => {
   const subjectTiles: SubjectOption[] = useMemo(() => {
     const baseOption = { label: username, value: username };
-    const descriptorOptions = descriptorsData.descriptors.flatMap(
-      (descriptor) =>
-        descriptor.options.map((option) => ({
-          label: `${username}'s ${option}`,
-          value: `${username}'s ${option}`,
-        }))
+    
+    // Find the category in the descriptors data
+    const categoryData = descriptorsData.descriptors.find(
+      (descriptor) => descriptor.name.toLowerCase() === category.toLowerCase()
     );
+    
+    // Use the category's options if found, otherwise use an empty array
+    const descriptorOptions = (categoryData?.options || []).map((option) => ({
+      label: `${username}'s ${option}`,
+      value: `${username}'s ${option}`,
+    }));
+    
     return [baseOption, ...descriptorOptions];
-  }, [username]);
+  }, [username, category]);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [isAddingNew, setIsAddingNew] = useState(false);

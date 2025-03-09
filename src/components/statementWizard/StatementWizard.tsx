@@ -66,11 +66,21 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Initialize default values based on whether this is a preset or custom statement
   useEffect(() => {
+    // For preset questions, set the subject if a preset is specified
     if (presetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({
         ...prev,
         atoms: { ...prev.atoms, subject: username },
+      }));
+    }
+    
+    // For custom statements, set the default category to 'uncategorised'
+    if (!presetQuestion) {
+      setSelection((prev) => ({
+        ...prev,
+        category: 'uncategorised',
       }));
     }
   }, [presetQuestion, username]);
@@ -92,8 +102,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       id: Date.now().toString(),
       input: fullInput,
       presetId: presetQuestion ? presetQuestion.id : undefined,
+      // Ensure consistent casing for uncategorized - capital 'U'
       category:
-        presetQuestion?.category || selection.category || 'Uncategorized',
+        presetQuestion?.category || 
+        (selection.category === 'uncategorised' ? 'Uncategorized' : selection.category) || 
+        'Uncategorized',
     };
 
     try {

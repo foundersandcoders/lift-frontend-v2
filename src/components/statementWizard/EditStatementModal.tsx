@@ -88,8 +88,17 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         return (
           <SubjectStep
             username={username}
-            // For editing mode, it doesn't need a preset question
-            presetQuestion={undefined}
+            // Create a mock preset question with the statement's category
+            presetQuestion={{
+              id: 'editing',
+              category: statement.category || 'wellbeing',
+              question: '', // Not needed for editing
+              steps: {
+                subject: {
+                  allowDescriptors: true
+                }
+              }
+            }}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
           />
