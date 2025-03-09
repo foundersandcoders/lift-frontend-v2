@@ -4,7 +4,9 @@ import { getVerbName } from '../../../utils/verbUtils';
 import { MailPlus, MailX, FileText } from 'lucide-react';
 
 interface StatementPreviewProps {
-  selection: Entry;
+  selection: Entry & {
+    currentStep?: Step;
+  };
 }
 
 const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
@@ -12,7 +14,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   const { isPublic } = selection;
   
   // Get the current step from the wizard
-  const currentStep = selection.currentStep as Step | undefined;
+  const currentStep = selection.currentStep;
 
   // Only show the preview if we have at least a subject
   const hasContent = Boolean(subject.trim());

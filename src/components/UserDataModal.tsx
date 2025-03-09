@@ -16,11 +16,10 @@ import QuestionCounter from './ui/questionCounter/QuestionCounter';
 import LargeCircularQuestionCounter from './ui/questionCounter/LargeCircularQuestionCounter';
 
 interface UserDataModalProps {
-  isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const UserDataModal: React.FC<UserDataModalProps> = ({ isOpen, onOpenChange }) => {
+const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   const { data, setData } = useEntries();
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [managerEmailInput, setManagerEmailInput] = useState(
