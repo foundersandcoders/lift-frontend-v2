@@ -15,7 +15,10 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
 }) => {
   const subQuestion = `You can set a category for your statement`;
   const categories = statementsCategories.categories || [];
-  const uncategorisedSelected = !selection || selection === 'uncategorised';
+  // Handle all possible variations of "uncategorized"
+  const uncategorisedSelected = !selection || 
+    selection.toLowerCase() === 'uncategorised' || 
+    selection.toLowerCase() === 'uncategorized';
 
   return (
     <StepContainer subQuestion={subQuestion} showBack>

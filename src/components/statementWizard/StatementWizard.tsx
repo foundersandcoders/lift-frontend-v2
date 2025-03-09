@@ -74,12 +74,13 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         ...prev,
         atoms: { ...prev.atoms, subject: username },
       }));
-    }
-    
-    // For custom statements, set the default category to 'uncategorised'
-    if (!presetQuestion) {
+    } else {
+      // For custom statements, set defaults:
       setSelection((prev) => ({
         ...prev,
+        // Set default subject to username
+        atoms: { ...prev.atoms, subject: username },
+        // Set default category to 'uncategorised'
         category: 'uncategorised',
       }));
     }
