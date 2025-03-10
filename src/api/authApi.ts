@@ -1,4 +1,4 @@
-// Import the mock services
+// Import the mock services for development
 import { 
   mockRequestMagicLink, 
   mockVerifyToken, 
@@ -6,6 +6,9 @@ import {
   mockSignOut,
   mockUpdateUserProfile
 } from './mockAuthService';
+
+// Import the real auth client for production
+import { authClient } from './authClient';
 
 export interface AuthUser {
   id: string;
@@ -21,12 +24,16 @@ export interface AuthState {
 }
 
 // Check if we should use mock services based on the environment variable
-// This allows easy toggling between mock and real implementations
+// Use mocks only when explicitly set to true, otherwise use real services
+// This way production doesn't need to set this variable at all
 const USE_MOCK_SERVICES = import.meta.env.VITE_USE_MOCK_AUTH === 'true';
 
 // Log a message indicating whether we're using mock services or not
 if (import.meta.env.DEV) {
   console.log(`Auth API: ${USE_MOCK_SERVICES ? 'Using MOCK services' : 'Using REAL API services'}`);
+  if (!import.meta.env.VITE_USE_MOCK_AUTH) {
+    console.log('Note: Set VITE_USE_MOCK_AUTH=true in .env.development to use mock authentication');
+  }
 }
 
 // Function to request a magic link
@@ -42,10 +49,22 @@ export const requestMagicLink = async (email: string, callbackURL?: string) => {
       
       return { success: true };
     } else {
-      // Use real API implementation
-      // This would use the authClient when the backend is ready
-      console.log('Using real API with callbackURL:', callbackURL);
-      throw new Error('Real API not implemented yet');
+      // Use real API implementation with the secure authClient
+      try {
+        const { error } = await authClient.signIn.magicLink({
+          email,
+          callbackURL: callbackURL || '/main'
+        });
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        return { success: true };
+      } catch (apiError) {
+        console.error('API error requesting magic link:', apiError);
+        throw apiError;
+      }
     }
   } catch (error) {
     console.error('Error requesting magic link:', error);
@@ -69,9 +88,21 @@ export const verifyMagicLink = async (token: string) => {
       
       return { success: true, user: data?.user };
     } else {
-      // Use real API implementation
-      // This would use the authClient when the backend is ready
-      throw new Error('Real API not implemented yet');
+      // Use real API implementation with the secure authClient
+      try {
+        const { data, error } = await authClient.magicLink.verify({
+          query: { token }
+        });
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        return { success: true, user: data?.user };
+      } catch (apiError) {
+        console.error('API error verifying token:', apiError);
+        throw apiError;
+      }
     }
   } catch (error) {
     console.error('Error verifying magic link:', error);
@@ -95,9 +126,19 @@ export const getCurrentUser = async (): Promise<{ user: AuthUser | null; error?:
       
       return { user: data?.user || null };
     } else {
-      // Use real API implementation
-      // This would use the authClient when the backend is ready
-      throw new Error('Real API not implemented yet');
+      // Use real API implementation with the secure authClient
+      try {
+        const { data, error } = await authClient.getUser();
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        return { user: data?.user || null };
+      } catch (apiError) {
+        console.error('API error getting current user:', apiError);
+        throw apiError;
+      }
     }
   } catch (error) {
     console.error('Error getting current user:', error);
@@ -121,9 +162,19 @@ export const signOut = async () => {
       
       return { success: true };
     } else {
-      // Use real API implementation
-      // This would use the authClient when the backend is ready
-      throw new Error('Real API not implemented yet');
+      // Use real API implementation with the secure authClient
+      try {
+        const { error } = await authClient.signOut();
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        return { success: true };
+      } catch (apiError) {
+        console.error('API error signing out:', apiError);
+        throw apiError;
+      }
     }
   } catch (error) {
     console.error('Error signing out:', error);
@@ -147,9 +198,25 @@ export const updateUserProfile = async (userId: string, data: { username?: strin
       
       return { success: true, user: responseData?.user };
     } else {
-      // Use real API implementation
-      // This would use the authClient when the backend is ready
-      throw new Error('Real API not implemented yet');
+      // Use real API implementation with the secure authClient
+      try {
+        // Note: The actual endpoint and method may vary depending on your backend API
+        // This is an example of how it might be implemented
+        const { data: responseData, error } = await authClient.request({
+          method: 'PUT',
+          url: `/users/${userId}/profile`,
+          body: data
+        });
+        
+        if (error) {
+          throw new Error(error.message);
+        }
+        
+        return { success: true, user: responseData?.user };
+      } catch (apiError) {
+        console.error('API error updating profile:', apiError);
+        throw apiError;
+      }
     }
   } catch (error) {
     console.error('Error updating profile:', error);
