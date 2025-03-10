@@ -23,7 +23,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
 
@@ -59,12 +63,12 @@ export interface StatementItemProps {
 const normalizeCategoryId = (id: string): string => {
   // Convert to lowercase and handle special cases
   const normalized = id ? id.toLowerCase() : '';
-  
+
   // Handle variations of "uncategorized"
   if (['uncategorized', 'uncategorised'].includes(normalized)) {
     return 'uncategorized';
   }
-  
+
   return normalized;
 };
 
@@ -72,18 +76,20 @@ const normalizeCategoryId = (id: string): string => {
 const getCategoryDisplayName = (categoryId: string): string => {
   // Find the category in our predefined categories
   const category = statementsCategories.categories.find(
-    c => normalizeCategoryId(c.id) === normalizeCategoryId(categoryId)
+    (c) => normalizeCategoryId(c.id) === normalizeCategoryId(categoryId)
   );
-  
+
   if (category) {
     return category.name;
   }
-  
+
   // Check for uncategorized variations
-  if (['uncategorized', 'uncategorised'].includes(normalizeCategoryId(categoryId))) {
+  if (
+    ['uncategorized', 'uncategorised'].includes(normalizeCategoryId(categoryId))
+  ) {
     return 'Uncategorized';
   }
-  
+
   // If not found, return the formatted ID
   return formatCategoryName(categoryId);
 };
@@ -123,13 +129,14 @@ const StatementItem: React.FC<StatementItemProps> = ({
       // Only capture initial state when entering edit mode
       // This will be our reference point for comparison
       setInitialDraft(statementCopy);
+      // Also ensure draft is synchronized with current statement
+      setDraft(statementCopy);
     } else {
       // Reset both states when exiting edit mode
       setInitialDraft(statementCopy);
       setDraft(statementCopy);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditing]); // Intentionally excluding statement to avoid resetting initialDraft
+  }, [isEditing, statement]); // Include statement to ensure we're always using the latest version
 
   // Second useEffect: Always keep draft updated with latest statement to reflect modal changes
   useEffect(() => {
@@ -146,27 +153,23 @@ const StatementItem: React.FC<StatementItemProps> = ({
     statement.atoms.verb,
     statement.atoms.object,
     statement.isPublic,
+    statement.category,
     isEditing,
   ]);
-
-  // Uncomment and use this if you need to update parts directly instead of using the modal
-  /*
-  const updatePart = (part: 'subject' | 'verb' | 'object', value: string) => {
-    // Create a new draft object to ensure React detects the change
-    setDraft((prevDraft) => {
-      const newDraft = JSON.parse(JSON.stringify(prevDraft));
-      newDraft.atoms[part] = value;
-      return newDraft;
-    });
-  };
-  */
 
   // Compute if draft has changed from the initial state
   const hasSubjectChanged = draft.atoms.subject !== initialDraft.atoms.subject;
   const hasVerbChanged = draft.atoms.verb !== initialDraft.atoms.verb;
   const hasObjectChanged = draft.atoms.object !== initialDraft.atoms.object;
   const hasPrivacyChanged = draft.isPublic !== initialDraft.isPublic;
-  const hasCategoryChanged = draft.category !== initialDraft.category;
+  // Force this to true for now for debugging
+  const hasCategoryChanged = true; // draft.category !== initialDraft.category;
+
+  console.log('CATEGORY DEBUG:');
+  console.log('Draft category:', draft.category);
+  console.log('Initial draft category:', initialDraft.category);
+  console.log('Normally would be:', draft.category !== initialDraft.category);
+  console.log('Forcing to true for debugging');
 
   const hasChanged =
     hasSubjectChanged ||
@@ -258,8 +261,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   onClick={async () => {
                     setIsSaving(true);
                     // Update the input field to reflect the edited statement
-                    const updatedDraft = {...draft};
-                    updatedDraft.input = `${draft.atoms.subject} ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
+                    const updatedDraft = { ...draft };
+                    updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
+                      draft.atoms.verb
+                    )} ${draft.atoms.object}`;
                     await onLocalSave(updatedDraft);
                     setIsSaving(false);
                   }}

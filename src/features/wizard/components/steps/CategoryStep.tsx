@@ -57,7 +57,7 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
           </Button>
         ))}
         <Button
-          onClick={() => onUpdate('Uncategorized')} 
+          onClick={() => onUpdate('uncategorized')} 
           className={`
             h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
             ${

@@ -332,28 +332,20 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     // Normalize the category ID for consistent comparison
     const normalizedCatId = normalizeCategoryIdForGrouping(catId);
     
-    // Get category color from the categories list
-    const categoryObj = categoriesList.find(c => normalizeCategoryIdForGrouping(c.id) === normalizedCatId);
-    const categoryColor = categoryObj ? 
-      `bg-${categoryObj.id.toLowerCase()}-100 border-${categoryObj.id.toLowerCase()}-300` : 
-      'bg-gray-100 border-gray-300';
+    // We're now using a consistent styling regardless of category
     
     // Use the answered counts by category to determine if all questions are answered
     const { categoryCounts } = useAnsweredCountByCategory();
     const categoryStatus = categoryCounts[normalizedCatId] || { answered: 0, total: 0 };
     const isComplete = categoryStatus.total > 0 && categoryStatus.answered === categoryStatus.total;
     
-    // Debug logging
-    console.log(`Category: ${catId} (normalized: ${normalizedCatId})`);
-    console.log(`Status: ${categoryStatus.answered}/${categoryStatus.total}`);
-    console.log(`Complete: ${isComplete}`);
     
     return (
       <div key={catId} className='mb-8'>
         {/* Folder Tab Design */}
-        <div className={`relative mb-1 z-10`}>
+        <div className={`relative z-10`}>
           <div 
-            className={`inline-block px-4 py-2 rounded-t-lg ${isComplete ? 'bg-green-200 border-green-500' : categoryColor} border-t border-l border-r`}
+            className={`inline-block px-4 py-2 rounded-t-lg ${isComplete ? 'bg-green-200 border-green-500' : 'bg-slate-100 border-slate-300'} border-t border-l border-r border-b-0`}
           >
             <h3 className='text-lg font-semibold'>
               {formatCategoryName(catLabel)}
@@ -362,7 +354,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         </div>
         
         {/* Folder Content */}
-        <div className={`border rounded-tr-lg rounded-b-lg p-4 ${isComplete ? 'bg-white border-green-500' : 'bg-white border-gray-300'}`}>
+        <div className={`border rounded-tr-lg rounded-b-lg p-4 -mt-[1px] ${isComplete ? 'bg-white border-green-500' : 'bg-white border-slate-300'}`}>
           {presetForCat.length > 0 && (
             <ul className='space-y-2'>
               {presetForCat.map((presetQuestion) => (
@@ -440,9 +432,9 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     return (
       <div className='mb-8 mt-4'>
         {/* Folder Tab Design for Snoozed Questions */}
-        <div className={`relative mb-1 z-10`}>
+        <div className={`relative z-10`}>
           <div 
-            className={`inline-block px-4 py-2 rounded-t-lg bg-blue-100 border-blue-300 border-t border-l border-r cursor-pointer`}
+            className={`inline-block px-4 py-2 rounded-t-lg bg-blue-100 border-blue-300 border-t border-l border-r border-b-0 cursor-pointer`}
             onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
           >
             <div className="flex items-center justify-between min-w-[200px]">
@@ -464,7 +456,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         
         {/* Folder Content for Snoozed Questions */}
         {isSnoozedQuestionsSectionExpanded && (
-          <div className="border rounded-tr-lg rounded-b-lg p-4 bg-white border-blue-300">
+          <div className="border rounded-tr-lg rounded-b-lg p-4 -mt-[1px] bg-white border-blue-300">
             <ul className='space-y-2'>
               {snoozedQuestions.map((question) => (
                 <li key={`snoozed-${question.id}`}>

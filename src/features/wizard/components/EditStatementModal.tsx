@@ -66,7 +66,17 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
       updatedStatement.input = `${updatedAtoms.subject} ${getVerbName(updatedAtoms.verb)} ${updatedAtoms.object}`;
       
     } else if (editPart === 'category') {
-      updatedStatement = { ...statement, category: localValue as string };
+      console.log('EDIT STATEMENT MODAL - Setting category:');
+      console.log('Original statement category:', statement.category);
+      console.log('New category value:', localValue);
+      
+      // Create a completely new object to ensure React detects the change
+      updatedStatement = JSON.parse(JSON.stringify({
+        ...statement,
+        category: localValue as string
+      }));
+      
+      console.log('Updated statement:', updatedStatement);
     } else if (editPart === 'privacy') {
       updatedStatement = { ...statement, isPublic: localValue as boolean };
     } else {

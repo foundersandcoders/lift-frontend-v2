@@ -56,7 +56,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           )}
           
           {/* Main question text (truncated if too long) */}
-          <span className='flex-1 truncate text-lg font-semibold'>
+          <span className='flex-1 truncate text-lg'>
             {presetQuestion.mainQuestion}
           </span>
           
