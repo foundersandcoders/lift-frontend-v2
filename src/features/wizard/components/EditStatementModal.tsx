@@ -4,9 +4,9 @@ import {
   DialogContent,
   DialogTitle,
   DialogDescription,
-} from '../../../components/ui/dialog';
-import { Button } from '../../../components/ui/button';
-import type { Entry } from '../../../types/entries';
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import type { Entry } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';

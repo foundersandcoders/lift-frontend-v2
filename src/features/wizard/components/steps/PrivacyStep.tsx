@@ -1,6 +1,6 @@
 import React from 'react';
 import StepContainer from '../StepContainer';
-import { Button } from '../../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { MailX, MailPlus } from 'lucide-react';
 
 interface PrivacyStepProps {

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { Button } from '../../../components/ui/button';
-import { getVerbName } from '../../../lib/utils/verbUtils';
+import { Button } from '@/components/ui/button';
+import { getVerbName } from '@/lib/utils/verbUtils';
 import {
   Trash2,
   Edit2,
@@ -14,16 +14,18 @@ import {
   MailX,
   PenOff,
 } from 'lucide-react';
-import type { Entry } from '../../../types/entries';
+import type { Entry } from '@/types/entries';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '../../../components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../../../components/ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import statementsCategories from '@/data/statementsCategories.json';
+import { formatCategoryName } from '@/lib/utils';
 
 export interface StatementItemProps {
   statement: Entry;
@@ -52,6 +54,39 @@ export interface StatementItemProps {
   onToggleResolved?: (statementId: string) => void;
   onToggleActionResolved?: (actionId: string) => void;
 }
+
+// Helper function to normalize category ID for comparison
+const normalizeCategoryId = (id: string): string => {
+  // Convert to lowercase and handle special cases
+  const normalized = id ? id.toLowerCase() : '';
+  
+  // Handle variations of "uncategorized"
+  if (['uncategorized', 'uncategorised'].includes(normalized)) {
+    return 'uncategorized';
+  }
+  
+  return normalized;
+};
+
+// Helper function to get category display name from ID
+const getCategoryDisplayName = (categoryId: string): string => {
+  // Find the category in our predefined categories
+  const category = statementsCategories.categories.find(
+    c => normalizeCategoryId(c.id) === normalizeCategoryId(categoryId)
+  );
+  
+  if (category) {
+    return category.name;
+  }
+  
+  // Check for uncategorized variations
+  if (['uncategorized', 'uncategorised'].includes(normalizeCategoryId(categoryId))) {
+    return 'Uncategorized';
+  }
+  
+  // If not found, return the formatted ID
+  return formatCategoryName(categoryId);
+};
 
 const StatementItem: React.FC<StatementItemProps> = ({
   statement,
@@ -204,10 +239,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
             className='cursor-pointer px-2 py-1 text-xs rounded border border-gray-300 bg-gray-50 hover:bg-gray-100 flex items-center'
           >
             <span className='mr-1'>📁</span>
+            {/* Use formatted category name */}
             {draft.category &&
             draft.category.toLowerCase() !== 'uncategorized' &&
             draft.category.toLowerCase() !== 'uncategorised'
-              ? draft.category
+              ? getCategoryDisplayName(draft.category)
               : 'Uncategorized'}
           </div>
         </div>

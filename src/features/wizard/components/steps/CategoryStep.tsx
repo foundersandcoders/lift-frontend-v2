@@ -1,8 +1,8 @@
 // src/components/statementWizard/steps/CategoryStep.tsx
 import React from 'react';
 import StepContainer from '../StepContainer';
-import { Button } from '../../../../components/ui/button';
-import statementsCategories from '../../../../data/statementsCategories.json';
+import { Button } from '@/components/ui/button';
+import statementsCategories from '@/data/statementsCategories.json';
 
 interface CategoryStepProps {
   selection: string;
@@ -19,10 +19,17 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
 }) => {
   const subQuestion = `You can set a category for your statement`;
   const categories = statementsCategories.categories || [];
+  
+  // Helper function to normalize category IDs
+  const normalizeCategoryId = (id: string): string => {
+    return id ? id.toLowerCase() : '';
+  };
+  
   // Handle all possible variations of "uncategorized"
+  const normalizedSelection = normalizeCategoryId(selection);
   const uncategorisedSelected = !selection || 
-    selection.toLowerCase() === 'uncategorised' || 
-    selection.toLowerCase() === 'uncategorized';
+    normalizedSelection === 'uncategorised' || 
+    normalizedSelection === 'uncategorized';
 
   return (
     <StepContainer 
@@ -35,22 +42,22 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
         {categories.map((cat: { id: string; name: string }) => (
           <Button
             key={cat.id}
-            onClick={() => onUpdate(cat.id)}
+            onClick={() => onUpdate(cat.id)} 
             className={`
               h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
               ${
-                selection === cat.id
+                normalizedSelection === normalizeCategoryId(cat.id)
                   ? 'bg-blue-50 text-blue-600 border-blue-300'
                   : 'bg-white text-gray-700 border-gray-300'
               }
             `}
-            variant={selection === cat.id ? 'default' : 'outline'}
+            variant={normalizedSelection === normalizeCategoryId(cat.id) ? 'default' : 'outline'}
           >
             <span className='font-medium'>{cat.name}</span>
           </Button>
         ))}
         <Button
-          onClick={() => onUpdate('uncategorised')}
+          onClick={() => onUpdate('Uncategorized')} 
           className={`
             h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
             ${

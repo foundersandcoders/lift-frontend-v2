@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Entry, Step } from '../../../types/entries';
-import { getVerbName } from '../../../lib/utils/verbUtils';
+import type { Entry, Step } from '@/types/entries';
+import { getVerbName } from '@/lib/utils/verbUtils';
 import { MailPlus, MailX, FileText } from 'lucide-react';
 
 interface StatementPreviewProps {

@@ -1,7 +1,7 @@
 // TestStatementButton.tsx
 import React from 'react';
 import { Button } from '../ui/button';
-import type { Entry } from '../../../types/entries';
+import type { Entry } from '@/types/entries';
 import { useEntries } from '../../features/statements/hooks/useEntries'; // CHANGE: Import useEntries to update context
 
 const TestStatementButton: React.FC = () => {

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Button } from '../../../components/ui/button';
-import type { Verb, Category } from '../../../types/entries';
-import { getContrastColor } from '../../../lib/utils/colorUtils';
-import { getVerbColor } from '../../../lib/utils/categoryUtils';
+import { Button } from '@/components/ui/button';
+import type { Verb, Category } from '@/types/entries';
+import { getContrastColor } from '@/lib/utils/colorUtils';
+import { getVerbColor } from '@/lib/utils/categoryUtils';
 
 interface VerbGridProps {
   verbs: Verb[];

@@ -2,7 +2,7 @@
 import React from 'react';
 import StepContainer from '../StepContainer';
 import { Input } from '../../../../components/ui/input';
-import { getVerbName } from '../../../../lib/utils/verbUtils';
+import { getVerbName } from '@/lib/utils/verbUtils';
 
 interface ObjectStepProps {
   subject: string;

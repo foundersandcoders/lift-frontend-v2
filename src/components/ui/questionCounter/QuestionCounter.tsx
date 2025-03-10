@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAnsweredCount } from '../../../features/questions/hooks/useAnsweredCount';
-import { cn } from '../../../../lib/utils';
+import { cn } from '@/lib/utils';
 
 interface QuestionCounterProps {
   className?: string;

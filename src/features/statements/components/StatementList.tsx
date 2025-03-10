@@ -3,20 +3,44 @@
 import React, { useState } from 'react';
 import { useEntries } from '../hooks/useEntries';
 import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
-import type { Entry, SetQuestion } from '../../../types/entries';
+import type { Entry, SetQuestion } from '@/types/entries';
 import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';
 import StatementWizard from '../../wizard/components/StatementWizard';
 import { useQuestions } from '../../questions/hooks/useQuestions';
-import statementsCategories from '../../../data/statementsCategories.json';
-import { formatCategoryName } from '../../../lib/utils';
+import statementsCategories from '@/data/statementsCategories.json';
+import { formatCategoryName } from '@/lib/utils';
 import { updateEntry } from '../api/entriesApi';
 import { EditStatementModal } from '../../wizard/components/EditStatementModal';
 import { BellOff, ChevronUp, ChevronDown } from 'lucide-react';
 
+// Helper function to normalize category IDs for consistent comparison
+const normalizeCategoryIdForGrouping = (id: string): string => {
+  // Convert to lowercase and handle special cases
+  const normalized = id ? id.toLowerCase() : '';
+  
+  // Handle variations of "uncategorized"
+  if (['uncategorized', 'uncategorised'].includes(normalized)) {
+    return 'uncategorized';
+  }
+  
+  return normalized;
+};
+
+// Map a category ID to its corresponding predefined category ID if it exists
+const mapToPredefinedCategoryId = (categoryId: string): string => {
+  const normalized = normalizeCategoryIdForGrouping(categoryId);
+  const predefinedCategory = statementsCategories.categories.find(
+    c => normalizeCategoryIdForGrouping(c.id) === normalized
+  );
+  
+  return predefinedCategory ? predefinedCategory.id : categoryId;
+};
+
 const groupQuestionsByCategory = (questions: SetQuestion[]) => {
   return questions.reduce<Record<string, SetQuestion[]>>((acc, question) => {
-    const cat = question.category || 'Uncategorized';
+    // Use the predefined category ID if it exists, otherwise use the normalized ID
+    const cat = mapToPredefinedCategoryId(question.category || 'Uncategorized');
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(question);
     return acc;
@@ -25,7 +49,8 @@ const groupQuestionsByCategory = (questions: SetQuestion[]) => {
 
 const groupStatementsByCategory = (statements: Entry[]) => {
   return statements.reduce<Record<string, Entry[]>>((acc, statement) => {
-    const cat = statement.category || 'Uncategorized';
+    // Use the predefined category ID if it exists, otherwise use the normalized ID
+    const cat = mapToPredefinedCategoryId(statement.category || 'Uncategorized');
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(statement);
     return acc;
@@ -426,6 +451,26 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     ])
   ).filter((catId) => !definedCategoryIds.includes(catId));
 
+  // Helper function to find category name from ID
+  const getCategoryName = (categoryId: string): string => {
+    // First check if it's in our defined categories
+    const category = definedCategories.find(c => 
+      normalizeCategoryIdForGrouping(c.id) === normalizeCategoryIdForGrouping(categoryId)
+    );
+    
+    if (category) {
+      return category.name;
+    }
+    
+    // Check for uncategorized variations
+    if (['uncategorized', 'uncategorised'].includes(normalizeCategoryIdForGrouping(categoryId))) {
+      return 'Uncategorized';
+    }
+    
+    // If not found, return the ID with formatting
+    return formatCategoryName(categoryId);
+  };
+
   return (
     <>
       <div className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
@@ -433,7 +478,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         {definedCategories.map((cat) =>
           renderCategorySection(cat.id, cat.name)
         )}
-        {extraCategoryIds.map((catId) => renderCategorySection(catId, catId))}
+        {extraCategoryIds.map((catId) => renderCategorySection(catId, getCategoryName(catId)))}
         
         {/* Snoozed sections */}
         {renderSnoozedQuestionsSection()}

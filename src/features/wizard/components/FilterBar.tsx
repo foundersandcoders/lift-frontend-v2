@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-// import { Button } from '../../../components/ui/button';
-import type { Category } from '../../../types/entries';
-import { getContrastColor } from '../../../lib/utils/colorUtils';
+// import { Button } from '@/components/ui/button';
+import type { Category } from '@/types/entries';
+import { getContrastColor } from '@/lib/utils/colorUtils';
 
 interface FilterBarProps {
   rootCategory: Category;

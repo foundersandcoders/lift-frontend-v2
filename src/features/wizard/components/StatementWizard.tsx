@@ -6,11 +6,11 @@ import {
   DialogContent,
   DialogDescription,
   DialogTitle,
-} from '../../../components/ui/dialog';
+} from '@/components/ui/dialog';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEntries } from '../../statements/hooks/useEntries';
-import { postNewEntry } from '../../statements/api/entriesApi';
-import type { Entry, SetQuestion, Step } from '../../../types/entries';
+import { useEntries } from '@/features/statements/hooks/useEntries';
+import { postNewEntry } from '@/features/statements/api/entriesApi';
+import type { Entry, SetQuestion, Step } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';
@@ -18,7 +18,7 @@ import { CategoryStep } from './steps/CategoryStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
-import { Button } from '../../../components/ui/button';
+import { Button } from '@/components/ui/button';
 
 interface StatementWizardProps {
   username: string;
@@ -103,12 +103,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       id: Date.now().toString(),
       input: fullInput,
       presetId: presetQuestion ? presetQuestion.id : undefined,
-      // Ensure consistent casing for uncategorized - capital 'U'
+      // Use the category ID directly - display name will be handled by the UI
       category:
         presetQuestion?.category ||
-        (selection.category === 'uncategorised'
-          ? 'Uncategorized'
-          : selection.category) ||
+        selection.category ||
         'Uncategorized',
     };
 
@@ -295,7 +293,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </span>
           </Button>
         </div>
-        <StatementPreview selection={selection} />
+        <StatementPreview selection={{...selection, currentStep}} />
       </DialogContent>
     </Dialog>
   );

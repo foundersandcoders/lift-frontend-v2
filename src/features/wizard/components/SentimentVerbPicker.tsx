@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import type { Verb, Category } from '../../../types/entries';
-import verbData from '../../../data/verbs.json';
-import categoryStructure from '../../../data/categoryStructure.json';
+import type { Verb, Category } from '@/types/entries';
+import verbData from '@/data/verbs.json';
+import categoryStructure from '@/data/categoryStructure.json';
 import FilterBar from './FilterBar';
 import VerbGrid from './VerbGrid';
-import { getAllDescendants } from '../../../lib/utils/categoryUtils';
+import { getAllDescendants } from '@/lib/utils/categoryUtils';
 
 interface SentimentVerbPickerProps {
   selectedVerbId: string;
