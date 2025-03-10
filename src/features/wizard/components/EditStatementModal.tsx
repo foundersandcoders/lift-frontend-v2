@@ -12,6 +12,7 @@ import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';
 import { CategoryStep } from './steps/CategoryStep';
 import { PrivacyStep } from './steps/PrivacyStep';
+import { getVerbName } from '@/lib/utils/verbUtils';
 
 interface EditStatementModalProps {
   statement: Entry;
@@ -54,10 +55,16 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
       editPart === 'verb' ||
       editPart === 'object'
     ) {
+      // Update the atoms
       updatedStatement = {
         ...statement,
         atoms: { ...statement.atoms, [editPart]: localValue as string },
       };
+      
+      // Update the input field to reflect the new statement text
+      const updatedAtoms = { ...statement.atoms, [editPart]: localValue as string };
+      updatedStatement.input = `${updatedAtoms.subject} ${getVerbName(updatedAtoms.verb)} ${updatedAtoms.object}`;
+      
     } else if (editPart === 'category') {
       updatedStatement = { ...statement, category: localValue as string };
     } else if (editPart === 'privacy') {

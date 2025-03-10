@@ -1,16 +1,22 @@
-const RESEND_KEY = import.meta.env.VITE_RESEND_KEY;
-import { Resend } from "resend";
 import { Email } from "../../../types/emails";
 
-const resend = new Resend(RESEND_KEY);
-
+// Send email via backend API
 export async function sendEmail(email: Email) {
   try {
-    const { data, error } = await resend.emails.send(email);
-
-    if (error) throw new Error(error.message);
+    const response = await fetch('/api/email/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(email),
+    });
     
-    return data;
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to send email');
+    }
+    
+    return await response.json();
   } catch (error) {
     console.error("Error sending email:", error);
     throw error;

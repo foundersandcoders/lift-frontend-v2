@@ -102,7 +102,6 @@ Configuration settings are managed through environment variables. Ensure you hav
 
 ```ini
 VITE_API_URL=<your_backend_api_url>
-VITE_RESEND_KEY=<your_resend_key>
 ```
 
 ## Contributing

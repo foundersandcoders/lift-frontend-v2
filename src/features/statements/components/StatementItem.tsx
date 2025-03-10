@@ -257,7 +257,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   size='compact'
                   onClick={async () => {
                     setIsSaving(true);
-                    await onLocalSave(draft);
+                    // Update the input field to reflect the edited statement
+                    const updatedDraft = {...draft};
+                    updatedDraft.input = `${draft.atoms.subject} ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
+                    await onLocalSave(updatedDraft);
                     setIsSaving(false);
                   }}
                   disabled={!hasChanged || isSaving}

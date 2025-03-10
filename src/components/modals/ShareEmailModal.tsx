@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { useEntries } from '../../features/statements/hooks/useEntries';
-// import { sendEmail } from '../../features/email/api/emailApi';
+import { sendEmail } from '../../features/email/api/emailApi';
 import { Email } from '../../types/emails';
 import { Loader2 } from 'lucide-react';
+import { getVerbName } from '../../lib/utils/verbUtils';
 
 const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { data } = useEntries();
@@ -32,7 +33,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       html += `
         <div style="margin-bottom: 25px; padding: 15px; border-left: 4px solid #ff69b4; background-color: #f9f9f9;">
           <p style="font-weight: bold; font-size: 18px; margin-bottom: 10px;">
-            ${entry.input}
+            ${entry.atoms.subject} ${getVerbName(entry.atoms.verb)} ${entry.atoms.object}
           </p>
       `;
 
@@ -172,7 +173,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     borderColor: '#e5e5e5',
                   }}
                 >
-                  <p className='text-base font-semibold'>{entry.input}</p>
+                  <p className='text-base font-semibold'>{entry.atoms.subject} {getVerbName(entry.atoms.verb)} {entry.atoms.object}</p>
                   {entry.actions && entry.actions.length > 0 && (
                     <div className='mt-3 space-y-2'>
                       <div className='text-xs uppercase tracking-wider text-gray-500 font-semibold border-b border-gray-200 pb-1 mb-2'>
