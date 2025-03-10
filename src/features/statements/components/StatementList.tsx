@@ -8,6 +8,7 @@ import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';
 import StatementWizard from '../../wizard/components/StatementWizard';
 import { useQuestions } from '../../questions/hooks/useQuestions';
+import { useAnsweredCountByCategory } from '../../questions/hooks/useAnsweredCount';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
 import { updateEntry } from '../api/entriesApi';
@@ -327,74 +328,104 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     const presetForCat = questionsByCategory[catId] || [];
     const statementsForCat = statementsByCategory[catId] || [];
     if (presetForCat.length === 0 && statementsForCat.length === 0) return null;
+
+    // Normalize the category ID for consistent comparison
+    const normalizedCatId = normalizeCategoryIdForGrouping(catId);
+    
+    // Get category color from the categories list
+    const categoryObj = categoriesList.find(c => normalizeCategoryIdForGrouping(c.id) === normalizedCatId);
+    const categoryColor = categoryObj ? 
+      `bg-${categoryObj.id.toLowerCase()}-100 border-${categoryObj.id.toLowerCase()}-300` : 
+      'bg-gray-100 border-gray-300';
+    
+    // Use the answered counts by category to determine if all questions are answered
+    const { categoryCounts } = useAnsweredCountByCategory();
+    const categoryStatus = categoryCounts[normalizedCatId] || { answered: 0, total: 0 };
+    const isComplete = categoryStatus.total > 0 && categoryStatus.answered === categoryStatus.total;
+    
+    // Debug logging
+    console.log(`Category: ${catId} (normalized: ${normalizedCatId})`);
+    console.log(`Status: ${categoryStatus.answered}/${categoryStatus.total}`);
+    console.log(`Complete: ${isComplete}`);
     
     return (
       <div key={catId} className='mb-8'>
-        <h3 className='text-lg font-semibold mb-2'>
-          {formatCategoryName(catLabel)}
-        </h3>
-        {presetForCat.length > 0 && (
-          <ul className='space-y-2'>
-            {presetForCat.map((presetQuestion) => (
-              <li key={`preset-${presetQuestion.id}`}>
-                <QuestionCard
-                  presetQuestion={presetQuestion}
-                  onSelect={handlePresetQuestionSelect}
-                  onToggleSnooze={handleToggleQuestionSnooze}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
-        {statementsForCat.length > 0 && (
-          <ul className='space-y-4 mt-4'>
-            {statementsForCat.map((statement) => (
-              <li key={statement.id}>
-                <StatementItem
-                  statement={statement}
-                  isEditing={statement.id === editingStatementId}
-                  editingPart={null}
-                  onPartClick={handlePartClick}
-                  onLocalSave={handleLocalSave}
-                  onCancel={() => {
-                    // If we have the original, restore it
-                    if (originalEntries[statement.id]) {
-                      // Restore the original entry from our backup
-                      setData({
-                        type: 'UPDATE_ENTRY',
-                        payload: originalEntries[statement.id]
-                      });
+        {/* Folder Tab Design */}
+        <div className={`relative mb-1 z-10`}>
+          <div 
+            className={`inline-block px-4 py-2 rounded-t-lg ${isComplete ? 'bg-green-200 border-green-500' : categoryColor} border-t border-l border-r`}
+          >
+            <h3 className='text-lg font-semibold'>
+              {formatCategoryName(catLabel)}
+            </h3>
+          </div>
+        </div>
+        
+        {/* Folder Content */}
+        <div className={`border rounded-tr-lg rounded-b-lg p-4 ${isComplete ? 'bg-white border-green-500' : 'bg-white border-gray-300'}`}>
+          {presetForCat.length > 0 && (
+            <ul className='space-y-2'>
+              {presetForCat.map((presetQuestion) => (
+                <li key={`preset-${presetQuestion.id}`}>
+                  <QuestionCard
+                    presetQuestion={presetQuestion}
+                    onSelect={handlePresetQuestionSelect}
+                    onToggleSnooze={handleToggleQuestionSnooze}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+          {statementsForCat.length > 0 && (
+            <ul className='space-y-4 mt-4'>
+              {statementsForCat.map((statement) => (
+                <li key={statement.id}>
+                  <StatementItem
+                    statement={statement}
+                    isEditing={statement.id === editingStatementId}
+                    editingPart={null}
+                    onPartClick={handlePartClick}
+                    onLocalSave={handleLocalSave}
+                    onCancel={() => {
+                      // If we have the original, restore it
+                      if (originalEntries[statement.id]) {
+                        // Restore the original entry from our backup
+                        setData({
+                          type: 'UPDATE_ENTRY',
+                          payload: originalEntries[statement.id]
+                        });
+                        
+                        // Remove from originalEntries
+                        setOriginalEntries(prev => {
+                          const newEntries = {...prev};
+                          delete newEntries[statement.id];
+                          return newEntries;
+                        });
+                      }
                       
-                      // Remove from originalEntries
-                      setOriginalEntries(prev => {
-                        const newEntries = {...prev};
-                        delete newEntries[statement.id];
-                        return newEntries;
-                      });
+                      // Exit edit mode
+                      setEditingStatementId(null);
+                    }}
+                    onDelete={handleDeleteClick}
+                    onEditClick={handleEditClick}
+                    onAddAction={handleAddAction}
+                    onEditAction={handleEditAction}
+                    onDeleteAction={handleDeleteAction}
+                    onReset={
+                      statement.presetId
+                        ? () => handleResetClick(statement.id)
+                        : undefined
                     }
-                    
-                    // Exit edit mode
-                    setEditingStatementId(null);
-                  }}
-                  onDelete={handleDeleteClick}
-                  onEditClick={handleEditClick}
-                  onAddAction={handleAddAction}
-                  onEditAction={handleEditAction}
-                  onDeleteAction={handleDeleteAction}
-                  onReset={
-                    statement.presetId
-                      ? () => handleResetClick(statement.id)
-                      : undefined
-                  }
-                  onToggleResolved={handleToggleResolved}
-                  onToggleActionResolved={(actionId: string) =>
-                    handleToggleActionResolved(statement.id, actionId)
-                  }
-                />
-              </li>
-            ))}
-          </ul>
-        )}
+                    onToggleResolved={handleToggleResolved}
+                    onToggleActionResolved={(actionId: string) =>
+                      handleToggleActionResolved(statement.id, actionId)
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     );
   };
@@ -407,36 +438,45 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     if (snoozedQuestions.length === 0) return null;
     
     return (
-      <div className='mb-8 mt-4 border-t pt-4'>
-        <div 
-          className='flex items-center justify-between cursor-pointer py-2 px-3 bg-blue-50 rounded-md mb-2'
-          onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
-        >
-          <h3 className='text-lg font-semibold flex items-center text-blue-700'>
-            <BellOff className='h-5 w-5 mr-2' />
-            Snoozed Questions ({snoozedQuestions.length})
-          </h3>
-          <div className='text-blue-600'>
-            {isSnoozedQuestionsSectionExpanded ? (
-              <ChevronUp className='h-5 w-5' />
-            ) : (
-              <ChevronDown className='h-5 w-5' />
-            )}
+      <div className='mb-8 mt-4'>
+        {/* Folder Tab Design for Snoozed Questions */}
+        <div className={`relative mb-1 z-10`}>
+          <div 
+            className={`inline-block px-4 py-2 rounded-t-lg bg-blue-100 border-blue-300 border-t border-l border-r cursor-pointer`}
+            onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
+          >
+            <div className="flex items-center justify-between min-w-[200px]">
+              <h3 className='text-lg font-semibold flex items-center text-blue-700'>
+                <BellOff className='h-5 w-5 mr-2' />
+                Snoozed Questions
+              </h3>
+              <div className='flex items-center'>
+                <span className="mr-2 text-blue-700">({snoozedQuestions.length})</span>
+                {isSnoozedQuestionsSectionExpanded ? (
+                  <ChevronUp className='h-5 w-5 text-blue-600' />
+                ) : (
+                  <ChevronDown className='h-5 w-5 text-blue-600' />
+                )}
+              </div>
+            </div>
           </div>
         </div>
         
+        {/* Folder Content for Snoozed Questions */}
         {isSnoozedQuestionsSectionExpanded && (
-          <ul className='space-y-2 mt-4 pl-4 border-l-2 border-blue-100'>
-            {snoozedQuestions.map((question) => (
-              <li key={`snoozed-${question.id}`}>
-                <QuestionCard
-                  presetQuestion={question}
-                  onSelect={() => {/* Disabled for snoozed questions */}}
-                  onToggleSnooze={handleToggleQuestionSnooze}
-                />
-              </li>
-            ))}
-          </ul>
+          <div className="border rounded-tr-lg rounded-b-lg p-4 bg-white border-blue-300">
+            <ul className='space-y-2'>
+              {snoozedQuestions.map((question) => (
+                <li key={`snoozed-${question.id}`}>
+                  <QuestionCard
+                    presetQuestion={question}
+                    onSelect={() => {/* Disabled for snoozed questions */}}
+                    onToggleSnooze={handleToggleQuestionSnooze}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     );
