@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
-import { useAuth } from '../../features/auth/hooks/useAuth';
+import { useAuth } from '../../features/auth/api/hooks';
 import {
   DialogContent,
   DialogFooter,

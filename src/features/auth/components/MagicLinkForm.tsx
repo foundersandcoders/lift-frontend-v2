@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../api/hooks';
 import { validateEmail } from '@/lib/utils/validateEmail';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

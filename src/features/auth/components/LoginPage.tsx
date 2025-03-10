@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../api/hooks';
 import { useEntries } from '../../statements/hooks/useEntries';
 import MagicLinkForm from './MagicLinkForm';
 import { Input } from '../../../components/ui/input';
