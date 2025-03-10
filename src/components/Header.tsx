@@ -27,13 +27,13 @@ const Header: React.FC = () => {
                 <SmallCircularQuestionCounter />
               </div>
             </DialogTrigger>
-            <UserDataModal 
-              onOpenChange={setIsDashboardOpen} 
+            <UserDataModal
+              onOpenChange={setIsDashboardOpen}
             />
           </Dialog>
         ) : (
           <div className='flex items-center border-2 border-white rounded-full px-4 py-2 cursor-default'>
-            <span className='mr-2'>Not logged</span>
+            <span className='mr-2'>Not logged in</span>
             <SmallCircularQuestionCounter />
           </div>
         )}

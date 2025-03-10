@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useEntries } from '../hooks/useEntries';
+import { useAuth } from '../hooks/useAuth';
 import {
   DialogContent,
   DialogFooter,
@@ -9,7 +10,7 @@ import {
 } from './ui/dialog';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Save, X, User, Mail, Award, Edit2 } from 'lucide-react';
+import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip';
 import { validateEmail } from '../../utils/validateEmail';
 import QuestionCounter from './ui/questionCounter/QuestionCounter';
@@ -21,6 +22,7 @@ interface UserDataModalProps {
 
 const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   const { data, setData } = useEntries();
+  const { signOut } = useAuth();
   const [isEditingContact, setIsEditingContact] = useState(false);
   const [managerEmailInput, setManagerEmailInput] = useState(
     data.managerEmail || ''
@@ -29,6 +31,16 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     data.managerName || ''
   );
   const [emailError, setEmailError] = useState('');
+  
+  const handleSignOut = async () => {
+    await signOut();
+    // Clear user data from entries context
+    setData({ type: 'SET_USERNAME', payload: '' });
+    setData({ type: 'SET_MANAGER_NAME', payload: '' });
+    setData({ type: 'SET_MANAGER_EMAIL', payload: '' });
+    // Close modal
+    onOpenChange(false);
+  };
 
   // Sync local inputs with context when edit mode is activated.
   useEffect(() => {
@@ -188,7 +200,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
           </div>
           
           {/* Progress section */}
-          <div className='bg-white rounded-lg p-4 shadow-sm border border-pink-100'>
+          <div className='bg-white rounded-lg p-4 shadow-sm border border-pink-100 mb-6'>
             <div className='flex items-center mb-3'>
               <Award size={18} className='text-brand-pink mr-2' />
               <div className='text-sm font-semibold text-gray-700'>
@@ -202,6 +214,15 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
               </div>
             </div>
           </div>
+          
+          {/* Sign Out section */}
+          <button 
+            onClick={handleSignOut}
+            className='w-full flex items-center justify-center py-3 px-4 rounded-md border border-pink-100 text-red-600 hover:bg-red-50 transition-colors'
+          >
+            <LogOut size={18} className='mr-2' />
+            <span className='font-medium'>Sign Out</span>
+          </button>
         </div>
       </div>
       
