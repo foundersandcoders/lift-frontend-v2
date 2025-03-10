@@ -1,0 +1,410 @@
+{
+  "setQuestions": [
+    {
+      "id": "q1",
+      "category": "wellbeing",
+      "mainQuestion": "Share any factors, either at work or outside, that might affect your wellbeing.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "what?",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this statement?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q2",
+      "category": "wellbeing",
+      "mainQuestion": "Express how you feel on a good day at work.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": false
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Express",
+          "allowedVerbs": ["Express", "Share"]
+        },
+        "object": {
+          "question": "Describe your feelings and actions on a good day.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this statement?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q3",
+      "category": "wellbeing",
+      "mainQuestion": "Share the signs that indicate you're having a difficult day at work.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "List any changes in behavior, communication, or appearance that signal a difficult day.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this statement?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q4",
+      "category": "wellbeing",
+      "mainQuestion": "Specify how we can support you when things are not going well.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Support",
+          "allowedVerbs": ["Support", "Help", "Assist"]
+        },
+        "object": {
+          "question": "Detail the actions and approach you prefer for support.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share your support preferences?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q5",
+      "category": "wellbeing",
+      "mainQuestion": "Share the symptoms that indicate you're not well enough to be at work.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "List the symptoms affecting your work readiness.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this assessment?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q6",
+      "category": "parental",
+      "mainQuestion": "Share your parental or caring responsibilities.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "Describe any parental or caring responsibilities you have.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this information?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q7",
+      "category": "parental",
+      "mainQuestion": "Specify the support or arrangements you need to fulfill your role as a parent or carer.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Support",
+          "allowedVerbs": ["Support", "Help"]
+        },
+        "object": {
+          "question": "Detail the support or arrangements you require.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share these details?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q8",
+      "category": "religious",
+      "mainQuestion": "Specify the support or arrangements you need to practice your religion or beliefs at work.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Support",
+          "allowedVerbs": ["Support", "Help"]
+        },
+        "object": {
+          "question": "Describe any necessary accommodations for your religious practices (e.g., prayer space, holidays).",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this information?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q9",
+      "category": "religious",
+      "mainQuestion": "Share any additional information about your religion or beliefs that would be helpful for us.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "Provide any extra details, such as dietary requirements or other relevant religious information.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share these details?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q10",
+      "category": "disability",
+      "mainQuestion": "Share the impact of your disability or long-term condition on your work.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "Detail the impact and any related conditions affecting your work.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this information?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q11",
+      "category": "disability",
+      "mainQuestion": "Share the barriers or challenges you face at work due to your disability or long-term condition.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "List the challenges and how they impact your job performance.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share these challenges?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q12",
+      "category": "colleague_Sharing",
+      "mainQuestion": "Share the information about your work needs that would be helpful for your colleagues.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Share",
+          "allowedVerbs": ["Share"]
+        },
+        "object": {
+          "question": "Detail what your colleagues should know and how you prefer this information to be shared.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this information with your colleagues?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q13",
+      "category": "employer_Support",
+      "mainQuestion": "Specify the support or understanding you need from us as your employer.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Support",
+          "allowedVerbs": ["Support", "Help", "Assist"]
+        },
+        "object": {
+          "question": "Describe how we can better support and communicate with you.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share your support preferences?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    },
+    {
+      "id": "q14",
+      "category": "personal_Introduction",
+      "mainQuestion": "Introduce yourself to your team.",
+      "steps": {
+        "subject": {
+          "question": "Who is this statement about?",
+          "preset": true,
+          "presetAnswer": "username",
+          "allowDescriptors": true
+        },
+        "verb": {
+          "question": "Select the action verb for your statement.",
+          "preset": true,
+          "presetAnswer": "Introduce",
+          "allowedVerbs": ["Introduce", "Share"]
+        },
+        "object": {
+          "question": "Provide a brief personal and professional introduction including key details.",
+          "preset": false,
+          "presetAnswer": null
+        },
+        "privacy": {
+          "question": "Do you want to share this introduction with your team?",
+          "preset": false,
+          "presetAnswer": null
+        }
+      }
+    }
+  ]
+}

@@ -36,18 +36,34 @@ npm install
 
 ## Project Structure
 
-The project is organized as follows:
+This project follows a feature-based architecture to ensure maintainability and separation of concerns:
 
-- **src/**: Contains the main source code for the application.
-  - **components/**: React components used throughout the app.
-  - **context/**: Context providers for state management.
-  - **api/**: API calls to the backend.
-  - **hooks/**: Custom React hooks.
-  - **lib/**: Utility functions.
-- **data/**: JSON files containing static data for the application.
-- **public/**: Static files and assets.
-- **.github/**: GitHub workflows for CI/CD.
-- **dist/**: Build output directory (ignored in version control).
+```
+src/
+├── assets/             # Images and static assets
+├── components/         # Shared UI components
+│   ├── ui/             # Base UI components (buttons, inputs, etc.)
+│   ├── modals/         # Modal dialogs
+│   └── shared/         # Other shared components
+├── config/             # Application configuration
+├── data/               # Static data files (JSON, etc.)
+├── features/           # Feature-specific code
+│   ├── auth/           # Authentication feature
+│   ├── email/          # Email-related functionality
+│   ├── questions/      # Questions management
+│   ├── statements/     # Statements management
+│   └── wizard/         # Statement wizard feature
+├── layouts/            # Layout components
+├── lib/                # Shared utilities
+│   └── utils/          # Utility functions
+├── providers/          # Context providers
+├── routes/             # Route definitions
+└── types/              # TypeScript type definitions
+```
+
+Each feature has its own directory with components, hooks, context, and API calls, enabling better separation of concerns and improved maintainability.
+
+> See `MIGRATION_GUIDE.md` for details on the project structure organization.
 
 ## Development
 

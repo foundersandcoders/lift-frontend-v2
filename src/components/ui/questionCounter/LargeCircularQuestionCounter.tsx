@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAnsweredCount } from '../../../hooks/useAnsweredCount';
+import { useAnsweredCount } from '../../../features/questions/hooks/useAnsweredCount';
 
 interface LargeCircularQuestionCounterProps {
   size?: number; // default 100px

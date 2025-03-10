@@ -1,16 +1,22 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { EntriesProvider } from './context/EntriesProvider';
-import { AuthProvider } from './context/AuthProvider';
-import LoginPage from './components/LoginPage';
-import Header from './components/Header';
-import MainPage from './components/MainPage';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { useEntries } from './hooks/useEntries';
-import { QuestionsProvider } from './context/QuestionsProvider';
-import { handleMagicLinkVerification } from './utils/authUtils';
-import MockNotification from './components/auth/MockNotification';
+
+// Providers
+import { AuthProvider } from './features/auth/AuthProvider';
+import { EntriesProvider } from './features/statements/context/EntriesProvider';
+import { QuestionsProvider } from './providers/QuestionsProvider';
+
+// Components
+import LoginPage from './features/auth/components/LoginPage';
+import Header from './layouts/components/Header';
+import MainPage from './layouts/components/MainPage';
+import MockNotification from './features/auth/components/MockNotification';
+
+// Hooks and Utilities
+import { useEntries } from './features/statements/hooks/useEntries';
+import { handleMagicLinkVerification } from './features/auth/authUtils';
 
 // Outer Component: Responsible only for setting up the environment (the providers) for the rest of the app.
 const AppContent: React.FC = () => {

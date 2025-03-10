@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "verb": "Support",
+    "object": "their team",
+    "isPublic": true,
+    "category": "parental",
+    "actions": [
+      {
+        "id": "a1",
+        "creationDate": "2024-02-15",
+        "dueDate": "2024-02-20",
+        "text": "Schedule team meeting"
+      },
+      {
+        "id": "a2",
+        "creationDate": "2024-02-15",
+        "dueDate": "2024-02-22",
+        "text": "Send follow-up email"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "descriptor": "coding practice",
+    "verb": "Improve",
+    "object": "software quality",
+    "isPublic": false,
+    "actions": [
+      {
+        "id": "a3",
+        "creationDate": "2024-02-16",
+        "dueDate": "2024-02-25",
+        "text": "Review coding guidelines"
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "verb": "Create",
+    "object": "innovative solutions",
+    "isPublic": true,
+    "category": "employer_Support"
+  },
+  {
+    "id": "4",
+    "descriptor": "marketing ideas",
+    "verb": "Engage",
+    "object": "potential customers",
+    "isPublic": true,
+    "category": "colleague_Sharing",
+    "actions": [
+      {
+        "id": "a4",
+        "creationDate": "2024-02-17",
+        "dueDate": "2024-02-28",
+        "text": "Draft social media campaign"
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "verb": "Learn",
+    "object": "new technologies",
+    "isPublic": false,
+    "category": "wellbeing"
+  }
+]

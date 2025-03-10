@@ -1,0 +1,75 @@
+{
+  "descriptors": [
+    {
+      "name": "wellbeing",
+      "description": "Descriptors related to the user's mental and emotional state, including stress, energy, and overall wellbeing.",
+      "options": [
+        "mental state",
+        "emotional balance",
+        "stress levels",
+        "energy levels"
+      ]
+    },
+    {
+      "name": "parental",
+      "description": "Descriptors related to parental or caring responsibilities.",
+      "options": [
+        "family responsibilities",
+        "child care",
+        "elder care",
+        "primary carer"
+      ]
+    },
+    {
+      "name": "religious",
+      "description": "Descriptors related to religious practices, beliefs, or related needs such as dietary or prayer requirements.",
+      "options": [
+        "religious practice",
+        "spirituality",
+        "dietary requirements",
+        "prayer needs"
+      ]
+    },
+    {
+      "name": "disability",
+      "description": "Descriptors that capture the impact of a disability or long-term condition on the user, including accessibility and health needs.",
+      "options": [
+        "physical limitations",
+        "accessibility needs",
+        "chronic condition",
+        "assistive technology"
+      ]
+    },
+    {
+      "name": "colleagueSharing",
+      "description": "Descriptors regarding the type and level of information the user is comfortable sharing with colleagues.",
+      "options": [
+        "detailed sharing",
+        "summarized sharing",
+        "anonymous",
+        "private"
+      ]
+    },
+    {
+      "name": "employerSupport",
+      "description": "Descriptors regarding the user's support and communication preferences from the employer.",
+      "options": [
+        "formal check-ins",
+        "informal chats",
+        "regular feedback",
+        "as-needed support"
+      ]
+    },
+    {
+      "name": "personalIntroduction",
+      "description": "Descriptors for personal introduction details that capture background, hobbies, ambitions, and other personal insights.",
+      "options": [
+        "family background",
+        "career journey",
+        "personal hobbies",
+        "ambitions",
+        "cultural background"
+      ]
+    }
+  ]
+}
