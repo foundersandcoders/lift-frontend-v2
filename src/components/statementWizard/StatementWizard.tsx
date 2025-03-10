@@ -105,8 +105,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       presetId: presetQuestion ? presetQuestion.id : undefined,
       // Ensure consistent casing for uncategorized - capital 'U'
       category:
-        presetQuestion?.category || 
-        (selection.category === 'uncategorised' ? 'Uncategorized' : selection.category) || 
+        presetQuestion?.category ||
+        (selection.category === 'uncategorised'
+          ? 'Uncategorized'
+          : selection.category) ||
         'Uncategorized',
     };
 
@@ -163,10 +165,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
 
   // Render the current step component without navigation buttons.
   const renderStep = () => {
-    // Calculate currentStep and totalSteps
-    const currentStepNumber = currentStepIndex + 1;
-    const totalSteps = steps.length;
-
     switch (currentStep) {
       case 'subject':
         return (
@@ -180,8 +178,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 atoms: { ...prev.atoms, subject: val },
               }))
             }
-            currentStep={currentStepNumber}
-            totalSteps={totalSteps}
           />
         );
       case 'verb':
@@ -195,8 +191,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 atoms: { ...prev.atoms, verb: val },
               }))
             }
-            currentStep={currentStepNumber}
-            totalSteps={totalSteps}
           />
         );
       case 'object':
@@ -211,8 +205,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 atoms: { ...prev.atoms, object: val },
               }))
             }
-            currentStep={currentStepNumber}
-            totalSteps={totalSteps}
           />
         );
       case 'category':
@@ -225,8 +217,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 category: val,
               }))
             }
-            currentStep={currentStepNumber}
-            totalSteps={totalSteps}
           />
         );
       case 'privacy':
@@ -239,17 +229,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                 isPublic: val,
               }))
             }
-            currentStep={currentStepNumber}
-            totalSteps={totalSteps}
           />
         );
       case 'complement':
-        return (
-          <ComplementStep
-            currentStep={currentStepNumber}
-            totalSteps={totalSteps}
-          />
-        );
+        return <ComplementStep />;
       default:
         return null;
     }
@@ -268,10 +251,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         )}`}
       >
         {presetQuestion && (
-          <div className='px-4 py-4 border-b'>
-            <div className='flex items-center'>
-              <h2 className='text-xl font-bold text-gray-800'>{presetQuestion.mainQuestion}</h2>
-            </div>
+          <div className='px-4 py-3 bg-gray-200 border-b'>
+            <h2 className='text-xl font-bold'>{presetQuestion.mainQuestion}</h2>
           </div>
         )}
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
@@ -288,7 +269,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           </motion.div>
         </AnimatePresence>
         {/* Navigation Panel */}
-        <div className='flex justify-center p-4 pb-3 mb-0 gap-4'>
+        <div className='flex justify-center p-4 pb-4 mb-0 gap-4'>
           <Button
             onClick={goBack}
             disabled={currentStepIndex === 0}
@@ -314,7 +295,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </span>
           </Button>
         </div>
-        <StatementPreview selection={{...selection, currentStep}} />
+        <StatementPreview selection={selection} />
       </DialogContent>
     </Dialog>
   );

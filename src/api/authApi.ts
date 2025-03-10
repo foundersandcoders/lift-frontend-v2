@@ -7,8 +7,8 @@ import {
   mockUpdateUserProfile
 } from './mockAuthService';
 
-// Import the real auth client for production
-import { authClient } from './authClient';
+// Base URL for API requests
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface AuthUser {
   id: string;
@@ -49,15 +49,23 @@ export const requestMagicLink = async (email: string, callbackURL?: string) => {
       
       return { success: true };
     } else {
-      // Use real API implementation with the secure authClient
+      // Use real API implementation with fetch
       try {
-        const { error } = await authClient.signIn.magicLink({
-          email,
-          callbackURL: callbackURL || '/main'
+        // Direct API call to request magic link
+        const response = await fetch(`${API_BASE_URL}/auth/signin/magic-link`, {
+          method: 'POST',
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            callbackURL: callbackURL || '/main'
+          })
         });
         
-        if (error) {
-          throw new Error(error.message);
+        if (!response.ok) {
+          throw new Error(`Failed to request magic link: ${response.statusText}`);
         }
         
         return { success: true };
@@ -88,17 +96,23 @@ export const verifyMagicLink = async (token: string) => {
       
       return { success: true, user: data?.user };
     } else {
-      // Use real API implementation with the secure authClient
+      // Use real API implementation with fetch
       try {
-        const { data, error } = await authClient.magicLink.verify({
-          query: { token }
+        // Direct API call to verify magic link token
+        const response = await fetch(`${API_BASE_URL}/auth/verify?token=${encodeURIComponent(token)}`, {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
         
-        if (error) {
-          throw new Error(error.message);
+        if (!response.ok) {
+          throw new Error(`Failed to verify token: ${response.statusText}`);
         }
         
-        return { success: true, user: data?.user };
+        const data = await response.json();
+        return { success: true, user: data.user };
       } catch (apiError) {
         console.error('API error verifying token:', apiError);
         throw apiError;
@@ -126,15 +140,23 @@ export const getCurrentUser = async (): Promise<{ user: AuthUser | null; error?:
       
       return { user: data?.user || null };
     } else {
-      // Use real API implementation with the secure authClient
+      // Use real API implementation with fetch
       try {
-        const { data, error } = await authClient.getUser();
+        // Direct API call to get current user
+        const response = await fetch(`${API_BASE_URL}/auth/user`, {
+          method: 'GET',
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         
-        if (error) {
-          throw new Error(error.message);
+        if (!response.ok) {
+          throw new Error(`Failed to get user: ${response.statusText}`);
         }
         
-        return { user: data?.user || null };
+        const data = await response.json();
+        return { user: data.user || null };
       } catch (apiError) {
         console.error('API error getting current user:', apiError);
         throw apiError;
@@ -162,12 +184,19 @@ export const signOut = async () => {
       
       return { success: true };
     } else {
-      // Use real API implementation with the secure authClient
+      // Use real API implementation with fetch
       try {
-        const { error } = await authClient.signOut();
+        // Direct API call to sign out
+        const response = await fetch(`${API_BASE_URL}/auth/signout`, {
+          method: 'POST',
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         
-        if (error) {
-          throw new Error(error.message);
+        if (!response.ok) {
+          throw new Error(`Failed to sign out: ${response.statusText}`);
         }
         
         return { success: true };
@@ -198,21 +227,24 @@ export const updateUserProfile = async (userId: string, data: { username?: strin
       
       return { success: true, user: responseData?.user };
     } else {
-      // Use real API implementation with the secure authClient
+      // Use real API implementation with fetch
       try {
-        // Note: The actual endpoint and method may vary depending on your backend API
-        // This is an example of how it might be implemented
-        const { data: responseData, error } = await authClient.request({
+        // Direct API call to update user profile
+        const response = await fetch(`${API_BASE_URL}/auth/users/${userId}/profile`, {
           method: 'PUT',
-          url: `/users/${userId}/profile`,
-          body: data
+          credentials: 'include', // Include cookies in the request
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
         });
         
-        if (error) {
-          throw new Error(error.message);
+        if (!response.ok) {
+          throw new Error(`Failed to update profile: ${response.statusText}`);
         }
         
-        return { success: true, user: responseData?.user };
+        const responseData = await response.json();
+        return { success: true, user: responseData.user };
       } catch (apiError) {
         console.error('API error updating profile:', apiError);
         throw apiError;
