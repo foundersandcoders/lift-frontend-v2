@@ -24,11 +24,15 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   const { data, setData } = useEntries();
   const { signOut } = useAuth();
   const [isEditingContact, setIsEditingContact] = useState(false);
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [managerEmailInput, setManagerEmailInput] = useState(
     data.managerEmail || ''
   );
   const [managerNameInput, setManagerNameInput] = useState(
     data.managerName || ''
+  );
+  const [usernameInput, setUsernameInput] = useState(
+    data.username || ''
   );
   const [emailError, setEmailError] = useState('');
   
@@ -48,7 +52,10 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
       setManagerEmailInput(data.managerEmail || '');
       setManagerNameInput(data.managerName || '');
     }
-  }, [isEditingContact, data.managerEmail, data.managerName]);
+    if (isEditingUsername) {
+      setUsernameInput(data.username || '');
+    }
+  }, [isEditingContact, isEditingUsername, data.managerEmail, data.managerName, data.username]);
 
   const handleSaveContact = () => {
     if (managerEmailInput.trim() && !validateEmail(managerEmailInput.trim())) {
@@ -59,6 +66,11 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     setData({ type: 'SET_MANAGER_NAME', payload: managerNameInput });
     setIsEditingContact(false);
     setEmailError('');
+  };
+  
+  const handleSaveUsername = () => {
+    setData({ type: 'SET_USERNAME', payload: usernameInput });
+    setIsEditingUsername(false);
   };
 
   return (
@@ -84,134 +96,181 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
         </div>
         
         <div className='p-6'>
-          {/* Username section */}
-          <div className='mb-6 bg-white rounded-lg p-4 shadow-sm border border-pink-100'>
-            <div className='flex items-center mb-2'>
-              <User size={18} className='text-brand-pink mr-2' />
-              <div className='text-sm font-semibold text-gray-700'>
-                Your name
+          {/* User Profile Section - Compact layout */}
+          <div className='mb-4 flex flex-wrap items-start gap-4'>
+            {/* Username section */}
+            <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100 flex-1 min-w-[180px]'>
+              <div className='flex items-center justify-between mb-1'>
+                <div className='flex items-center'>
+                  <User size={16} className='text-brand-pink mr-1' />
+                  <div className='text-xs font-semibold text-gray-700'>Your name</div>
+                </div>
+                {!isEditingUsername && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        className='flex items-center justify-center rounded-full bg-pink-50 p-1 text-brand-pink hover:bg-pink-100 transition-colors'
+                        aria-label="Edit your name"
+                        onClick={() => setIsEditingUsername(true)}
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit your name</TooltipContent>
+                  </Tooltip>
+                )}
               </div>
-            </div>
-            <div className='ml-6 text-lg font-medium text-gray-800 bg-pink-50 px-3 py-2 rounded-md'>
-              {data.username || 'Not set'}
-            </div>
-          </div>
-          
-          {/* Manager contact section */}
-          <div className='mb-6 bg-white rounded-lg p-4 shadow-sm border border-pink-100'>
-            <div className='flex items-center mb-2'>
-              <Mail size={18} className='text-brand-pink mr-2' />
-              <div className='text-sm font-semibold text-gray-700'>
-                Your line manager's details
-              </div>
-              {!isEditingContact && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className='ml-auto flex items-center justify-center rounded-full bg-pink-50 p-2 text-brand-pink hover:bg-pink-100 transition-colors'
-                      aria-label="Edit your line manager's details"
-                      onClick={() => setIsEditingContact(true)}
+              
+              {isEditingUsername ? (
+                <div className='space-y-2'>
+                  <Input
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    placeholder="Enter your name"
+                    aria-label='Your Name'
+                    className='w-full border-pink-200 focus:border-brand-pink text-sm'
+                  />
+                  <div className='flex space-x-2'>
+                    <Button
+                      onClick={handleSaveUsername}
+                      variant='pink'
+                      size='sm'
+                      aria-label='Save Name'
+                      className='px-2 py-0.5 h-auto text-xs'
                     >
-                      <Edit2 size={16} />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    Edit your line manager's details
-                  </TooltipContent>
-                </Tooltip>
+                      <Save size={12} className='mr-1' />
+                      Save
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsEditingUsername(false);
+                        setUsernameInput(data.username || '');
+                      }}
+                      variant='outline'
+                      size='sm'
+                      aria-label='Cancel Editing'
+                      className='px-2 py-0.5 h-auto text-xs'
+                    >
+                      <X size={12} className='mr-1' />
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className='bg-pink-50 px-2 py-1 rounded-md text-sm font-medium text-gray-800'>
+                  {data.username || 'Not set'}
+                </div>
               )}
             </div>
-            
-            {isEditingContact ? (
-              <div className='ml-6 space-y-3'>
-                <div>
-                  <label className='text-xs text-gray-500 block mb-1'>Name</label>
-                  <Input
-                    value={managerNameInput}
-                    onChange={(e) => setManagerNameInput(e.target.value)}
-                    placeholder="Enter manager's name (optional)"
-                    aria-label='Manager Name'
-                    className='w-full border-pink-200 focus:border-brand-pink'
-                  />
+
+            {/* Manager contact section - more compact */}
+            <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100 flex-1 min-w-[180px]'>
+              <div className='flex items-center justify-between mb-1'>
+                <div className='flex items-center'>
+                  <Mail size={16} className='text-brand-pink mr-1' />
+                  <div className='text-xs font-semibold text-gray-700'>Line manager</div>
                 </div>
-                <div>
-                  <label className='text-xs text-gray-500 block mb-1'>Email</label>
-                  <Input
-                    value={managerEmailInput}
-                    onChange={(e) => setManagerEmailInput(e.target.value)}
-                    placeholder="Enter manager's email (optional)"
-                    aria-label='Manager Email'
-                    className='w-full border-pink-200 focus:border-brand-pink'
-                  />
-                  {emailError && (
-                    <div className='text-red-500 text-xs mt-1'>
-                      {emailError}
-                    </div>
-                  )}
-                </div>
-                <div className='flex space-x-2 pt-2'>
-                  <Button
-                    onClick={handleSaveContact}
-                    variant='pink'
-                    size='sm'
-                    aria-label='Save Contact'
-                    className='px-4 py-1 h-auto text-sm'
-                    disabled={
-                      managerEmailInput.trim() !== '' &&
-                      !validateEmail(managerEmailInput.trim())
-                    }
-                  >
-                    <Save size={14} className='mr-1' />
-                    Save
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setIsEditingContact(false);
-                      setManagerEmailInput(data.managerEmail || '');
-                      setManagerNameInput(data.managerName || '');
-                      setEmailError('');
-                    }}
-                    variant='outline'
-                    size='sm'
-                    aria-label='Cancel Editing'
-                    className='px-4 py-1 h-auto text-sm'
-                  >
-                    <X size={14} className='mr-1' />
-                    Cancel
-                  </Button>
-                </div>
+                {!isEditingContact && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        className='flex items-center justify-center rounded-full bg-pink-50 p-1 text-brand-pink hover:bg-pink-100 transition-colors'
+                        aria-label="Edit your line manager's details"
+                        onClick={() => setIsEditingContact(true)}
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit line manager's details</TooltipContent>
+                  </Tooltip>
+                )}
               </div>
-            ) : (
-              <div className='ml-6 space-y-1'>
-                <div className='bg-pink-50 px-3 py-2 rounded-md'>
-                  <span className='text-xs text-gray-500 block'>Name</span>
-                  <span className='text-md font-medium text-gray-800'>
-                    {data.managerName ? data.managerName : 'Not set'}
-                  </span>
+              
+              {isEditingContact ? (
+                <div className='space-y-2'>
+                  <div>
+                    <Input
+                      value={managerNameInput}
+                      onChange={(e) => setManagerNameInput(e.target.value)}
+                      placeholder="Manager's name"
+                      aria-label='Manager Name'
+                      className='w-full border-pink-200 focus:border-brand-pink text-sm mb-1'
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      value={managerEmailInput}
+                      onChange={(e) => setManagerEmailInput(e.target.value)}
+                      placeholder="Manager's email"
+                      aria-label='Manager Email'
+                      className='w-full border-pink-200 focus:border-brand-pink text-sm'
+                    />
+                    {emailError && (
+                      <div className='text-red-500 text-xs mt-0.5'>{emailError}</div>
+                    )}
+                  </div>
+                  <div className='flex space-x-2'>
+                    <Button
+                      onClick={handleSaveContact}
+                      variant='pink'
+                      size='sm'
+                      aria-label='Save Contact'
+                      className='px-2 py-0.5 h-auto text-xs'
+                      disabled={
+                        managerEmailInput.trim() !== '' &&
+                        !validateEmail(managerEmailInput.trim())
+                      }
+                    >
+                      <Save size={12} className='mr-1' />
+                      Save
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setIsEditingContact(false);
+                        setManagerEmailInput(data.managerEmail || '');
+                        setManagerNameInput(data.managerName || '');
+                        setEmailError('');
+                      }}
+                      variant='outline'
+                      size='sm'
+                      aria-label='Cancel Editing'
+                      className='px-2 py-0.5 h-auto text-xs'
+                    >
+                      <X size={12} className='mr-1' />
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
-                <div className='bg-pink-50 px-3 py-2 rounded-md'>
-                  <span className='text-xs text-gray-500 block'>Email</span>
-                  <span className='text-md font-medium text-gray-800'>
-                    {data.managerEmail ? data.managerEmail : 'Not set'}
-                  </span>
+              ) : (
+                <div className='text-sm'>
+                  <div className='bg-pink-50 px-2 py-1 rounded-md mb-1'>
+                    <span className='text-xs text-gray-500'>Name:</span>{' '}
+                    <span className='font-medium text-gray-800'>
+                      {data.managerName || 'Not set'}
+                    </span>
+                  </div>
+                  <div className='bg-pink-50 px-2 py-1 rounded-md'>
+                    <span className='text-xs text-gray-500'>Email:</span>{' '}
+                    <span className='font-medium text-gray-800'>
+                      {data.managerEmail || 'Not set'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           
-          {/* Progress section */}
-          <div className='bg-white rounded-lg p-4 shadow-sm border border-pink-100 mb-6'>
-            <div className='flex items-center mb-3'>
-              <Award size={18} className='text-brand-pink mr-2' />
-              <div className='text-sm font-semibold text-gray-700'>
-                Your progress
+          {/* Progress section - more compact */}
+          <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100 mb-4'>
+            <div className='flex items-center justify-between mb-2'>
+              <div className='flex items-center'>
+                <Award size={16} className='text-brand-pink mr-1' />
+                <div className='text-xs font-semibold text-gray-700'>Your progress</div>
               </div>
+              <QuestionCounter />
             </div>
-            <div className='flex flex-col items-center'>
-              <QuestionCounter className='mb-2' />
-              <div className='bg-pink-50 p-4 rounded-lg w-full flex justify-center'>
-                <LargeCircularQuestionCounter />
-              </div>
+            <div className='bg-pink-50 p-2 rounded-lg flex justify-center'>
+              <LargeCircularQuestionCounter />
             </div>
           </div>
           
