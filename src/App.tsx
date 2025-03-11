@@ -1,10 +1,7 @@
 'use client';
 
-// Import reactive shim first to ensure global React is available
-import './lib/react-shim';
-
 import React, { useEffect } from 'react';
-import { TooltipProvider } from '@radix-ui/react-tooltip';
+import { TooltipProvider } from './components/ui/radix-compatibility';
 
 // Providers
 import { AuthProvider } from './features/auth/AuthProvider';

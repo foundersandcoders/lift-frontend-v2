@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { useAuth } from '../../features/auth/api/hooks';
-import { DialogContent, DialogTitle, DialogDescription, DialogClose } from '../ui/dialog';
+// Use non-Radix components
+import { DialogContent, DialogTitle, DialogDescription, DialogClose } from '../ui/radix-compatibility';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/radix-compatibility';
 import { validateEmail } from '../../lib/utils/validateEmail';
 import QuestionCounter from '../ui/questionCounter/QuestionCounter';
 import ProgressWithFeedback from '../ui/progress/ProgressWithFeedback';
