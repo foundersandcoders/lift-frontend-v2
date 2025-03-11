@@ -15,7 +15,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   const { isPublic, category } = selection;
 
   // Get the current step from the wizard
-  const currentStep = selection.currentStep ?? 'privacy';
+  const currentStep = selection.currentStep || undefined;
 
   // Only show the preview if we have at least a subject
   const hasContent = Boolean(subject.trim());
