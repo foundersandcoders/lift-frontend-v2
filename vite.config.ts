@@ -4,15 +4,15 @@ import path from 'path';
 
 // This ensures the polyfill is always included early in the bundle
 const polyfillPlugin = {
-  name: 'react-polyfill',
+  name: 'radix-polyfill',
   enforce: 'pre' as const,
   transform(code: string, id: string) {
     // Only add to entry point
     if (id.includes('main.tsx')) {
       // Make sure the polyfill import is at the top
-      const hasPolyfill = code.includes("import './lib/utils/react-polyfill'");
+      const hasPolyfill = code.includes("import './lib/utils/radix-utils'");
       if (!hasPolyfill) {
-        return `import './lib/utils/react-polyfill';\n${code}`;
+        return `import './lib/utils/radix-utils';\n${code}`;
       }
     }
     return code;
@@ -42,7 +42,7 @@ export default defineConfig({
             if (id.includes('react') || 
                 id.includes('scheduler') || 
                 id.includes('prop-types') ||
-                id.includes('src/lib/utils/react-polyfill')) {
+                id.includes('src/lib/utils/radix-utils')) {
               return 'vendor-react';
             }
             
