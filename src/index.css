@@ -56,10 +56,10 @@
     --verb-selector-hover: #a0d8f1;
     --object-input: #bfdbfe;
     --object-input-hover: #aecbf0;
-    --privacy-selector: #22c55e;
-    --privacy-selector-hover: #1ea07b;
-    --category-selector: #000000;
-    --category-selector-hover: #2c2c2c;
+    --privacy-selector: #f0a3d3;
+    --privacy-selector-hover: #e68fc0;
+    --category-selector: #ffc394;
+    --category-selector-hover: #ffb57a;
     --complement: 'gray-400';
   }
 

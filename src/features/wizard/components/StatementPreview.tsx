@@ -2,6 +2,7 @@ import React from 'react';
 import type { Entry, Step } from '@/types/entries';
 import { getVerbName } from '@/lib/utils/verbUtils';
 import { MailPlus, MailX, FileText } from 'lucide-react';
+import statementsCategories from '@/data/statementsCategories.json';
 
 interface StatementPreviewProps {
   selection: Entry & {
@@ -11,7 +12,7 @@ interface StatementPreviewProps {
 
 const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   const { subject, verb, object, adverbial } = selection.atoms;
-  const { isPublic } = selection;
+  const { isPublic, category } = selection;
   
   // Get the current step from the wizard
   const currentStep = selection.currentStep;
@@ -21,6 +22,27 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
 
   // Only show privacy icon if we've reached or passed that step
   const showPrivacyIcon = currentStep === 'privacy' || currentStep === 'complement';
+  
+  // Only show category if we've reached or passed that step
+  const showCategory = currentStep === 'category' || currentStep === 'privacy' || currentStep === 'complement';
+  
+  // Get category display name from ID
+  const getCategoryName = (categoryId: string) => {
+    if (!categoryId) return '';
+    
+    // Handle uncategorized variations
+    const normalized = categoryId.toLowerCase();
+    if (normalized === 'uncategorized' || normalized === 'uncategorised') {
+      return 'Uncategorised';
+    }
+    
+    // Find matching category in the list
+    const categoryObj = statementsCategories.categories.find(
+      cat => cat.id.toLowerCase() === normalized
+    );
+    
+    return categoryObj ? categoryObj.name : categoryId;
+  };
 
   if (!hasContent) return null;
 
@@ -46,6 +68,14 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
       {object && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-objectInput text-black'>
           {object}
+        </span>
+      )}
+      
+      {/* Category indicator (only show after category step) */}
+      {showCategory && category && (
+        <span className='px-1.5 py-0.5 text-xs rounded bg-categorySelector text-black flex items-center gap-1'>
+          <span className='mr-1'>📁</span>
+          {getCategoryName(category)}
         </span>
       )}
       

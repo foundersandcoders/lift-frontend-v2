@@ -31,11 +31,15 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({
         <div className='space-y-4'>
           <Button
             variant='outline'
+            selected={!isPublic}
             disabled={isSubmitting}
-            className={`w-full h-auto p-4 flex items-center justify-between ${
-              !isPublic ? 'border-2 border-primary' : ''
-            }`}
+            className='w-full h-auto p-4 flex items-center justify-between'
             onClick={() => onUpdate(false)}
+            style={
+              {
+                '--tile-color': 'var(--privacy-selector)',
+              } as React.CSSProperties
+            }
           >
             <div className='flex items-center space-x-3'>
               <MailX className='w-5 h-5 text-gray-500' />
@@ -49,11 +53,15 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({
           </Button>
           <Button
             variant='outline'
+            selected={isPublic}
             disabled={isSubmitting}
-            className={`w-full h-auto p-4 flex items-center justify-between ${
-              isPublic ? 'border-2 border-primary' : ''
-            }`}
+            className='w-full h-auto p-4 flex items-center justify-between'
             onClick={() => onUpdate(true)}
+            style={
+              {
+                '--tile-color': 'var(--privacy-selector)',
+              } as React.CSSProperties
+            }
           >
             <div className='flex items-center space-x-3'>
               <MailPlus className='w-5 h-5 text-green-500' />

@@ -22,6 +22,8 @@ export default {
         verbSelectorHover: 'var(--verb-selector-hover)',
         objectInput: 'var(--object-input)',
         objectInputHover: 'var(--object-input-hover)',
+        categorySelector: 'var(--category-selector)',
+        categorySelectorHover: 'var(--category-selector-hover)',
         privacySelector: 'var(--privacy-selector)',
         privacySelectorHover: 'var(--privacy-selector-hover)',
         border: 'hsl(var(--border))',

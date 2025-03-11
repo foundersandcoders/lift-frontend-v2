@@ -46,7 +46,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     subject: 'border-[var(--subject-selector)]',
     verb: 'border-[var(--verb-selector)]',
     object: 'border-[var(--object-input)]',
-    category: 'border-black',
+    category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
     complement: 'border-gray-400',
   };

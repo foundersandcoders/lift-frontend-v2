@@ -239,7 +239,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               // Open the category modal
               onPartClick('category', draft.id);
             }}
-            className='cursor-pointer px-2 py-1 text-xs rounded border border-gray-300 bg-gray-50 hover:bg-gray-100 flex items-center'
+            className='cursor-pointer px-2 py-1 rounded bg-categorySelector text-black flex items-center gap-1 hover:bg-categorySelectorHover'
           >
             <span className='mr-1'>📁</span>
             {/* Use formatted category name */}

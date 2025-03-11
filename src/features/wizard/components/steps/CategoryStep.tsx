@@ -43,30 +43,30 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
           <Button
             key={cat.id}
             onClick={() => onUpdate(cat.id)} 
-            className={`
-              h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
-              ${
-                normalizedSelection === normalizeCategoryId(cat.id)
-                  ? 'bg-blue-50 text-blue-600 border-blue-300'
-                  : 'bg-white text-gray-700 border-gray-300'
-              }
-            `}
-            variant={normalizedSelection === normalizeCategoryId(cat.id) ? 'default' : 'outline'}
+            variant={'outline'}
+            selected={normalizedSelection === normalizeCategoryId(cat.id)}
+            className='h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words'
+            style={
+              {
+                // Set the CSS variable to the category selector color. This is used on buttonVariants.ts
+                '--tile-color': 'var(--category-selector)',
+              } as React.CSSProperties
+            }
           >
             <span className='font-medium'>{cat.name}</span>
           </Button>
         ))}
         <Button
           onClick={() => onUpdate('uncategorized')} 
-          className={`
-            h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words
-            ${
-              uncategorisedSelected
-                ? 'bg-blue-50 text-blue-600 border-blue-300'
-                : 'bg-white text-gray-700 border-gray-300'
-            }
-          `}
-          variant={uncategorisedSelected ? 'default' : 'outline'}
+          variant={'outline'}
+          selected={uncategorisedSelected}
+          className='h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words'
+          style={
+            {
+              // Set the CSS variable to the category selector color. This is used on buttonVariants.ts
+              '--tile-color': 'var(--category-selector)',
+            } as React.CSSProperties
+          }
         >
           <span className='font-medium'>Uncategorised</span>
         </Button>
