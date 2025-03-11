@@ -72,7 +72,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   return (
     <DialogContent 
       className="max-w-3xl p-0 overflow-hidden"
-      onOpenAutoFocus={(e) => e.preventDefault()} 
+      onOpenAutoFocus={(e: React.FocusEvent) => e.preventDefault()} 
     >
       <div className='bg-brand-pink p-2 flex items-center justify-between sm:rounded-t-lg'>
         <DialogTitle className='text-xl font-semibold text-white'>
