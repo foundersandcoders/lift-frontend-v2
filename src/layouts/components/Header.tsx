@@ -9,11 +9,11 @@ const Header: React.FC = () => {
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   // Debug output to make sure username is correct
-  console.log("Header rendering with username:", data.username);
-  
+  //console.log("Header rendering with username:", data.username);
+
   // Function to open the modal directly
   const openModal = () => {
-    console.log("Opening modal directly");
+    console.log('Opening modal directly');
     setIsDashboardOpen(true);
   };
 
@@ -24,11 +24,7 @@ const Header: React.FC = () => {
         <div className='flex flex-wrap items-center justify-between'>
           {/* Left section: Logo */}
           <div className='flex items-center'>
-            <img
-              src='/lift_logo.png'
-              alt='Logo'
-              className='h-8 sm:h-10 mr-2'
-            />
+            <img src='/lift_logo.png' alt='Logo' className='h-8 sm:h-10 mr-2' />
           </div>
 
           {/* Center section: Title */}
@@ -40,7 +36,7 @@ const Header: React.FC = () => {
           <div className='flex items-center relative'>
             {data.username ? (
               <div>
-                <button 
+                <button
                   onClick={openModal}
                   className='flex items-center border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-pink-600 transition-colors'
                 >
@@ -56,9 +52,11 @@ const Header: React.FC = () => {
                 <SmallCircularQuestionCounter size={18} />
               </div>
             )}
-            
+
             {/* Render the modal directly when open */}
-            {isDashboardOpen && <UserDataModal onOpenChange={setIsDashboardOpen} />}
+            {isDashboardOpen && (
+              <UserDataModal onOpenChange={setIsDashboardOpen} />
+            )}
           </div>
         </div>
       </div>

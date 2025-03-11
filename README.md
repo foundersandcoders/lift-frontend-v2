@@ -98,7 +98,7 @@ The deployment workflow is defined in `.github/workflows/deploy.yml`. It include
 
 ## Configuration
 
-Configuration settings are managed through environment variables. Ensure you have a `.env` file in the root directory with the necessary variables:
+Configuration settings are managed through environment variables. Ensure you have a `.env.development` file in the root directory with the necessary variables:
 
 ```ini
 VITE_API_URL=<your_backend_api_url>
