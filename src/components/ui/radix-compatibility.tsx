@@ -15,8 +15,11 @@ import {
 } from './simple-dialog';
 
 import {
-  SimpleTooltipProvider,
-} from './simple-tooltip';
+  Tooltip as BetterTooltip,
+  TooltipTrigger as BetterTooltipTrigger,
+  TooltipContent as BetterTooltipContent,
+  TooltipProvider as BetterTooltipProvider
+} from './better-tooltip';
 
 import { SimpleLabel } from './simple-label';
 import { Slot } from './simple-slot';
@@ -65,18 +68,7 @@ const PopoverContent: React.FC<{children: React.ReactNode, className?: string}> 
   return <div className={className}>{children}</div>;
 };
 
-// Simple Tooltip implementation
-const Tooltip: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  return <>{children}</>;
-};
-
-const TooltipTrigger: React.FC<{children: React.ReactNode, asChild?: boolean}> = ({ children }) => {
-  return <>{children}</>;
-};
-
-const TooltipContent: React.FC<{children: React.ReactNode, className?: string}> = ({ children, className }) => {
-  return <div className={className}>{children}</div>;
-};
+// Using our better tooltip implementation instead of the dummy ones
 
 // Export all components with Radix-compatible names
 export {
@@ -92,11 +84,11 @@ export {
   SimpleDialogOverlay as DialogOverlay,
   SimpleDialogPortal as DialogPortal,
   
-  // Tooltip components
-  SimpleTooltipProvider as TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
+  // Tooltip components - using our fully-functional implementation
+  BetterTooltipProvider as TooltipProvider,
+  BetterTooltip as Tooltip,
+  BetterTooltipTrigger as TooltipTrigger,
+  BetterTooltipContent as TooltipContent,
   
   // Popover components
   Popover,
