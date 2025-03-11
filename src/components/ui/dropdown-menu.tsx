@@ -1,7 +1,7 @@
 'use client';
 
-// Import the polyfill early
-import '../../lib/utils/radix-utils';
+// Import react-shim to ensure React global methods exist
+import '../../lib/react-shim';
 
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
