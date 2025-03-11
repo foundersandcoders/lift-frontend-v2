@@ -170,12 +170,18 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             username={username}
             presetQuestion={presetQuestion}
             selection={selection.atoms.subject}
-            onUpdate={(val) =>
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, subject: val },
-              }))
-            }
+            onUpdate={(val) => {
+              // If the same value is selected again, move to next step
+              if (selection.atoms.subject === val) {
+                goNext();
+              } else {
+                // Otherwise, just update the selection
+                setSelection((prev) => ({
+                  ...prev,
+                  atoms: { ...prev.atoms, subject: val },
+                }));
+              }
+            }}
           />
         );
       case 'verb':
@@ -183,12 +189,18 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           <VerbStep
             subject={selection.atoms.subject}
             selection={selection.atoms.verb}
-            onUpdate={(val) =>
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, verb: val },
-              }))
-            }
+            onUpdate={(val) => {
+              // If the same value is selected again, move to next step
+              if (selection.atoms.verb === val) {
+                goNext();
+              } else {
+                // Otherwise, just update the selection
+                setSelection((prev) => ({
+                  ...prev,
+                  atoms: { ...prev.atoms, verb: val },
+                }));
+              }
+            }}
           />
         );
       case 'object':
@@ -197,36 +209,54 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             subject={selection.atoms.subject}
             verb={selection.atoms.verb}
             selection={selection.atoms.object}
-            onUpdate={(val) =>
-              setSelection((prev) => ({
-                ...prev,
-                atoms: { ...prev.atoms, object: val },
-              }))
-            }
+            onUpdate={(val) => {
+              // If the same value is selected again, move to next step
+              if (selection.atoms.object === val) {
+                goNext();
+              } else {
+                // Otherwise, just update the selection
+                setSelection((prev) => ({
+                  ...prev,
+                  atoms: { ...prev.atoms, object: val },
+                }));
+              }
+            }}
           />
         );
       case 'category':
         return (
           <CategoryStep
             selection={selection.category}
-            onUpdate={(val) =>
-              setSelection((prev) => ({
-                ...prev,
-                category: val,
-              }))
-            }
+            onUpdate={(val) => {
+              // If the same value is selected again, move to next step
+              if (selection.category === val) {
+                goNext();
+              } else {
+                // Otherwise, just update the selection
+                setSelection((prev) => ({
+                  ...prev,
+                  category: val,
+                }));
+              }
+            }}
           />
         );
       case 'privacy':
         return (
           <PrivacyStep
             isPublic={selection.isPublic}
-            onUpdate={(val) =>
-              setSelection((prev) => ({
-                ...prev,
-                isPublic: val,
-              }))
-            }
+            onUpdate={(val) => {
+              // If the same value is selected again, move to next step
+              if (selection.isPublic === val) {
+                goNext();
+              } else {
+                // Otherwise, just update the selection
+                setSelection((prev) => ({
+                  ...prev,
+                  isPublic: val,
+                }));
+              }
+            }}
           />
         );
       case 'complement':
