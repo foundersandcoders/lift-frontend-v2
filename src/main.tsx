@@ -1,8 +1,5 @@
-// Apply React useLayoutEffect polyfill
-if (typeof window !== 'undefined') {
-  window.React = window.React || {};
-  window.React.useLayoutEffect = window.React.useEffect || function() { return function() {}; };
-}
+// Import the polyfill first, before any other imports
+import './lib/utils/react-polyfill';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

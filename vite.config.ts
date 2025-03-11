@@ -2,9 +2,26 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+// This ensures the polyfill is always included early in the bundle
+const polyfillPlugin = {
+  name: 'react-polyfill',
+  enforce: 'pre' as const,
+  transform(code: string, id: string) {
+    // Only add to entry point
+    if (id.includes('main.tsx')) {
+      // Make sure the polyfill import is at the top
+      const hasPolyfill = code.includes("import './lib/utils/react-polyfill'");
+      if (!hasPolyfill) {
+        return `import './lib/utils/react-polyfill';\n${code}`;
+      }
+    }
+    return code;
+  }
+};
+
 export default defineConfig({
   base: '/',
-  plugins: [react()],
+  plugins: [polyfillPlugin, react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -24,7 +41,8 @@ export default defineConfig({
             // Split React and related packages into a separate chunk
             if (id.includes('react') || 
                 id.includes('scheduler') || 
-                id.includes('prop-types')) {
+                id.includes('prop-types') ||
+                id.includes('src/lib/utils/react-polyfill')) {
               return 'vendor-react';
             }
             

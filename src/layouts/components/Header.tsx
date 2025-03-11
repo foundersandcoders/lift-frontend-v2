@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { Dialog, DialogTrigger } from '../../components/ui/dialog';
 import SmallCircularQuestionCounter from '../../components/ui/questionCounter/smallCircularQuestionCounter';
-// import UserDataModal from '../../components/modals/UserDataModal';
+import UserDataModal from '../../components/modals/UserDataModal';
 
 const Header: React.FC = () => {
   const { data } = useEntries();
@@ -39,9 +39,9 @@ const Header: React.FC = () => {
                       <SmallCircularQuestionCounter size={18} />
                     </button>
                   </DialogTrigger>
-                  {/* <UserDataModal
+                  <UserDataModal
                     onOpenChange={setIsDashboardOpen}
-                  /> */}
+                  />
                 </Dialog>
               ) : (
                 <div className='flex shrink-0 items-center border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-default'>
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                     <SmallCircularQuestionCounter size={18} />
                   </button>
                 </DialogTrigger>
-                {/* <UserDataModal onOpenChange={setIsDashboardOpen} /> */}
+                <UserDataModal onOpenChange={setIsDashboardOpen} />
               </Dialog>
             ) : (
               <div className='flex shrink-0 items-center border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-default'>
