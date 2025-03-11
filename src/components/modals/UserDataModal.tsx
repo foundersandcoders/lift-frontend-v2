@@ -14,9 +14,10 @@ import ProgressWithFeedback from '../ui/progress/ProgressWithFeedback';
 
 interface UserDataModalProps {
   onOpenChange: (open: boolean) => void;
+  isOpen?: boolean;  // Re-adding the isOpen prop
 }
 
-const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
+const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange, isOpen }) => {
   const { data, setData } = useEntries();
   const { signOut } = useAuth();
   const [isEditingContact, setIsEditingContact] = useState(false);
@@ -68,6 +69,11 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     setData({ type: 'SET_USERNAME', payload: usernameInput });
     setIsEditingUsername(false);
   };
+
+  // Make sure we only render when isOpen is true
+  if (typeof isOpen === 'boolean' && !isOpen) {
+    return null;
+  }
 
   return (
     <DialogContent 

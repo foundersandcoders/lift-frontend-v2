@@ -32,6 +32,7 @@ const Header: React.FC = () => {
                   </DialogTrigger>
                   <UserDataModal
                     onOpenChange={setIsDashboardOpen}
+                    isOpen={isDashboardOpen}
                   />
                 </Dialog>
               ) : (
@@ -60,6 +61,7 @@ const Header: React.FC = () => {
                 </DialogTrigger>
                 <UserDataModal
                   onOpenChange={setIsDashboardOpen}
+                  isOpen={isDashboardOpen}
                 />
               </Dialog>
             ) : (
