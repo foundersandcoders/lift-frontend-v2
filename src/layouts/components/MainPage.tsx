@@ -1,7 +1,11 @@
 'use client';
 
 import React from 'react';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../../components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '../../components/ui/tooltip';
 import StatementList from '../../features/statements/components/StatementList';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { Button } from '../../components/ui/button';
@@ -22,7 +26,7 @@ const MainPage: React.FC = () => {
   const publicStatementsCount = entries.filter(
     (entry) => entry.isPublic
   ).length;
-  
+
   // Email button should be disabled if no manager email or no public statements
   const isEmailDisabled = !hasManagerEmail || publicStatementsCount === 0;
 
@@ -39,16 +43,15 @@ const MainPage: React.FC = () => {
   return (
     <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12'>
       <h1 className='text-3xl font-bold mb-8 text-center'>
-        {managerName 
+        {managerName
           ? `${username} would like to share with ${managerName}`
-          : `${username}'s statements for sharing`
-        }
+          : `${username}'s statements for sharing`}
       </h1>
       <div className='container mx-auto px-4'>
         <StatementList username={username} />
       </div>
-      {/* Floating Buttons Container */}
-      <div className='fixed bottom-8 right-8 flex items-center space-x-4'>
+      {/* Floating Buttons Container with higher z-index */}
+      <div className='fixed bottom-8 right-8 flex items-center space-x-4 z-30'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -67,7 +70,7 @@ const MainPage: React.FC = () => {
             {!hasManagerEmail
               ? "Please add your manager's email address first."
               : publicStatementsCount === 0
-              ? "Please create at least one public statement to share."
+              ? 'Please create at least one public statement to share.'
               : 'Send email with your public statements.'}
           </TooltipContent>
         </Tooltip>
@@ -75,10 +78,13 @@ const MainPage: React.FC = () => {
         <Button
           onClick={handleNewStatement}
           variant='pink'
-          className='rounded-full flex items-center space-x-2 px-6 py-3 shadow-lg'
+          className='rounded-full flex items-center px-3 py-2 sm:px-4 sm:py-3 shadow-lg'
         >
-          <Plus className='w-6 h-6' />
-          <span className='text-lg'>Create your own statement</span>
+          <Plus className='w-5 h-5 sm:w-6 sm:h-6' />
+          <span className='ml-1 sm:ml-2 text-base sm:text-lg'>
+            <span className='hidden sm:inline'>Custom statement</span>
+            <span className='sm:hidden'>Add</span>
+          </span>
         </Button>
         <TestStatementButton />
       </div>

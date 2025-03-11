@@ -276,7 +276,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                     </div>
                     <QuestionCounter />
                   </div>
-                  <div className='bg-pink-50 p-4 rounded-lg flex flex-col lg:flex-row items-center'>
+                  <div className='bg-pink-50 p-2 sm:p-4 rounded-lg'>
                     <ProgressWithFeedback />
                   </div>
                 </div>

@@ -22,9 +22,10 @@ const Header: React.FC = () => {
         {data.username ? (
           <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
             <DialogTrigger asChild>
-              <div className='flex items-center border-2 border-white rounded-full px-4 py-2 cursor-pointer hover:bg-pink-600 transition-colors'>
-                <span className='mr-2'>Logged as: {data.username}</span>
-                <SmallCircularQuestionCounter />
+              <div className='flex items-center border-2 border-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 cursor-pointer hover:bg-pink-600 transition-colors'>
+                <span className='hidden sm:inline mr-2'>Logged as: </span>
+                <span className='mr-2 text-sm sm:text-base'>{data.username}</span>
+                <SmallCircularQuestionCounter size={20} />
               </div>
             </DialogTrigger>
             <UserDataModal
@@ -32,9 +33,10 @@ const Header: React.FC = () => {
             />
           </Dialog>
         ) : (
-          <div className='flex items-center border-2 border-white rounded-full px-4 py-2 cursor-default'>
-            <span className='mr-2'>Not logged in</span>
-            <SmallCircularQuestionCounter />
+          <div className='flex items-center border-2 border-white rounded-full px-3 py-1.5 sm:px-4 sm:py-2 cursor-default'>
+            <span className='hidden sm:inline mr-2'>Not logged in</span>
+            <span className='sm:hidden mr-2'>Guest</span>
+            <SmallCircularQuestionCounter size={20} />
           </div>
         )}
       </div>

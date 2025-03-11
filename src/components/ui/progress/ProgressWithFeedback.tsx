@@ -9,12 +9,13 @@ const ProgressWithFeedback: React.FC = () => {
   const feedbackMessage = useProgressFeedback(progress);
 
   return (
-    <div className="flex flex-col lg:flex-row items-center gap-6">
+    <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-6">
       <div className="flex-shrink-0">
-        <LargeCircularQuestionCounter size={120} />
+        <LargeCircularQuestionCounter size={90} strokeWidth={5} className="sm:hidden" />
+        <LargeCircularQuestionCounter size={120} className="hidden sm:block" />
       </div>
       <div className="flex-1 text-center lg:text-left">
-        <p className="text-gray-700 text-base italic font-medium">
+        <p className="text-gray-700 text-sm sm:text-base italic font-medium">
           "{feedbackMessage}"
         </p>
       </div>
