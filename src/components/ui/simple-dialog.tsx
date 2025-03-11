@@ -103,8 +103,33 @@ const SimpleDialogDescription: React.FC<SimpleDialogDescriptionProps> = ({ child
   );
 };
 
+// Context for communicating between Dialog and DialogTrigger
+export const SimpleDialogContext = React.createContext<{
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+}>({
+  isOpen: false,
+  onOpenChange: () => {},
+});
+
 const SimpleDialogTrigger: React.FC<SimpleDialogTriggerProps> = ({ children }) => {
-  return <>{children}</>;
+  // Get the dialog context to control the dialog's open state
+  const { onOpenChange } = React.useContext(SimpleDialogContext);
+  
+  // Create a clickable wrapper that opens the dialog
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('SimpleDialogTrigger: Opening dialog');
+    onOpenChange(true);
+  };
+  
+  // If asChild is true, we'd clone the child element and add an onClick handler
+  // For simplicity, we'll just wrap the children in a div with an onClick
+  return (
+    <div onClick={handleClick} style={{ display: 'inline-block', cursor: 'pointer' }}>
+      {children}
+    </div>
+  );
 };
 
 const SimpleDialog: React.FC<SimpleDialogProps> = ({ 
@@ -127,12 +152,21 @@ const SimpleDialog: React.FC<SimpleDialogProps> = ({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isOpen, onOpenChange]);
 
-  if (!isOpen) return null;
+  console.log('SimpleDialog rendering with isOpen:', isOpen);
 
+  // Provide the dialog state to all children via context
   return (
-    <div className={cn('', className)}>
-      {children}
-    </div>
+    <SimpleDialogContext.Provider value={{ isOpen, onOpenChange }}>
+      {isOpen ? (
+        <div className={cn('fixed inset-0 z-50', className)}>
+          <SimpleDialogOverlay />
+          {children}
+        </div>
+      ) : (
+        // Even when dialog is closed, we need to render the trigger
+        <>{children}</>
+      )}
+    </SimpleDialogContext.Provider>
   );
 };
 

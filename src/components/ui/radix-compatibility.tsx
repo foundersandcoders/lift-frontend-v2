@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Import our simple components
 import {
@@ -41,7 +41,16 @@ interface DialogRootProps {
 
 // Create a Dialog Root that has the same API as Radix's
 const Dialog: React.FC<DialogRootProps> = ({ children, open, onOpenChange }) => {
-  const [isOpen, setIsOpen] = useState(open || false);
+  // IMPORTANT: Initialize isOpen to false by default
+  const [isOpen, setIsOpen] = useState(open === true ? true : false);
+  
+  // Add useEffect to update internal state when open prop changes
+  useEffect(() => {
+    // Only update when the prop explicitly changes to true or false (not undefined)
+    if (open === true || open === false) {
+      setIsOpen(open);
+    }
+  }, [open]);
   
   const handleOpenChange = (newOpen: boolean) => {
     setIsOpen(newOpen);

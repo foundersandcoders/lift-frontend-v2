@@ -23,16 +23,26 @@ export function ConfirmationDialog({
   description,
   singleButton = false,
 }: ConfirmationDialogProps) {
+  // Don't render anything if not open
+  if (!isOpen) {
+    return null;
+  }
+  
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      {/* Pass headerTitle so the shared DialogContent renders the pink header */}
-      <DialogContent headerTitle={title} className='sm:max-w-md p-0'>
-        {/* Optionally hide the description for screen readers */}
-        <DialogDescription className='sr-only'>{description}</DialogDescription>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50">
+      <div className="bg-white max-w-md rounded-lg shadow-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-brand-pink p-3 flex items-center">
+          <h2 className="text-lg font-bold text-white">{title}</h2>
+        </div>
+        
+        {/* Body */}
         <div className='bg-gray-50 p-4'>
           <p className='text-sm text-gray-800'>{description}</p>
         </div>
-        <DialogFooter className='p-4 bg-gray-50 sm:rounded-b-lg'>
+        
+        {/* Footer */}
+        <div className='p-4 bg-gray-50 flex justify-end space-x-2'>
           {singleButton ? (
             <Button variant='default' onClick={onConfirm} className="inline-flex items-center">
               <span>OK</span>
@@ -47,8 +57,8 @@ export function ConfirmationDialog({
               </Button>
             </>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useReducer, ReactNode } from 'react';
+import React, { useReducer, ReactNode, useEffect } from 'react';
 import {
   EntriesContext,
   EntriesContextType,
@@ -50,6 +50,36 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
     managerName: '',
     managerEmail: '',
   });
+
+  // Listen for auth state changes
+  useEffect(() => {
+    // Handler for auth state changes
+    const handleAuthStateChange = (event: CustomEvent) => {
+      console.log('Auth state changed event received in EntriesProvider:', event.detail);
+      
+      // If we have a user object with a username
+      if (event.detail?.user?.username) {
+        console.log('Setting username in EntriesProvider:', event.detail.user.username);
+        // Update username from auth state - ALWAYS update, don't check if empty
+        setData({ type: 'SET_USERNAME', payload: event.detail.user.username });
+      }
+      
+      // If we have a user object with an email
+      if (event.detail?.user?.email) {
+        console.log('Setting manager email in EntriesProvider:', event.detail.user.email);
+        // Update manager email from auth state - ALWAYS update, don't check if empty
+        setData({ type: 'SET_MANAGER_EMAIL', payload: event.detail.user.email });
+      }
+    };
+    
+    // Listen for the auth state change event
+    window.addEventListener('authStateChanged', handleAuthStateChange as EventListener);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('authStateChanged', handleAuthStateChange as EventListener);
+    };
+  }, []);
 
   return (
     <EntriesContext.Provider value={{ data, setData }}>

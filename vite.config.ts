@@ -2,26 +2,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// This ensures the polyfill is always included early in the bundle
-const polyfillPlugin = {
-  name: 'radix-polyfill',
-  enforce: 'pre' as const,
-  transform(code: string, id: string) {
-    // Only add to entry point
-    if (id.includes('main.tsx')) {
-      // Make sure the polyfill import is at the top
-      const hasPolyfill = code.includes("import './lib/utils/radix-utils'");
-      if (!hasPolyfill) {
-        return `import './lib/utils/radix-utils';\n${code}`;
-      }
-    }
-    return code;
-  }
-};
+// Polyfill plugin removed as we no longer use Radix UI
 
 export default defineConfig({
   base: '/',
-  plugins: [polyfillPlugin, react()],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -41,15 +26,12 @@ export default defineConfig({
             // Split React and related packages into a separate chunk
             if (id.includes('react') || 
                 id.includes('scheduler') || 
-                id.includes('prop-types') ||
-                id.includes('src/lib/utils/radix-utils')) {
+                id.includes('prop-types')) {
               return 'vendor-react';
             }
             
             // UI libraries
-            if (id.includes('@radix-ui') || 
-                id.includes('radix') || 
-                id.includes('class-variance-authority') || 
+            if (id.includes('class-variance-authority') || 
                 id.includes('lucide')) {
               return 'vendor-ui';
             }
