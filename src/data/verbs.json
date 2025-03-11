@@ -68,7 +68,8 @@
       "name": "Mentor",
       "popularity": 82,
       "categories": ["Guide & Encourage", "Leadership"],
-      "color": "#27ae60"
+      "color": "#27ae60",
+      "presentTenseForm": "mentor"
     },
     {
       "id": "v11",
@@ -173,7 +174,8 @@
       "name": "Pioneer",
       "popularity": 83,
       "categories": ["Creative Process"],
-      "color": "#7d3c98"
+      "color": "#7d3c98",
+      "presentTenseForm": "pioneer"
     },
     {
       "id": "v26",
@@ -215,7 +217,8 @@
       "name": "Partner",
       "popularity": 85,
       "categories": ["Teamwork"],
-      "color": "#1abc9c"
+      "color": "#1abc9c",
+      "presentTenseForm": "partner"
     },
     {
       "id": "v32",
@@ -397,7 +400,8 @@
       "name": "Impede",
       "popularity": 73,
       "categories": ["Passive Hindrance"],
-      "color": "#d35400"
+      "color": "#d35400",
+      "presentTenseForm": "impede"
     },
     {
       "id": "v58",
@@ -446,7 +450,8 @@
       "name": "Withhold",
       "popularity": 69,
       "categories": ["Passive Avoidance"],
-      "color": "#e67e22"
+      "color": "#e67e22",
+      "presentTenseForm": "withhold"
     },
     {
       "id": "v65",

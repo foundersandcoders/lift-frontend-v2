@@ -39,6 +39,7 @@ export interface Verb {
   popularity: number;
   categories: string[];
   color: string;
+  presentTenseForm?: string;  // Optional field for verbs that need explicit present tense form
 }
 
 export interface SubjectData {
