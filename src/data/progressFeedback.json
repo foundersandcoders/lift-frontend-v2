@@ -1,0 +1,103 @@
+{
+  "feedbackBrackets": [
+    {
+      "range": [0, 10],
+      "messages": [
+        "Taking the first step is the beginning of a meaningful journey.",
+        "Your openness starts the path to self-discovery.",
+        "Every journey begins with a single step.",
+        "The beginning of reflection shows courage."
+      ]
+    },
+    {
+      "range": [10, 20],
+      "messages": [
+        "You're starting to build a foundation for self-awareness.",
+        "Early insights create the foundation for growth.",
+        "Your initial reflections show promising self-awareness.",
+        "You're beginning to reveal parts of your authentic self."
+      ]
+    },
+    {
+      "range": [20, 30],
+      "messages": [
+        "You're making steady progress on your reflective journey.",
+        "Your growing insights are creating a clearer picture.",
+        "Continuing to explore helps you understand yourself better.",
+        "Each statement adds depth to your self-awareness."
+      ]
+    },
+    {
+      "range": [30, 40],
+      "messages": [
+        "Your commitment to reflection is becoming evident.",
+        "You're developing a meaningful narrative about yourself.",
+        "Your persistence is revealing important patterns.",
+        "Your journey is gathering momentum."
+      ]
+    },
+    {
+      "range": [40, 50],
+      "messages": [
+        "You're approaching the halfway point with meaningful insights.",
+        "Your reflections are building a comprehensive self-portrait.",
+        "The depth of your sharing shows genuine commitment.",
+        "Your dedication to self-understanding is admirable."
+      ]
+    },
+    {
+      "range": [50, 60],
+      "messages": [
+        "You've crossed the halfway mark - your commitment shows.",
+        "Your consistent reflection reveals your dedication to growth.",
+        "Your journey is well underway, showing true dedication.",
+        "The breadth of your insights demonstrates remarkable self-awareness."
+      ]
+    },
+    {
+      "range": [60, 70],
+      "messages": [
+        "Your substantial progress reveals a deeply thoughtful person.",
+        "The richness of your responses shows impressive depth.",
+        "You're building a comprehensive understanding of yourself.",
+        "Your dedication to this process is truly inspiring."
+      ]
+    },
+    {
+      "range": [70, 80],
+      "messages": [
+        "Your journey shows remarkable commitment to self-discovery.",
+        "The tapestry of your reflections is rich and nuanced.",
+        "You've shared insights that reflect deep self-understanding.",
+        "Your dedication to authenticity is powerful."
+      ]
+    },
+    {
+      "range": [80, 90],
+      "messages": [
+        "You're approaching completion with exceptional insights.",
+        "Your comprehensive sharing reveals uncommon self-awareness.",
+        "The depth and breadth of your reflections are truly remarkable.",
+        "Your commitment to this process shows incredible dedication."
+      ]
+    },
+    {
+      "range": [90, 100],
+      "messages": [
+        "Your complete picture shows extraordinary self-awareness.",
+        "You've created a comprehensive map of your authentic self.",
+        "Your dedication to this journey has been remarkable.",
+        "The fullness of your reflections reveals profound understanding."
+      ]
+    },
+    {
+      "range": [100, 100],
+      "messages": [
+        "Congratulations on completing your self-reflection journey!",
+        "You've achieved complete self-reflection - a remarkable accomplishment.",
+        "Your full commitment reveals a person of exceptional introspection.",
+        "The complete tapestry of your insights shows extraordinary dedication."
+      ]
+    }
+  ]
+}

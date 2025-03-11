@@ -10,7 +10,7 @@ const Header: React.FC = () => {
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   return (
-    <header className='bg-brand-pink text-white p-4 shadow-md'>
+    <header className='bg-brand-pink text-white p-4 shadow-md sticky top-0 z-50'>
       <div className='container mx-auto flex items-center justify-between'>
         {/* Left side: Logo and Title */}
         <div className='flex items-center'>
