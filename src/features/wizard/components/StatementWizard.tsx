@@ -65,6 +65,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     category: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Add a flag to prevent rapid multiple step transitions
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Initialize default values based on whether this is a preset or custom statement
   useEffect(() => {
@@ -123,11 +125,27 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   };
 
   const goNext = () => {
-    if (currentStepIndex < steps.length - 1) {
-      setCurrentStepIndex((prev) => prev + 1);
-    } else {
-      handleComplete();
+    // Check if we're already in the middle of a transition
+    if (isTransitioning) {
+      return; // Prevent multiple rapid transitions
     }
+    
+    // Set transitioning flag to prevent additional advances
+    setIsTransitioning(true);
+    
+    // Add a small delay to prevent double-click issues
+    setTimeout(() => {
+      if (currentStepIndex < steps.length - 1) {
+        setCurrentStepIndex((prev) => prev + 1);
+      } else {
+        handleComplete();
+      }
+      
+      // Reset transition flag after a slightly longer delay
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 300);
+    }, 200); // 200ms delay to prevent step skipping
   };
 
   const goBack = () => {
