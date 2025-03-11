@@ -20,47 +20,25 @@ const EntriesReducer = (
       return { ...data, entries: action.payload };
     case 'ADD_ENTRY':
       return { ...data, entries: [...data.entries, action.payload] };
-    case 'UPDATE_ENTRY':
-      console.log("[ENTRIES REDUCER] Processing UPDATE_ENTRY action:", {
-        updatedId: action.payload.id,
-        updatedCategory: action.payload.category,
-        // Use optional chaining to safely access a property that might not exist
-        updatedTimestamp: (action.payload as any)._updateTimestamp
-      });
-      
-      const oldEntry = data.entries.find(entry => entry.id === action.payload.id);
-      
-      console.log("[ENTRIES REDUCER] Entry being replaced:", {
-        oldEntry,
-        oldCategory: oldEntry?.category,
-        newCategory: action.payload.category,
-        categoryChanged: oldEntry?.category !== action.payload.category
-      });
-      
+    case 'UPDATE_ENTRY': {
       const result = {
         ...data,
         entries: data.entries.map((entry) => {
           if (entry.id === action.payload.id) {
-            console.log("[ENTRIES REDUCER] Replacing entry:", {
-              id: entry.id,
-              oldCategory: entry.category,
-              newCategory: action.payload.category
-            });
             return action.payload;
           }
           return entry;
         }),
       };
       
-      console.log("[ENTRIES REDUCER] UPDATE_ENTRY completed");
       return result;
+    }
     case 'DELETE_ENTRY':
       return {
         ...data,
         entries: data.entries.filter((entry) => entry.id !== action.payload),
       };
     case 'SET_ORIGINAL_CATEGORY':
-      console.log("[ENTRIES REDUCER] Setting original category:", action.payload);
       return {
         ...data,
         originalCategories: {
@@ -68,14 +46,14 @@ const EntriesReducer = (
           [action.payload.statementId]: action.payload.category
         }
       };
-    case 'CLEAR_ORIGINAL_CATEGORY':
-      console.log("[ENTRIES REDUCER] Clearing original category for:", action.payload);
+    case 'CLEAR_ORIGINAL_CATEGORY': {
       const updatedCategories = { ...data.originalCategories };
       delete updatedCategories[action.payload];
       return {
         ...data,
         originalCategories: updatedCategories
       };
+    }
     default:
       return data;
   }
@@ -83,6 +61,16 @@ const EntriesReducer = (
 
 interface EntriesProviderProps {
   children: ReactNode;
+}
+
+// Define the shape of the CustomEvent for auth state changes
+interface AuthStateChangedEvent extends CustomEvent {
+  detail: {
+    user?: {
+      username?: string;
+      email?: string;
+    };
+  };
 }
 
 export const EntriesProvider: React.FC<EntriesProviderProps> = ({
@@ -99,30 +87,26 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
   // Listen for auth state changes
   useEffect(() => {
     // Handler for auth state changes
-    const handleAuthStateChange = (event: CustomEvent) => {
-      console.log('Auth state changed event received in EntriesProvider:', event.detail);
-      
+    const handleAuthStateChange = (event: AuthStateChangedEvent) => {
       // If we have a user object with a username
       if (event.detail?.user?.username) {
-        console.log('Setting username in EntriesProvider:', event.detail.user.username);
         // Update username from auth state - ALWAYS update, don't check if empty
         setData({ type: 'SET_USERNAME', payload: event.detail.user.username });
       }
       
       // If we have a user object with an email
       if (event.detail?.user?.email) {
-        console.log('Setting manager email in EntriesProvider:', event.detail.user.email);
         // Update manager email from auth state - ALWAYS update, don't check if empty
         setData({ type: 'SET_MANAGER_EMAIL', payload: event.detail.user.email });
       }
     };
     
     // Listen for the auth state change event
-    window.addEventListener('authStateChanged', handleAuthStateChange as EventListener);
+    window.addEventListener('authStateChanged', handleAuthStateChange as unknown as EventListener);
     
     // Clean up
     return () => {
-      window.removeEventListener('authStateChanged', handleAuthStateChange as EventListener);
+      window.removeEventListener('authStateChanged', handleAuthStateChange as unknown as EventListener);
     };
   }, []);
 

@@ -23,6 +23,7 @@ export interface Entry {
   presetId?: string;
   isResolved?: boolean;
   _needsScroll?: boolean; // Flag to indicate if this entry needs to be scrolled into view
+  _updateTimestamp?: number; // Optional timestamp for tracking updates
 }
 
 export interface Category {
