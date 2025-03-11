@@ -24,7 +24,8 @@ const EntriesReducer = (
       console.log("[ENTRIES REDUCER] Processing UPDATE_ENTRY action:", {
         updatedId: action.payload.id,
         updatedCategory: action.payload.category,
-        updatedTimestamp: action.payload._updateTimestamp
+        // Use optional chaining to safely access a property that might not exist
+        updatedTimestamp: (action.payload as any)._updateTimestamp
       });
       
       const oldEntry = data.entries.find(entry => entry.id === action.payload.id);

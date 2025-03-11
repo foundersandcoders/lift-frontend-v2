@@ -83,6 +83,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         ...statement,
         // Add a timestamp to force detection of changes
         _lastModified: Date.now(),
+        _needsScroll: true, // Flag to indicate this needs scrolling
         category: categoryValue,
       };
       

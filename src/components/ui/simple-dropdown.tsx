@@ -84,20 +84,32 @@ const SimpleDropdownMenuTrigger: React.FC<SimpleDropdownMenuTriggerProps> = ({
   ...props 
 }) => {
   if (asChild && React.isValidElement(children)) {
-    // If asChild is true, clone the child element and add the onClick handler
-    return React.cloneElement(children, {
-      ...props,
-      onClick: (e: React.MouseEvent) => {
-        // Preserve original onClick if it exists
-        if (children.props.onClick) {
-          children.props.onClick(e);
-        }
-        // Call our onClick handler
-        if (onClick) {
-          onClick(e);
-        }
+    // Create a merged handler that combines the existing handler and our new one
+    const mergedClickHandler = (e: React.MouseEvent) => {
+      // Call the child's original onClick if it exists
+      if (children.props.onClick) {
+        children.props.onClick(e);
       }
-    });
+      // Call our onClick handler
+      if (onClick) {
+        onClick(e);
+      }
+    };
+    
+    // Create a new props object with our merged handler
+    const mergedProps = {
+      ...props,
+    };
+    
+    // Create a clone with a properly typed handler
+    return React.cloneElement(
+      children,
+      {
+        ...mergedProps,
+        // Just use the child's props directly
+        onClick: mergedClickHandler,
+      } as React.HTMLAttributes<HTMLElement>
+    );
   }
   
   // Otherwise, wrap the children in a div with the onClick handler

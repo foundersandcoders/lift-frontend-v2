@@ -112,6 +112,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
   originalCategory: externalOriginalCategory, // Get original category from parent
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
+  
+  // Create a ref for the component root element
+  const itemRef = React.useRef<HTMLDivElement>(null);
+  
+  // Create refs to track category changes for animations
+  const prevCategoryRef = React.useRef<string | null>(null);
 
   // Use simple primitive values to store original state
   // This way we avoid object reference issues
@@ -168,6 +174,34 @@ const StatementItem: React.FC<StatementItemProps> = ({
       setDraft(JSON.parse(JSON.stringify(statement)));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statement, isEditing]);
+  
+  // Dedicated effect for scrolling when needed
+  useEffect(() => {
+    // Check if this statement was updated with a category change (flagged by EditStatementModal)
+    if (isEditing && (statement as any)._needsScroll) {
+      console.log('Statement flagged for scrolling:', statement.id);
+      
+      // Use a longer delay to ensure the DOM has fully updated
+      const timer = setTimeout(() => {
+        if (itemRef.current) {
+          console.log('Executing scroll to element');
+          // Force scroll to this element
+          itemRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+          });
+          console.log('Scroll instruction sent');
+        }
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+    
+    // Keep reference updated for category change tracking
+    prevCategoryRef.current = statement.category;
+  // Check this effect whenever the statement reference changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statement, isEditing]);
 
   // Helper function to normalize category values for comparison
@@ -226,7 +260,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
   if (isEditing) {
     return (
-      <div className='bg-gray-100 p-3 rounded-lg shadow'>
+      <div 
+        ref={itemRef} 
+        id={`statement-${statement.id}`}
+        className='bg-gray-100 p-3 rounded-lg shadow'>
         {/* Desktop layout - horizontal row */}
         <div className='hidden md:flex md:items-center md:space-x-2'>
           {/* Privacy toggle button */}
@@ -614,6 +651,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
   // Static view when not in editing mode.
   return (
     <div
+      ref={itemRef}
+      id={`statement-${statement.id}`}
       className={`border rounded-md p-3 space-y-2 relative ${
         statement.isResolved
           ? 'bg-gray-100 border-gray-300 opacity-80'
