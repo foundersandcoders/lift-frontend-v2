@@ -313,11 +313,53 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
 
-        {/* Mobile layout - vertical stack */}
-        <div className='md:hidden flex flex-col space-y-4'>
-          {/* Statement header with privacy toggle */}
-          <div className='flex items-center justify-between pb-2 border-b border-gray-300'>
-            <h3 className='text-sm font-semibold text-gray-700'>Edit Statement</h3>
+        {/* Intermediate layout (640px-768px) - Two rows */}
+        <div className='hidden sm:flex md:hidden flex-col space-y-3'>
+          {/* Top row: Subject, Verb, Object, Category */}
+          <div className='flex flex-wrap gap-2'>
+            {/* Subject */}
+            <div
+              onClick={() => onPartClick('subject', draft.id)}
+              className='cursor-pointer p-2 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
+            >
+              <span className='font-medium'>{draft.atoms.subject}</span>
+            </div>
+            
+            {/* Verb */}
+            <div
+              onClick={() => onPartClick('verb', draft.id)}
+              className='cursor-pointer p-2 rounded bg-verbSelector hover:bg-verbSelectorHover'
+            >
+              <span className='font-medium'>{getVerbName(draft.atoms.verb)}</span>
+            </div>
+            
+            {/* Object */}
+            <div
+              onClick={() => onPartClick('object', draft.id)}
+              className='cursor-pointer p-2 rounded bg-objectInput hover:bg-objectInputHover'
+            >
+              <span className='font-medium'>{draft.atoms.object}</span>
+            </div>
+            
+            {/* Category */}
+            <div
+              onClick={() => onPartClick('category', draft.id)}
+              className='cursor-pointer p-2 rounded bg-categorySelector hover:bg-categorySelectorHover flex items-center'
+            >
+              <span className='mr-1'>📁</span>
+              <span className='font-medium'>
+                {draft.category &&
+                draft.category.toLowerCase() !== 'uncategorized' &&
+                draft.category.toLowerCase() !== 'uncategorised'
+                  ? getCategoryDisplayName(draft.category)
+                  : 'Uncategorized'}
+              </span>
+            </div>
+          </div>
+          
+          {/* Bottom row: Privacy toggle (left), Action buttons (right) */}
+          <div className='flex items-center justify-between pt-3 border-t border-gray-300'>
+            {/* Left: Privacy toggle */}
             <Button
               variant={draft.isPublic ? 'success' : 'destructive'}
               size='compact'
@@ -331,48 +373,97 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='p-2 transition-colors shadow-sm'
             >
               {draft.isPublic ? 
-                <><MailPlus size={16} /><span className="hidden sm:inline ml-1 text-xs">Public</span></> : 
-                <><MailX size={16} /><span className="hidden sm:inline ml-1 text-xs">Private</span></>
+                <><MailPlus size={16} /><span className="ml-1 text-xs">Public</span></> : 
+                <><MailX size={16} /><span className="ml-1 text-xs">Private</span></>
               }
             </Button>
+            
+            {/* Right: Action buttons */}
+            <div className='flex items-center space-x-2'>
+              {/* Delete button */}
+              <Button
+                variant='destructive'
+                size='compact'
+                onClick={() => onDelete(draft.id)}
+                className='px-2 py-1 flex items-center'
+              >
+                <Trash2 size={16} className="mr-1" />
+                <span className="text-xs">Delete</span>
+              </Button>
+              
+              {/* Cancel button */}
+              <Button
+                variant='outline'
+                size='compact'
+                onClick={() => {
+                  setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                  if (onCancel) onCancel(statement.id);
+                }}
+                className='px-2 py-1 flex items-center'
+              >
+                <PenOff size={16} className="mr-1" />
+                <span className="text-xs">Cancel</span>
+              </Button>
+              
+              {/* Save button */}
+              <Button
+                variant='success'
+                size='compact'
+                onClick={async () => {
+                  setIsSaving(true);
+                  const updatedDraft = { ...draft };
+                  updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
+                    draft.atoms.verb
+                  )} ${draft.atoms.object}`;
+                  await onLocalSave(updatedDraft);
+                  setIsSaving(false);
+                }}
+                disabled={!hasChanged || isSaving}
+                className='px-2 py-1 flex items-center'
+              >
+                <Save size={16} className="mr-1" />
+                <span className="text-xs">Save</span>
+              </Button>
+            </div>
           </div>
+        </div>
+
+        {/* Mobile layout - vertical stack */}
+        <div className='sm:hidden flex flex-col space-y-4'>
           
-          {/* Statement parts grid */}
-          <div className='grid grid-cols-2 gap-2'>
+          {/* Statement parts column - single column vertical layout */}
+          <div className='flex flex-col space-y-2'>
             {/* Subject */}
             <div
               onClick={() => onPartClick('subject', draft.id)}
-              className='cursor-pointer p-3 rounded bg-subjectSelector hover:bg-subjectSelectorHover flex flex-col'
+              className='cursor-pointer p-3 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
             >
-              <span className='text-xs mb-1 opacity-70'>Subject</span>
-              <span className='font-medium truncate'>{draft.atoms.subject}</span>
+              <span className='font-medium'>{draft.atoms.subject}</span>
             </div>
             
             {/* Verb */}
             <div
               onClick={() => onPartClick('verb', draft.id)}
-              className='cursor-pointer p-3 rounded bg-verbSelector hover:bg-verbSelectorHover flex flex-col'
+              className='cursor-pointer p-3 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
-              <span className='text-xs mb-1 opacity-70'>Verb</span>
-              <span className='font-medium truncate'>{getVerbName(draft.atoms.verb)}</span>
+              <span className='font-medium'>{getVerbName(draft.atoms.verb)}</span>
             </div>
             
             {/* Object */}
             <div
               onClick={() => onPartClick('object', draft.id)}
-              className='cursor-pointer p-3 rounded bg-objectInput hover:bg-objectInputHover flex flex-col'
+              className='cursor-pointer p-3 rounded bg-objectInput hover:bg-objectInputHover'
             >
-              <span className='text-xs mb-1 opacity-70'>Object</span>
-              <span className='font-medium truncate'>{draft.atoms.object}</span>
+              <span className='font-medium'>{draft.atoms.object}</span>
             </div>
             
             {/* Category */}
             <div
               onClick={() => onPartClick('category', draft.id)}
-              className='cursor-pointer p-3 rounded bg-categorySelector hover:bg-categorySelectorHover flex flex-col'
+              className='cursor-pointer p-3 rounded bg-categorySelector hover:bg-categorySelectorHover flex items-center'
             >
-              <span className='text-xs mb-1 opacity-70'>Category</span>
-              <span className='font-medium truncate'>
+              <span className='mr-1'>📁</span>
+              <span className='font-medium'>
                 {draft.category &&
                 draft.category.toLowerCase() !== 'uncategorized' &&
                 draft.category.toLowerCase() !== 'uncategorised'
@@ -384,18 +475,38 @@ const StatementItem: React.FC<StatementItemProps> = ({
           
           {/* Action buttons - bottom fixed bar */}
           <div className='flex justify-between items-center pt-3 mt-2 border-t border-gray-300'>
-            {/* Delete button */}
+            {/* Left: Privacy toggle */}
             <Button
-              variant='destructive'
+              variant={draft.isPublic ? 'success' : 'destructive'}
               size='compact'
-              onClick={() => onDelete(draft.id)}
+              onClick={() => {
+                setDraft((prevDraft) => {
+                  const newDraft = JSON.parse(JSON.stringify(prevDraft));
+                  newDraft.isPublic = !prevDraft.isPublic;
+                  return newDraft;
+                });
+              }}
               className='min-w-[40px] xs:px-3 py-2 flex justify-center'
             >
-              <Trash2 size={16} className="xs:mr-1" />
-              <span className="hidden xs:inline text-xs">Delete</span>
+              {draft.isPublic ? 
+                <><MailPlus size={16} className="xs:mr-1" /><span className="hidden xs:inline text-xs">Public</span></> : 
+                <><MailX size={16} className="xs:mr-1" /><span className="hidden xs:inline text-xs">Private</span></>
+              }
             </Button>
             
+            {/* Right: Action buttons */}
             <div className='flex space-x-2'>
+              {/* Delete button */}
+              <Button
+                variant='destructive'
+                size='compact'
+                onClick={() => onDelete(draft.id)}
+                className='min-w-[40px] xs:px-3 py-2 flex justify-center'
+              >
+                <Trash2 size={16} className="xs:mr-1" />
+                <span className="hidden xs:inline text-xs">Delete</span>
+              </Button>
+              
               {/* Cancel button */}
               <Button
                 variant='outline'
