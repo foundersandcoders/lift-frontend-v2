@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/better-tooltip';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
-import { EntriesContext } from '../context/EntriesContext';
 
 export interface StatementItemProps {
   statement: Entry;
@@ -58,6 +57,7 @@ export interface StatementItemProps {
   onReset?: (statementId: string) => void;
   onToggleResolved?: (statementId: string) => void;
   onToggleActionResolved?: (actionId: string) => void;
+  originalCategory?: string; // Add prop for original category from parent
 }
 
 // Helper function to normalize category ID for comparison
@@ -109,6 +109,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onReset,
   onToggleResolved = () => {},
   onToggleActionResolved = () => {},
+  originalCategory: externalOriginalCategory, // Get original category from parent
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
 
@@ -126,151 +127,48 @@ const StatementItem: React.FC<StatementItemProps> = ({
   // Local state to track if we are currently saving the draft
   const [isSaving, setIsSaving] = React.useState(false);
 
-  // DEBUG LOGGER - Create a unique ID for this component instance
-  const componentId = React.useRef(`StatementItem_${statement.id}_${Date.now()}`).current;
-  
-  // DEBUG LOGGER - Track all calls to setOriginalCategory
-  const debugSetOriginalCategory = (value: string | null, source: string) => {
-    console.log(`[CATEGORY TRACKER] SET ORIGINAL CATEGORY from ${source}:`, {
-      componentId,
-      statementId: statement.id,
-      from: originalCategory,
-      to: value,
-      statement: statement.category,
-      callStack: new Error().stack?.split('\n').slice(2, 5).join('\n')
-    });
-    setOriginalCategory(value);
-  };
-  
-  // LOG EACH RENDER
-  console.log(`[RENDER] StatementItem ${componentId}:`, {
-    statementId: statement.id, 
-    isEditing,
-    category: statement.category,
-    originalCategory
-  });
-  
-  // Track statement changes via ref
-  const prevStatementRef = React.useRef(statement);
-  
-  // Log statement changes between renders
-  if (prevStatementRef.current !== statement) {
-    console.log(`[STATEMENT CHANGED] ${componentId}:`, {
-      prevCategory: prevStatementRef.current.category,
-      newCategory: statement.category,
-      originalCategory,
-      statementObjectChanged: prevStatementRef.current !== statement
-    });
-    prevStatementRef.current = statement;
-  }
-
-  // Import the EntriesContext to access the global original categories store
-  const entriesContext = React.useContext(EntriesContext);
-  
   // Effect for edit mode changes - only runs when isEditing changes
   useEffect(() => {
-    console.log(`[EDIT MODE EFFECT] ${componentId}:`, { 
-      isEditing, 
-      id: statement.id,
-      category: statement.category,
-      originalCategory,
-      globalOriginalCategory: entriesContext?.data.originalCategories[statement.id]
-    });
-
     if (isEditing) {
       // Entering edit mode - capture original values if not already set
       if (originalCategory === null) {
-        console.log(`[CAPTURE ORIGINAL VALUES] ${componentId}`);
-        
-        // Check if we already have an original category stored in the global context
-        const globalOriginalCategory = entriesContext?.data.originalCategories[statement.id];
-        
-        // Use the stored original category if available, otherwise use the current category
-        const originalCategoryValue = globalOriginalCategory || (statement.category ? String(statement.category) : '');
-        
-        console.log(`[FREEZING ORIGINAL CATEGORY] ${componentId}:`, {
-          originalCategoryValue,
-          statementCategory: statement.category,
-          fromGlobalStore: !!globalOriginalCategory
-        });
-        
-        // If the original category isn't already in the global store, save it there
-        if (!globalOriginalCategory && entriesContext) {
-          entriesContext.setData({
-            type: 'SET_ORIGINAL_CATEGORY',
-            payload: {
-              statementId: statement.id,
-              category: originalCategoryValue
-            }
-          });
-        }
-        
-        // Also set it in the local state for immediate use in comparison
-        debugSetOriginalCategory(originalCategoryValue, 'EDIT_MODE_START');
+        // Use the external original category from parent if available, otherwise use the current category
+        const originalCategoryValue =
+          externalOriginalCategory ||
+          (statement.category ? String(statement.category) : "");
+
+        // Set it in the local state for immediate use in comparison
+        setOriginalCategory(originalCategoryValue);
         setOriginalSubject(statement.atoms.subject);
         setOriginalVerb(statement.atoms.verb);
         setOriginalObject(statement.atoms.object);
         setOriginalPrivacy(statement.isPublic);
-      } else {
-        console.log(`[EDIT CONTINUING - NOT CAPTURING] ${componentId}`, {
-          statementCategory: statement.category,
-          originalCategory,
-          globalOriginalCategory: entriesContext?.data.originalCategories[statement.id]
-        });
       }
 
       // Always keep draft updated with latest statement value
       setDraft(JSON.parse(JSON.stringify(statement)));
     } else {
       // Exiting edit mode - reset everything
-      console.log(`[EXIT EDIT MODE] ${componentId} - clearing original values`);
-      
-      // Clear the original category from the global store
-      if (entriesContext) {
-        entriesContext.setData({
-          type: 'CLEAR_ORIGINAL_CATEGORY',
-          payload: statement.id
-        });
-      }
-      
-      // Clear local state
-      debugSetOriginalCategory(null, 'EDIT_MODE_EXIT');
+      setOriginalCategory(null);
       setOriginalSubject(null);
       setOriginalVerb(null);
       setOriginalObject(null);
       setOriginalPrivacy(null);
-      
+
       setDraft(JSON.parse(JSON.stringify(statement)));
     }
-  // Only depend on isEditing to prevent loops when the entriesContext changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Only depend on isEditing to prevent loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditing]);
-  
-  // Log every time originalCategory changes
-  useEffect(() => {
-    console.log(`[ORIGINAL CATEGORY CHANGED] ${componentId}:`, {
-      originalCategory,
-      statementCategory: statement.category
-    });
-  }, [originalCategory, componentId, statement.category]);
-  
+
   // Separate effect to keep draft updated when statement changes
   useEffect(() => {
     if (isEditing) {
       // Keep draft updated with latest changes from the statement
-      console.log(`[STATEMENT UPDATE EFFECT] ${componentId}:`, {
-        currentCategory: statement.category,
-        originalCategory: originalCategory,
-        globalOriginalCategory: entriesContext?.data.originalCategories[statement.id],
-        different: statement.category !== originalCategory,
-        editingStatementId: statement.id
-      });
-      
       setDraft(JSON.parse(JSON.stringify(statement)));
     }
-  // We need statement in the deps array, but we'll exclude entriesContext to avoid loops
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statement, isEditing, componentId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statement, isEditing]);
 
   // Helper function to normalize category values for comparison
   const normalizeCategoryForComparison = (
@@ -288,7 +186,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
     return categoryStr;
   };
 
-  // Calculate changes based on primitive values and global store
+  // Calculate changes based on primitive values
   // If we're not in edit mode or don't have original values, no changes to detect
   let hasSubjectChanged = false;
   let hasVerbChanged = false;
@@ -298,11 +196,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
   let hasChanged = false;
 
   if (isEditing) {
-    // Use the global store's original category if available, otherwise use the local state
-    // This ensures we always compare against the true original, even after remounting
-    const effectiveOriginalCategory = entriesContext?.data.originalCategories[statement.id] || originalCategory;
+    // Use the external original category if available, otherwise use local state
+    // This ensures consistent comparison even after component remounts
+    const effectiveOriginalCategory = externalOriginalCategory || originalCategory;
     
-    if (effectiveOriginalCategory !== null) {
+    if (effectiveOriginalCategory !== null || originalCategory !== null) {
       // Compare current draft with original primitive values
       hasSubjectChanged = draft.atoms.subject !== originalSubject;
       hasVerbChanged = draft.atoms.verb !== originalVerb;
@@ -316,39 +214,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
       // Compare normalized categories
       hasCategoryChanged = draftCategory !== originalCategoryNormalized;
 
-      // Log changes for debugging
-      console.log('[CHANGE DETECTION]', {
-        subject: {
-          draft: draft.atoms.subject,
-          original: originalSubject,
-          changed: hasSubjectChanged,
-        },
-        verb: {
-          draft: draft.atoms.verb,
-          original: originalVerb,
-          changed: hasVerbChanged,
-        },
-        object: {
-          draft: draft.atoms.object,
-          original: originalObject,
-          changed: hasObjectChanged,
-        },
-        privacy: {
-          draft: draft.isPublic,
-          original: originalPrivacy,
-          changed: hasPrivacyChanged,
-        },
-        category: {
-          draft: draft.category,
-          local: originalCategory,
-          global: entriesContext?.data.originalCategories[statement.id],
-          effective: effectiveOriginalCategory,
-          draftNormalized: draftCategory,
-          originalNormalized: originalCategoryNormalized,
-          changed: hasCategoryChanged,
-        },
-      });
-
       // Calculate overall change status
       hasChanged =
         hasSubjectChanged ||
@@ -356,48 +221,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
         hasObjectChanged ||
         hasPrivacyChanged ||
         hasCategoryChanged;
-
-      console.log('[OVERALL CHANGE STATUS]', { 
-        hasChanged,
-        hasSubjectChanged,
-        hasVerbChanged,
-        hasObjectChanged,
-        hasPrivacyChanged,
-        hasCategoryChanged
-      });
     }
   }
-
-  // Uncomment for debugging if needed
-  // console.log('StatementItem change detection:', {
-  //   subject: {
-  //     draft: draft.atoms.subject,
-  //     initial: initialDraft.atoms.subject,
-  //     changed: hasSubjectChanged
-  //   },
-  //   verb: {
-  //     draft: draft.atoms.verb,
-  //     initial: initialDraft.atoms.verb,
-  //     changed: hasVerbChanged
-  //   },
-  //   object: {
-  //     draft: draft.atoms.object,
-  //     initial: initialDraft.atoms.object,
-  //     changed: hasObjectChanged
-  //   },
-  //   privacy: {
-  //     draft: draft.isPublic,
-  //     initial: initialDraft.isPublic,
-  //     changed: hasPrivacyChanged
-  //   },
-  //   category: {
-  //     draft: draft.category,
-  //     initial: initialDraft.category,
-  //     changed: hasCategoryChanged
-  //   }
-  // });
-
-  // Enable save button when any part of the statement has been changed
 
   if (isEditing) {
     return (
@@ -475,10 +300,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                         draft.atoms.subject
                       } ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
 
-                      console.log(
-                        'SAVE BUTTON CLICKED - submitting draft:',
-                        updatedDraft
-                      );
                       await onLocalSave(updatedDraft);
                       setIsSaving(false);
                     }}
@@ -649,10 +470,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                     draft.atoms.verb
                   )} ${draft.atoms.object}`;
 
-                  console.log(
-                    'SAVE BUTTON CLICKED (tablet) - submitting draft:',
-                    updatedDraft
-                  );
                   await onLocalSave(updatedDraft);
                   setIsSaving(false);
                 }}
@@ -778,10 +595,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
                     draft.atoms.verb
                   )} ${draft.atoms.object}`;
 
-                  console.log(
-                    'SAVE BUTTON CLICKED (mobile) - submitting draft:',
-                    updatedDraft
-                  );
                   await onLocalSave(updatedDraft);
                   setIsSaving(false);
                 }}

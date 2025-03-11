@@ -94,6 +94,9 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   
   // Keep a backup of the original entries when entering edit mode
   const [originalEntries, setOriginalEntries] = useState<{[id: string]: Entry}>({});
+  
+  // Store original categories to compare when statements are edited
+  const [originalCategories, setOriginalCategories] = useState<{[id: string]: string}>({});
 
   // Handle toggling the resolved state (archive/unarchive)
   const handleToggleResolved = (statementId: string) => {
@@ -157,15 +160,10 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // Handler for when a statement's local save button is clicked.
   async function handleLocalSave(updatedEntry: Entry) {
     try {
-      console.log("LOCAL SAVE DETECTED:", {
-        updatedEntry,
-        original: originalEntries[updatedEntry.id]
-      });
-      
-      // Call the backend API with the updated entry.
+      // Call the backend API with the updated entry
       await updateEntry(updatedEntry);
       
-      // Update the context with the new entry.
+      // Update the context with the new entry
       setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
       
       // Remove from originalEntries since we've saved
@@ -175,11 +173,18 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         return newEntries;
       });
       
-      // Exit editing mode for this statement.
+      // Remove from originalCategories
+      setOriginalCategories(prev => {
+        const newCategories = {...prev};
+        delete newCategories[updatedEntry.id];
+        return newCategories;
+      });
+      
+      // Exit editing mode for this statement
       setEditingStatementId(null);
     } catch (error) {
       console.error('Error saving statement to DB:', error);
-      // Optionally display an error message to the user.
+      // Optionally display an error message to the user
     }
   }
 
@@ -225,9 +230,16 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     // Store the original entry for possible reversion later
     const entryToEdit = entries.find(e => e.id === statementId);
     if (entryToEdit) {
+      // Store the full entry for restoring on cancel
       setOriginalEntries(prev => ({
         ...prev,
         [statementId]: JSON.parse(JSON.stringify(entryToEdit))
+      }));
+      
+      // Store the original category for change detection
+      setOriginalCategories(prev => ({
+        ...prev,
+        [statementId]: entryToEdit.category || ''
       }));
     }
     
@@ -383,6 +395,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                     statement={statement}
                     isEditing={statement.id === editingStatementId}
                     editingPart={null}
+                    originalCategory={originalCategories[statement.id]}
                     onPartClick={handlePartClick}
                     onLocalSave={handleLocalSave}
                     onCancel={() => {
@@ -394,11 +407,18 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
                           payload: originalEntries[statement.id]
                         });
                         
-                        // Remove from originalEntries
+                        // Remove from originalEntries and originalCategories
                         setOriginalEntries(prev => {
                           const newEntries = {...prev};
                           delete newEntries[statement.id];
                           return newEntries;
+                        });
+                        
+                        // Also clear from original categories
+                        setOriginalCategories(prev => {
+                          const newCategories = {...prev};
+                          delete newCategories[statement.id];
+                          return newCategories;
                         });
                       }
                       
