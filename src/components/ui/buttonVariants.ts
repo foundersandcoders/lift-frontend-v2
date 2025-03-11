@@ -10,7 +10,7 @@ export const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'border border-pink-200 bg-white text-gray-700 hover:bg-pink-50 hover:border-pink-300 transition-colors',
+          'border border-pink-200 bg-white text-gray-700  hover:border-pink-300 transition-colors',
         outlineVerbs:
           'border border-pink-200 bg-white text-gray-700 hover:bg-brand-pink hover:border-pink-300 transition-colors',
         secondary:

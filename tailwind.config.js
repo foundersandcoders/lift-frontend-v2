@@ -14,6 +14,14 @@ export default {
         '2xl': '1400px',
       },
     },
+    screens: {
+      'xs': '480px',
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
+    },
     extend: {
       colors: {
         subjectSelector: 'var(--subject-selector)',
@@ -22,6 +30,8 @@ export default {
         verbSelectorHover: 'var(--verb-selector-hover)',
         objectInput: 'var(--object-input)',
         objectInputHover: 'var(--object-input-hover)',
+        categorySelector: 'var(--category-selector)',
+        categorySelectorHover: 'var(--category-selector-hover)',
         privacySelector: 'var(--privacy-selector)',
         privacySelectorHover: 'var(--privacy-selector-hover)',
         border: 'hsl(var(--border))',
