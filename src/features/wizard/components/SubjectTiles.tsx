@@ -60,7 +60,19 @@ export const SubjectTiles: React.FC<SubjectTilesProps> = ({
           className={`h-auto py-4 px-6 text-left flex flex-col items-start space-y-1  
       
           `}
-          onClick={() => onSelect(tile.value)}
+          onClick={() => {
+            // If this tile is already selected, trigger a double-click behavior
+            if (selectedValue === tile.value) {
+              // Find and click the OK button by its ID
+              const okButton = document.getElementById('edit-statement-ok-button');
+              if (okButton) {
+                okButton.click();
+              }
+            } else {
+              // Normal selection behavior
+              onSelect(tile.value);
+            }
+          }}
           style={
             {
               // Set the CSS variable to the subject selector color. This is used on buttonVariants.ts

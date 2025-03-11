@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,90 @@ import { CategoryStep } from './steps/CategoryStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { getVerbName } from '@/lib/utils/verbUtils';
 
+// Global utility function to find and click the OK button
+export const clickOkButton = (): boolean => {
+  console.log('Attempting to click OK button...');
+  
+  // Try multiple approaches to find the OK button
+  try {
+    // Method 0: Use the React ref (most reliable)
+    if (okButtonRef && okButtonRef.current) {
+      console.log('Found OK button via React ref');
+      okButtonRef.current.click();
+      return true;
+    }
+    
+    // Method 1: Use the ID
+    let okButton = document.getElementById('edit-statement-ok-button');
+    if (okButton) {
+      console.log('Found OK button by ID');
+      (okButton as HTMLButtonElement).click();
+      return true;
+    }
+    
+    // Method 2: Look for a button with data-testid attribute
+    okButton = document.querySelector('button[data-testid="edit-statement-ok-button"]') as HTMLButtonElement;
+    if (okButton) {
+      console.log('Found OK button by data-testid');
+      okButton.click();
+      return true;
+    }
+    
+    // Method 3: Find button in dialog content
+    const dialogContent = document.querySelector('[role="dialog"]');
+    if (dialogContent) {
+      const buttons = dialogContent.querySelectorAll('button');
+      for (let i = 0; i < buttons.length; i++) {
+        if (buttons[i].textContent?.trim() === 'OK') {
+          console.log('Found OK button within dialog by text');
+          buttons[i].click();
+          return true;
+        }
+      }
+      
+      // If no button with 'OK' text found, try the first non-outline button
+      for (let i = 0; i < buttons.length; i++) {
+        if (!buttons[i].classList.contains('outline')) {
+          console.log('Found first non-outline button within dialog');
+          buttons[i].click();
+          return true;
+        }
+      }
+    }
+    
+    // Method 4: Last resort - find any button with text "OK"
+    const allButtons = document.querySelectorAll('button');
+    for (let i = 0; i < allButtons.length; i++) {
+      if (allButtons[i].textContent?.trim() === 'OK') {
+        console.log('Found OK button by text content');
+        allButtons[i].click();
+        return true;
+      }
+    }
+    
+    // Method 5: Programmatically call handleSave function
+    console.log('All DOM methods failed. Trying handleConfirm programmatically');
+    
+    // Get the OK button's parent element to find it more reliably
+    const okButtonParent = document.querySelector('.DialogContent .p-4.flex.justify-center.gap-4');
+    if (okButtonParent) {
+      const firstButton = okButtonParent.querySelector('button');
+      if (firstButton) {
+        console.log('Found OK button via parent element');
+        firstButton.click();
+        return true;
+      }
+    }
+    
+    console.log('All methods failed to find the OK button');
+    return false;
+    
+  } catch (error) {
+    console.error('Error while trying to click OK button:', error);
+    return false;
+  }
+};
+
 interface EditStatementModalProps {
   statement: Entry;
   editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
@@ -22,6 +106,9 @@ interface EditStatementModalProps {
   onClose: () => void;
 }
 
+// For accessing the OK button from other components
+let okButtonRef: React.RefObject<HTMLButtonElement> | null = null;
+
 export const EditStatementModal: React.FC<EditStatementModalProps> = ({
   statement,
   editPart,
@@ -29,6 +116,10 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
   onUpdate,
   onClose,
 }) => {
+  // Create a ref for the OK button
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  // Store the ref in the module-level variable for external access
+  okButtonRef = buttonRef;
   // Initialize local state with the current value of the part
   const [localValue, setLocalValue] = useState(() => {
     switch (editPart) {
@@ -46,6 +137,12 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         return '';
     }
   });
+  
+  // Function to handle when a selected item is clicked again to save immediately
+  const handleConfirm = () => {
+    console.log('handleConfirm called - saving immediately');
+    handleSave();
+  };
 
   // When saving, update the statement with the new value
   const handleSave = () => {
@@ -136,6 +233,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             }}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
+            onConfirm={handleConfirm}
           />
         );
       case 'verb':
@@ -144,6 +242,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             subject={statement.atoms.subject}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
+            onConfirm={handleConfirm}
           />
         );
       case 'object':
@@ -153,6 +252,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             verb={statement.atoms.verb}
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
+            onConfirm={handleConfirm}
           />
         );
       case 'category':
@@ -160,6 +260,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
           <CategoryStep
             selection={localValue as string}
             onUpdate={(val) => setLocalValue(val)}
+            onConfirm={handleConfirm}
           />
         );
       case 'privacy':
@@ -167,6 +268,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
           <PrivacyStep
             isPublic={localValue as boolean}
             onUpdate={(val) => setLocalValue(val)}
+            onConfirm={handleConfirm}
           />
         );
       default:
@@ -187,9 +289,12 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         {/* Optionally add a footer for explicit Save/Cancel */}
         <div className='p-4 flex justify-center gap-4'>
           <Button 
+            id="edit-statement-ok-button"
+            ref={buttonRef}
             onClick={handleSave} 
             variant='default' 
             className="inline-flex items-center shadow-sm"
+            data-testid="edit-statement-ok-button"
           >
             OK
           </Button>

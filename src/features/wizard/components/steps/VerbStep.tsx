@@ -7,6 +7,7 @@ interface VerbStepProps {
   subject: string;
   selection: string;
   onUpdate: (val: string) => void;
+  onConfirm?: () => void;
   currentStep?: number;
   totalSteps?: number;
 }
@@ -15,6 +16,7 @@ export const VerbStep: React.FC<VerbStepProps> = ({
   subject,
   selection,
   onUpdate,
+  onConfirm,
   currentStep = 2,
   totalSteps = 5,
 }) => {
@@ -30,7 +32,18 @@ export const VerbStep: React.FC<VerbStepProps> = ({
         <SentimentVerbPicker
           selectedVerbId={selection}
           onVerbSelect={(verb: Verb) => {
-            onUpdate(verb.id);
+            // If this verb is already selected, trigger the confirm function (double-click behavior)
+            if (verb.id === selection) {
+              console.log('Double-click on already selected verb:', verb.id);
+              if (onConfirm) {
+                console.log('Calling onConfirm function');
+                onConfirm();
+              } else {
+                console.log('No onConfirm function provided');
+              }
+            } else {
+              onUpdate(verb.id);
+            }
           }}
         />
       </div>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import type { Verb, Category } from '@/types/entries';
 import { getContrastColor } from '@/lib/utils/colorUtils';
 import { getVerbColor } from '@/lib/utils/categoryUtils';
+import { clickOkButton } from './EditStatementModal';
 
 interface VerbGridProps {
   verbs: Verb[];
@@ -29,7 +30,16 @@ const VerbGrid: React.FC<VerbGridProps> = ({
         return (
           <Button
             key={verb.name}
-            onClick={() => onVerbSelect(verb)}
+            onClick={() => {
+              // If the verb is already selected, click the OK button
+              if (verb.id === selectedVerbId) {
+                console.log('Verb already selected, clicking OK button');
+                clickOkButton();
+              } else {
+                // Normal selection behavior - select this verb
+                onVerbSelect(verb);
+              }
+            }}
             variant={'outlineVerbs'}
             selected={isSelected}
             className='flex items-center justify-center p-4 rounded-lg shadow-md'
