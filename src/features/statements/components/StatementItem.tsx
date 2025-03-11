@@ -185,7 +185,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       <div className='flex items-center space-x-2 bg-gray-100 p-2 rounded'>
         {/* Privacy toggle button */}
         <Button
-          variant={draft.isPublic ? 'success' : 'warning'}
+          variant={draft.isPublic ? 'success' : 'destructive'}
           size='compact'
           onClick={() => {
             // Create a new draft object to ensure React detects the change

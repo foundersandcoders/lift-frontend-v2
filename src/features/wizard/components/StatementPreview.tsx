@@ -81,7 +81,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
       
       {/* Privacy indicator (only show after privacy step) */}
       {showPrivacyIcon && (
-        <span className={`ml-0.5 flex-shrink-0 ${isPublic ? 'text-green-500' : 'text-gray-500'}`}>
+        <span className={`ml-0.5 flex-shrink-0 ${isPublic ? 'text-green-500' : 'text-red-500'}`}>
           {isPublic ? <MailPlus size={14} /> : <MailX size={14} />}
         </span>
       )}
