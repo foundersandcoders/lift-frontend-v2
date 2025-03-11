@@ -13,34 +13,38 @@ interface StatementPreviewProps {
 const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   const { subject, verb, object, adverbial } = selection.atoms;
   const { isPublic, category } = selection;
-  
+
   // Get the current step from the wizard
-  const currentStep = selection.currentStep;
+  const currentStep = selection.currentStep ?? 'privacy';
 
   // Only show the preview if we have at least a subject
   const hasContent = Boolean(subject.trim());
 
   // Only show privacy icon if we've reached or passed that step
-  const showPrivacyIcon = currentStep === 'privacy' || currentStep === 'complement';
-  
+  const showPrivacyIcon =
+    currentStep === 'privacy' || currentStep === 'complement';
+
   // Only show category if we've reached or passed that step
-  const showCategory = currentStep === 'category' || currentStep === 'privacy' || currentStep === 'complement';
-  
+  const showCategory =
+    currentStep === 'category' ||
+    currentStep === 'privacy' ||
+    currentStep === 'complement';
+
   // Get category display name from ID
   const getCategoryName = (categoryId: string) => {
     if (!categoryId) return '';
-    
+
     // Handle uncategorized variations
     const normalized = categoryId.toLowerCase();
     if (normalized === 'uncategorized' || normalized === 'uncategorised') {
       return 'Uncategorised';
     }
-    
+
     // Find matching category in the list
     const categoryObj = statementsCategories.categories.find(
-      cat => cat.id.toLowerCase() === normalized
+      (cat) => cat.id.toLowerCase() === normalized
     );
-    
+
     return categoryObj ? categoryObj.name : categoryId;
   };
 
@@ -53,7 +57,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
         <FileText size={12} className='mr-1' />
         <span className='text-xs font-medium'>Statement:</span>
       </div>
-      
+
       {/* Statement parts */}
       {subject && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-subjectSelector text-black'>
@@ -70,7 +74,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
           {object}
         </span>
       )}
-      
+
       {/* Category indicator (only show after category step) */}
       {showCategory && category && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-categorySelector text-black flex items-center gap-1'>
@@ -78,14 +82,18 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
           {getCategoryName(category)}
         </span>
       )}
-      
+
       {/* Privacy indicator (only show after privacy step) */}
       {showPrivacyIcon && (
-        <span className={`ml-0.5 flex-shrink-0 ${isPublic ? 'text-green-500' : 'text-red-500'}`}>
+        <span
+          className={`ml-0.5 flex-shrink-0 ${
+            isPublic ? 'text-green-500' : 'text-red-500'
+          }`}
+        >
           {isPublic ? <MailPlus size={14} /> : <MailX size={14} />}
         </span>
       )}
-      
+
       {/* Adverbials */}
       {adverbial &&
         adverbial.length > 0 &&

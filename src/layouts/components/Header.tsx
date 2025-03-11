@@ -24,11 +24,11 @@ const Header: React.FC = () => {
               {data.username ? (
                 <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
                   <DialogTrigger asChild>
-                    <div className='flex items-center shrink-0 border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-pink-600 transition-colors'>
+                    <button className='flex items-center shrink-0 border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-pink-600 transition-colors'>
                       <span className='hidden sm:inline mr-2'>Logged as: </span>
                       <span className='mr-2 text-xs sm:text-base truncate max-w-[100px] sm:max-w-[150px]'>{data.username}</span>
                       <SmallCircularQuestionCounter size={18} />
-                    </div>
+                    </button>
                   </DialogTrigger>
                   <UserDataModal
                     onOpenChange={setIsDashboardOpen}
@@ -52,11 +52,11 @@ const Header: React.FC = () => {
             {data.username ? (
               <Dialog open={isDashboardOpen} onOpenChange={setIsDashboardOpen}>
                 <DialogTrigger asChild>
-                  <div className='flex items-center shrink-0 border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-pink-600 transition-colors'>
+                  <button className='flex items-center shrink-0 border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-pointer hover:bg-pink-600 transition-colors'>
                     <span className='hidden sm:inline mr-2'>Logged as: </span>
                     <span className='mr-2 text-xs sm:text-base truncate max-w-[100px] sm:max-w-[150px]'>{data.username}</span>
                     <SmallCircularQuestionCounter size={18} />
-                  </div>
+                  </button>
                 </DialogTrigger>
                 <UserDataModal
                   onOpenChange={setIsDashboardOpen}
