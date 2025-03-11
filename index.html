@@ -4,34 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Beacons</title>
-    <!-- CRITICAL: Polyfill to ensure React is available globally -->
-    <script>
-      // THIS MUST RUN BEFORE ANY OTHER SCRIPTS
-      (function() {
-        // Global React polyfill to prevent errors like:
-        // - Cannot read properties of undefined (reading 'useLayoutEffect')
-        // - Cannot read properties of undefined (reading 'createContext')
-        window.React = {};
-        window.React.useState = function() { return [undefined, function() {}]; };
-        window.React.useEffect = function() { return function() {}; };
-        window.React.useLayoutEffect = function() { return function() {}; };
-        window.React.useRef = function() { return { current: null }; };
-        window.React.useContext = function() { return {}; };
-        window.React.createContext = function() { return { Provider: function(){}, Consumer: function(){} }; };
-        window.React.forwardRef = function(fn) { return fn; };
-        window.React.Children = { map: function(){}, forEach: function(){}, count: function(){}, only: function(){} };
-        window.React.Fragment = "Fragment";
-        window.React.StrictMode = "StrictMode";
-        window.React.cloneElement = function() { return {}; };
-        window.React.createElement = function() { return {}; };
-        
-        // Ensure this polyfill isn't overridden
-        Object.defineProperty(window, 'React', {
-          configurable: false,
-          writable: false
-        });
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>

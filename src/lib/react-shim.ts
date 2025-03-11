@@ -4,43 +4,62 @@
  * React.useLayoutEffect and React.createContext to be available globally
  */
 
-// Force window.React to exist and have key methods
+// Safely check and set properties
+function safelySetProperty(obj: any, prop: string, value: any) {
+  // Skip if property already exists
+  if (obj[prop] !== undefined) return;
+  
+  try {
+    // Try to set the property - this will fail if the property is read-only
+    obj[prop] = value;
+  } catch (e) {
+    // Property is read-only or can't be assigned - just log in dev mode
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`Unable to set ${prop} on React`, e);
+    }
+  }
+}
+
+// Create stubs for common React methods
+const noop = () => {};
+const noopReturn = () => () => {};
+const emptyObj = {};
+
+// Apply React polyfills safely
 if (typeof window !== 'undefined') {
-  // Create stubs for common React methods
-  const noop = () => {};
-  const noopReturn = () => () => {};
-  const emptyObj = {};
+  const windowAny = window as any;
   
-  // Only add if missing
-  if (!window.React) {
-    (window as any).React = {};
+  // We won't try to create window.React if it doesn't exist
+  // This avoids the error of trying to create a property on window
+  if (windowAny.React) {
+    // Only try to set properties that don't already exist
+    safelySetProperty(windowAny.React, 'useState', () => [undefined, noop]);
+    safelySetProperty(windowAny.React, 'useEffect', noopReturn);
+    safelySetProperty(windowAny.React, 'useLayoutEffect', windowAny.React.useEffect || noopReturn);
+    safelySetProperty(windowAny.React, 'useRef', () => ({ current: null }));
+    safelySetProperty(windowAny.React, 'useContext', () => emptyObj);
+    safelySetProperty(windowAny.React, 'createContext', () => ({ Provider: noop, Consumer: noop }));
+    safelySetProperty(windowAny.React, 'forwardRef', (fn: any) => fn);
+    safelySetProperty(windowAny.React, 'createElement', () => emptyObj);
+    safelySetProperty(windowAny.React, 'cloneElement', () => emptyObj);
+    
+    // Add Children if it doesn't exist
+    if (!windowAny.React.Children) {
+      try {
+        windowAny.React.Children = {
+          map: noop,
+          forEach: noop,
+          count: noop,
+          only: noop,
+        };
+      } catch (e) {
+        // Couldn't set Children
+      }
+    }
+    
+    safelySetProperty(windowAny.React, 'Fragment', 'Fragment');
+    safelySetProperty(windowAny.React, 'StrictMode', 'StrictMode');
   }
-  
-  // Add missing methods - use type assertion for TypeScript
-  const reactShim = (window as any).React;
-  
-  if (!reactShim.useState) reactShim.useState = () => [undefined, noop];
-  if (!reactShim.useEffect) reactShim.useEffect = noopReturn;
-  if (!reactShim.useLayoutEffect) reactShim.useLayoutEffect = reactShim.useEffect || noopReturn;
-  if (!reactShim.useRef) reactShim.useRef = () => ({ current: null });
-  if (!reactShim.useContext) reactShim.useContext = () => emptyObj;
-  if (!reactShim.createContext) reactShim.createContext = () => ({ Provider: noop, Consumer: noop });
-  if (!reactShim.forwardRef) reactShim.forwardRef = (fn: any) => fn;
-  if (!reactShim.createElement) reactShim.createElement = () => emptyObj;
-  if (!reactShim.cloneElement) reactShim.cloneElement = () => emptyObj;
-  
-  // Only add these if they don't exist
-  if (!reactShim.Children) {
-    reactShim.Children = {
-      map: noop,
-      forEach: noop,
-      count: noop,
-      only: noop,
-    };
-  }
-  
-  if (!reactShim.Fragment) reactShim.Fragment = 'Fragment';
-  if (!reactShim.StrictMode) reactShim.StrictMode = 'StrictMode';
 }
 
 // Export to ensure this file isn't tree-shaken

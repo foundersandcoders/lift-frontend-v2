@@ -4,14 +4,46 @@
  * in certain environments like SSR or when window.React isn't properly set
  */
 
-// Apply React useLayoutEffect polyfill
+// Safely check and set properties
+function safelySetProperty(obj: any, prop: string, value: any) {
+  // Skip if property already exists
+  if (obj[prop] !== undefined) return;
+  
+  try {
+    // Try to set the property - this will fail if the property is read-only
+    obj[prop] = value;
+  } catch (e) {
+    // Property is read-only or can't be assigned - just log in dev mode
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`Unable to set ${prop}`, e);
+    }
+  }
+}
+
+// Apply React polyfills safely
 if (typeof window !== 'undefined') {
-  // We're in the browser, so we can safely create a React object on window
-  // This ensures that libraries that expect to find React on window won't break
-  // @ts-ignore - intentionally modifying window
-  window.React = window.React || {};
-  // @ts-ignore - intentionally modifying window.React
-  window.React.useLayoutEffect = window.React.useLayoutEffect || window.React.useEffect || function() { return function() {}; };
+  // Check if window.React exists
+  const windowAny = window as any;
+  
+  // Create React object if it doesn't exist
+  if (!windowAny.React) {
+    try {
+      windowAny.React = {};
+    } catch (e) {
+      // If we can't assign to window.React, there's not much we can do
+      console.debug('Unable to create window.React', e);
+    }
+  }
+  
+  // Only try to set properties if window.React exists
+  if (windowAny.React) {
+    // Safely set individual properties
+    safelySetProperty(windowAny.React, 'useLayoutEffect', 
+      windowAny.React.useEffect || function() { return function() {}; });
+    
+    safelySetProperty(windowAny.React, 'createContext', 
+      function() { return { Provider: function() {}, Consumer: function() {} }; });
+  }
 }
 
 // Export a dummy function to make TypeScript happy when importing this module
