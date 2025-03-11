@@ -1,79 +1,60 @@
 'use client';
 
+// Import the polyfill early
+import '../../lib/utils/radix-utils';
+
 import * as React from 'react';
+import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { cn } from '@/lib/utils';
 
-// DISABLED FOR TESTING
-// import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
+const DropdownMenu = DropdownMenuPrimitive.Root;
 
-// Mock interfaces and components
-interface DropdownMenuProps {
-  children?: React.ReactNode;
-}
+const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 
-interface DropdownMenuTriggerProps {
-  children?: React.ReactNode;
-  asChild?: boolean;
-}
-
-interface DropdownMenuContentProps {
-  children?: React.ReactNode;
-  className?: string;
-  sideOffset?: number;
-  [key: string]: any;
-}
-
-interface DropdownMenuItemProps {
-  children?: React.ReactNode;
-  className?: string;
-  [key: string]: any;
-}
-
-interface DropdownMenuSeparatorProps {
-  className?: string;
-  [key: string]: any;
-}
-
-// Mock components
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ children }) => <>{children}</>;
-const DropdownMenuTrigger: React.FC<DropdownMenuTriggerProps> = ({ children }) => <>{children}</>;
-
-const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenuContentProps>(
-  ({ children, className, ...props }, ref) => (
-    <div 
+const DropdownMenuContent = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
+>(({ className, sideOffset = 4, ...props }, ref) => (
+  <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Content
       ref={ref}
-      className={cn('hidden', className)}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-);
-DropdownMenuContent.displayName = 'DropdownMenuContent';
-
-const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuItemProps>(
-  ({ children, className, ...props }, ref) => (
-    <div 
-      ref={ref}
-      className={cn('hidden', className)}
-      {...props}
-    >
-      {children}
-    </div>
-  )
-);
-DropdownMenuItem.displayName = 'DropdownMenuItem';
-
-const DropdownMenuSeparator = React.forwardRef<HTMLDivElement, DropdownMenuSeparatorProps>(
-  ({ className, ...props }, ref) => (
-    <div 
-      ref={ref}
-      className={cn('hidden', className)}
+      sideOffset={sideOffset}
+      className={cn(
+        'z-50 min-w-[8rem] rounded-md border bg-white p-2 shadow-md',
+        className
+      )}
       {...props}
     />
-  )
-);
-DropdownMenuSeparator.displayName = 'DropdownMenuSeparator';
+  </DropdownMenuPrimitive.Portal>
+));
+DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
+
+const DropdownMenuItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item>
+>(({ className, ...props }, ref) => (
+  <DropdownMenuPrimitive.Item
+    ref={ref}
+    className={cn(
+      'flex cursor-pointer items-center rounded-sm px-2 py-1 text-sm text-gray-700 hover:bg-gray-100',
+      className
+    )}
+    {...props}
+  />
+));
+DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+
+const DropdownMenuSeparator = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
+>(({ className, ...props }, ref) => (
+  <DropdownMenuPrimitive.Separator
+    ref={ref}
+    className={cn('my-1 h-px bg-gray-200', className)}
+    {...props}
+  />
+));
+DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 export {
   DropdownMenu,

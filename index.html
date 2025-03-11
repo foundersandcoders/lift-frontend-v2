@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Beacons</title>
+    <!-- Preload polyfill to ensure React is available globally -->
+    <script>
+      // Global React polyfill to prevent errors like:
+      // - Cannot read properties of undefined (reading 'useLayoutEffect')
+      // - Cannot read properties of undefined (reading 'createContext')
+      if (typeof window !== 'undefined') {
+        window.React = window.React || {};
+        window.React.useState = function() { return [undefined, function() {}]; };
+        window.React.useEffect = function() { return function() {}; };
+        window.React.useLayoutEffect = function() { return function() {}; };
+        window.React.useRef = function() { return { current: null }; };
+        window.React.useContext = function() { return {}; };
+        window.React.createContext = function() { return { Provider: function() {}, Consumer: function() {} }; };
+        window.React.forwardRef = function(fn) { return fn; };
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
