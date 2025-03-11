@@ -4,7 +4,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogDescription,
-} from './dialog';
+} from './radix-compatibility';
 
 interface ConfirmationDialogProps {
   isOpen: boolean;

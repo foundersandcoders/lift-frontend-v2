@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '../../../components/ui/dropdown-menu';
+} from '../../../components/ui/radix-compatibility';
 import ActionForm from './ActionForm';
 import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
 import type { Action } from '../../../types/entries';

@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 import React, { useState } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
-import { Dialog, DialogTrigger } from '../../components/ui/dialog';
+import { Dialog, DialogTrigger } from '../../components/ui/radix-compatibility';
 import SmallCircularQuestionCounter from '../../components/ui/questionCounter/smallCircularQuestionCounter';
 import UserDataModal from '../../components/modals/UserDataModal';
 

@@ -4,7 +4,7 @@ import React from 'react';
 import type { SetQuestion } from '../../../types/entries';
 import { HelpCircle, ChevronRight, BellOff, Bell } from 'lucide-react';
 import { cn } from '../../../lib/utils';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../../../components/ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent } from '../../../components/ui/radix-compatibility';
 
 export interface QuestionCardProps {
   presetQuestion: SetQuestion;
