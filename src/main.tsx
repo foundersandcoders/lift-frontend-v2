@@ -1,3 +1,9 @@
+// Apply React useLayoutEffect polyfill
+if (typeof window !== 'undefined') {
+  window.React = window.React || {};
+  window.React.useLayoutEffect = window.React.useEffect || function() { return function() {}; };
+}
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
