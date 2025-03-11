@@ -1,5 +1,8 @@
 'use client';
 
+// Import the polyfill early
+import '../../lib/utils/radix-utils';
+
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';

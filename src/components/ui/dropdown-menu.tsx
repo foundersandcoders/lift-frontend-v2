@@ -1,3 +1,8 @@
+'use client';
+
+// Import the polyfill early
+import '../../lib/utils/radix-utils';
+
 import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { cn } from '@/lib/utils';

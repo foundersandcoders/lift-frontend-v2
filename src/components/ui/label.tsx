@@ -1,5 +1,8 @@
 'use client';
 
+// Import the polyfill early
+import '../../lib/utils/radix-utils';
+
 import * as React from 'react';
 import * as LabelPrimitive from '@radix-ui/react-label';
 import { cva, type VariantProps } from 'class-variance-authority';

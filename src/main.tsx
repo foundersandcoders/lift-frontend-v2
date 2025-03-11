@@ -1,5 +1,5 @@
 // Import the polyfill first, before any other imports
-import './lib/utils/react-polyfill';
+import './lib/utils/radix-utils';
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
