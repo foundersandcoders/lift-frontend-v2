@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from '../../lib/utils/react-safe';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { cn } from '@/lib/utils';
 

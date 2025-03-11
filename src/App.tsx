@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect } from './lib/utils/react-safe';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 // Providers

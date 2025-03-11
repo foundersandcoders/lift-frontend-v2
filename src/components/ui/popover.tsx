@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import * as React from '../../lib/utils/react-safe';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
 
 import { cn } from '@/lib/utils';

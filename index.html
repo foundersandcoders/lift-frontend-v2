@@ -4,13 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Beacons</title>
-    <!-- Prevent "useLayoutEffect does nothing on the server" warning -->
+    <!-- Fix for React hooks in server environments -->
     <script>
-      // Polyfill useLayoutEffect for environments that don't support it (like Deno Deploy)
-      if (typeof window !== 'undefined') {
-        window.React = window.React || {};
-        window.React.useLayoutEffect = window.React.useEffect || function() { return function() {}; };
-      }
+      // This needs to run before React is loaded, so React will use these implementations
+      window.__REACT_WORKAROUND__ = true;
+      window.requestAnimationFrame = function(cb) { setTimeout(cb, 0); };
     </script>
   </head>
   <body>
