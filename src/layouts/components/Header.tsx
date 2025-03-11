@@ -14,7 +14,7 @@ const Header: React.FC = () => {
       <div className='container mx-auto'>
         {/* Mobile: Stacked layout / Desktop: Single row with 3 items */}
         <div className='flex flex-wrap items-center'>
-          {/* Mobile: Top row with logo and login / Desktop: 3-column layout */}
+          {/* Mobile: Top row with logo and login / Desktop: with 3-column layout */}
           <div className='flex w-full min-[580px]:w-auto items-center justify-between min-[580px]:justify-start'>
             {/* Logo - always left */}
             <img
@@ -39,9 +39,7 @@ const Header: React.FC = () => {
                       <SmallCircularQuestionCounter size={18} />
                     </button>
                   </DialogTrigger>
-                  <UserDataModal
-                    onOpenChange={setIsDashboardOpen}
-                  />
+                  <UserDataModal onOpenChange={setIsDashboardOpen} />
                 </Dialog>
               ) : (
                 <div className='flex shrink-0 items-center border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2 cursor-default'>
