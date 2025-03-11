@@ -5,7 +5,7 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '../../components/ui/radix-compatibility';
+} from '../../components/ui/better-tooltip';
 import StatementList from '../../features/statements/components/StatementList';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { Button } from '../../components/ui/button';

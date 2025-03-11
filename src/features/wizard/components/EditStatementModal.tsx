@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  SimpleDialog as Dialog,
+  SimpleDialogContent as DialogContent,
+  SimpleDialogTitle as DialogTitle,
+  SimpleDialogDescription as DialogDescription,
+} from '@/components/ui/simple-dialog';
 import { Button } from '@/components/ui/button';
 import type { Entry } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
@@ -70,19 +70,26 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         updatedAtoms.verb
       )} ${updatedAtoms.object}`;
     } else if (editPart === 'category') {
-      // console.log('EDIT STATEMENT MODAL - Setting category:');
-      // console.log('Original statement category:', statement.category);
-      // console.log('New category value:', localValue);
+      console.log('EDIT STATEMENT MODAL - Setting category:');
+      console.log('Original statement category:', statement.category);
+      console.log('New category value:', localValue);
 
-      // Create a completely new object to ensure React detects the change
-      updatedStatement = JSON.parse(
-        JSON.stringify({
-          ...statement,
-          category: localValue as string,
-        })
-      );
+      // Create a completely new object with a deeper clone to ensure React detects the change
+      // Force category to be a string to avoid type issues
+      const categoryValue = localValue ? String(localValue) : '';
+      
+      // Create a new object with the modified category
+      const newStatement = {
+        ...statement,
+        // Add a timestamp to force detection of changes
+        _lastModified: Date.now(),
+        category: categoryValue,
+      };
+      
+      // Deep clone to ensure all references are fresh
+      updatedStatement = JSON.parse(JSON.stringify(newStatement));
 
-      console.log('Updated statement:', updatedStatement);
+      console.log('Updated statement (category change):', updatedStatement);
     } else if (editPart === 'privacy') {
       updatedStatement = { ...statement, isPublic: localValue as boolean };
     } else {

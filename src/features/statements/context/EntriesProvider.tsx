@@ -21,16 +21,59 @@ const EntriesReducer = (
     case 'ADD_ENTRY':
       return { ...data, entries: [...data.entries, action.payload] };
     case 'UPDATE_ENTRY':
-      return {
+      console.log("[ENTRIES REDUCER] Processing UPDATE_ENTRY action:", {
+        updatedId: action.payload.id,
+        updatedCategory: action.payload.category,
+        updatedTimestamp: action.payload._updateTimestamp
+      });
+      
+      const oldEntry = data.entries.find(entry => entry.id === action.payload.id);
+      
+      console.log("[ENTRIES REDUCER] Entry being replaced:", {
+        oldEntry,
+        oldCategory: oldEntry?.category,
+        newCategory: action.payload.category,
+        categoryChanged: oldEntry?.category !== action.payload.category
+      });
+      
+      const result = {
         ...data,
-        entries: data.entries.map((entry) =>
-          entry.id === action.payload.id ? action.payload : entry
-        ),
+        entries: data.entries.map((entry) => {
+          if (entry.id === action.payload.id) {
+            console.log("[ENTRIES REDUCER] Replacing entry:", {
+              id: entry.id,
+              oldCategory: entry.category,
+              newCategory: action.payload.category
+            });
+            return action.payload;
+          }
+          return entry;
+        }),
       };
+      
+      console.log("[ENTRIES REDUCER] UPDATE_ENTRY completed");
+      return result;
     case 'DELETE_ENTRY':
       return {
         ...data,
         entries: data.entries.filter((entry) => entry.id !== action.payload),
+      };
+    case 'SET_ORIGINAL_CATEGORY':
+      console.log("[ENTRIES REDUCER] Setting original category:", action.payload);
+      return {
+        ...data,
+        originalCategories: {
+          ...data.originalCategories,
+          [action.payload.statementId]: action.payload.category
+        }
+      };
+    case 'CLEAR_ORIGINAL_CATEGORY':
+      console.log("[ENTRIES REDUCER] Clearing original category for:", action.payload);
+      const updatedCategories = { ...data.originalCategories };
+      delete updatedCategories[action.payload];
+      return {
+        ...data,
+        originalCategories: updatedCategories
       };
     default:
       return data;
@@ -49,6 +92,7 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
     username: '',
     managerName: '',
     managerEmail: '',
+    originalCategories: {} // Initialize the originalCategories store
   });
 
   // Listen for auth state changes

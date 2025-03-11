@@ -157,6 +157,11 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // Handler for when a statement's local save button is clicked.
   async function handleLocalSave(updatedEntry: Entry) {
     try {
+      console.log("LOCAL SAVE DETECTED:", {
+        updatedEntry,
+        original: originalEntries[updatedEntry.id]
+      });
+      
       // Call the backend API with the updated entry.
       await updateEntry(updatedEntry);
       
@@ -321,6 +326,9 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
   // State for managing the visibility of the snoozed section
   const [isSnoozedQuestionsSectionExpanded, setIsSnoozedQuestionsSectionExpanded] = useState(false);
   
+  // Move the hook call to the top level
+  const { categoryCounts } = useAnsweredCountByCategory();
+  
   const renderCategorySection = (catId: string, catLabel: string) => {
     // Don't render the snoozed category in the normal flow
     if (catId === 'snoozed') return null;
@@ -334,8 +342,7 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     
     // We're now using a consistent styling regardless of category
     
-    // Use the answered counts by category to determine if all questions are answered
-    const { categoryCounts } = useAnsweredCountByCategory();
+    // Use the pre-fetched category counts
     const categoryStatus = categoryCounts[normalizedCatId] || { answered: 0, total: 0 };
     const isComplete = categoryStatus.total > 0 && categoryStatus.answered === categoryStatus.total;
     
@@ -537,17 +544,67 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
           editPart={editModalData.editPart}
           username={username}
           onUpdate={(updatedStatement) => {
+            console.log("====== MODAL UPDATE SEQUENCE START ======");
+            console.log("1. EditStatementModal returned updated statement:", updatedStatement);
+            console.log("2. Current editing state:", { 
+              isEditing: editingStatementId === updatedStatement.id,
+              editingStatementId, 
+              updatedStatementId: updatedStatement.id 
+            });
+            
             // If we're in editing mode for this statement:
             if (editingStatementId === updatedStatement.id) {
-              // Only update the UI representation without saving to backend
-              // This allows the save button to detect changes and become active
-              setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
+              console.log("3. EDIT MODE PATH: Will update UI without saving to backend");
+              console.log("4. Original entries stored:", originalEntries);
+              
+              // In edit mode, we need to update the data without saving to backend yet
+              // But we must ensure the original values in StatementItem aren't updated
+              
+              // Create a completely isolated copy with a unique timestamp
+              const markedEntry = {
+                ...JSON.parse(JSON.stringify(updatedStatement)),
+                // Add special properties to force React to treat this as a new object
+                _updateTimestamp: Date.now(),
+                _forceUpdate: Math.random().toString(),
+              };
+              
+              console.log("5. Will dispatch UPDATE_ENTRY with:", markedEntry);
+              
+              // Before updating the global state, log the current statements
+              const existingEntry = entries.find(e => e.id === updatedStatement.id);
+              console.log("6. Current entries before update:", existingEntry);
+              
+              // Log potential category changes
+              console.log("CATEGORY CHANGE CHECK:", {
+                existingCategory: existingEntry?.category,
+                newCategory: markedEntry.category,
+                changed: existingEntry?.category !== markedEntry.category,
+                equal: existingEntry?.category === markedEntry.category
+              });
+              
+              // Update the UI with the new values
+              setData({ type: 'UPDATE_ENTRY', payload: markedEntry });
+              
+              console.log("7. UPDATE_ENTRY action dispatched");
+              
+              // Log what will happen next
+              console.log("8. This will trigger a re-render of StatementItem with:", {
+                statementId: updatedStatement.id,
+                isEditing: true,
+                newStatementCategory: markedEntry.category,
+                editingStatementId
+              });
             } else {
+              console.log("3. DIRECT SAVE PATH: Will update both UI and backend");
+              
               // If we're not in edit mode, save directly when modal is closed
               setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
               // Also update backend
               updateEntry(updatedStatement);
+              
+              console.log("4. Direct save completed");
             }
+            console.log("====== MODAL UPDATE SEQUENCE END ======");
           }}
           onClose={() => setEditModalData(null)}
         />

@@ -2,11 +2,11 @@ import React from 'react';
 import { format, parse } from 'date-fns';
 import { MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '../../../components/ui/radix-compatibility';
+  SimpleDropdownMenu as DropdownMenu,
+  SimpleDropdownMenuTrigger as DropdownMenuTrigger,
+  SimpleDropdownMenuContent as DropdownMenuContent,
+  SimpleDropdownMenuItem as DropdownMenuItem,
+} from '../../../components/ui/simple-dropdown';
 import ActionForm from './ActionForm';
 import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
 import type { Action } from '../../../types/entries';

@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  SimpleDialog as Dialog,
+  SimpleDialogContent as DialogContent,
+  SimpleDialogDescription as DialogDescription,
+  SimpleDialogTitle as DialogTitle,
+} from '@/components/ui/simple-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEntries } from '@/features/statements/hooks/useEntries';
 import { postNewEntry } from '@/features/statements/api/entriesApi';

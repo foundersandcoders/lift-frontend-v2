@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface SimpleDialogProps {
-  isOpen: boolean;
+  isOpen?: boolean;
+  open?: boolean;
   onOpenChange: (isOpen: boolean) => void;
   children: React.ReactNode;
   className?: string;
@@ -134,13 +135,17 @@ const SimpleDialogTrigger: React.FC<SimpleDialogTriggerProps> = ({ children }) =
 
 const SimpleDialog: React.FC<SimpleDialogProps> = ({ 
   isOpen, 
+  open,
   onOpenChange, 
   children, 
   className 
 }) => {
+  // Support both isOpen and open props for compatibility
+  const isDialogOpen = open !== undefined ? open : isOpen !== undefined ? isOpen : false;
+  
   // Handle ESC key press
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isDialogOpen) return;
     
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -150,14 +155,12 @@ const SimpleDialog: React.FC<SimpleDialogProps> = ({
     
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [isOpen, onOpenChange]);
-
-  console.log('SimpleDialog rendering with isOpen:', isOpen);
+  }, [isDialogOpen, onOpenChange]);
 
   // Provide the dialog state to all children via context
   return (
-    <SimpleDialogContext.Provider value={{ isOpen, onOpenChange }}>
-      {isOpen ? (
+    <SimpleDialogContext.Provider value={{ isOpen: isDialogOpen, onOpenChange }}>
+      {isDialogOpen ? (
         <div className={cn('fixed inset-0 z-50', className)}>
           <SimpleDialogOverlay />
           {children}

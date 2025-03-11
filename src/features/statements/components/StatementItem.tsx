@@ -16,20 +16,21 @@ import {
 } from 'lucide-react';
 import type { Entry } from '@/types/entries';
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
+  SimpleDropdownMenu as DropdownMenu,
+  SimpleDropdownMenuTrigger as DropdownMenuTrigger,
+  SimpleDropdownMenuContent as DropdownMenuContent,
+  SimpleDropdownMenuItem as DropdownMenuItem,
+} from '@/components/ui/simple-dropdown';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '@/components/ui/radix-compatibility';
+} from '@/components/ui/better-tooltip';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
+import { EntriesContext } from '../context/EntriesContext';
 
 export interface StatementItemProps {
   statement: Entry;
@@ -111,71 +112,261 @@ const StatementItem: React.FC<StatementItemProps> = ({
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
 
-  // Local "draft" state to hold unsaved modifications.
+  // Use simple primitive values to store original state
+  // This way we avoid object reference issues
+  const [originalCategory, setOriginalCategory] = React.useState<string | null>(null);
+  const [originalSubject, setOriginalSubject] = React.useState<string | null>(null);
+  const [originalVerb, setOriginalVerb] = React.useState<string | null>(null);
+  const [originalObject, setOriginalObject] = React.useState<string | null>(null);
+  const [originalPrivacy, setOriginalPrivacy] = React.useState<boolean | null>(null);
+
+  // Local "draft" state to track current modifications
   const [draft, setDraft] = React.useState<Entry>(statement);
 
-  // initialDraft freezes the original values when editing begins.
-  const [initialDraft, setInitialDraft] = React.useState<Entry>(statement);
-
-  // Local state to track if we are currently saving the draft.
+  // Local state to track if we are currently saving the draft
   const [isSaving, setIsSaving] = React.useState(false);
-  
-  // Reference to track previous editing state
-  const prevIsEditingRef = React.useRef<boolean>(false);
 
-  // First useEffect: Capture changes in edit mode status
+  // DEBUG LOGGER - Create a unique ID for this component instance
+  const componentId = React.useRef(`StatementItem_${statement.id}_${Date.now()}`).current;
+  
+  // DEBUG LOGGER - Track all calls to setOriginalCategory
+  const debugSetOriginalCategory = (value: string | null, source: string) => {
+    console.log(`[CATEGORY TRACKER] SET ORIGINAL CATEGORY from ${source}:`, {
+      componentId,
+      statementId: statement.id,
+      from: originalCategory,
+      to: value,
+      statement: statement.category,
+      callStack: new Error().stack?.split('\n').slice(2, 5).join('\n')
+    });
+    setOriginalCategory(value);
+  };
+  
+  // LOG EACH RENDER
+  console.log(`[RENDER] StatementItem ${componentId}:`, {
+    statementId: statement.id, 
+    isEditing,
+    category: statement.category,
+    originalCategory
+  });
+  
+  // Track statement changes via ref
+  const prevStatementRef = React.useRef(statement);
+  
+  // Log statement changes between renders
+  if (prevStatementRef.current !== statement) {
+    console.log(`[STATEMENT CHANGED] ${componentId}:`, {
+      prevCategory: prevStatementRef.current.category,
+      newCategory: statement.category,
+      originalCategory,
+      statementObjectChanged: prevStatementRef.current !== statement
+    });
+    prevStatementRef.current = statement;
+  }
+
+  // Import the EntriesContext to access the global original categories store
+  const entriesContext = React.useContext(EntriesContext);
+  
+  // Effect for edit mode changes - only runs when isEditing changes
   useEffect(() => {
-    // Create a deep copy of the statement to avoid reference issues
-    const statementCopy = JSON.parse(JSON.stringify(statement));
+    console.log(`[EDIT MODE EFFECT] ${componentId}:`, { 
+      isEditing, 
+      id: statement.id,
+      category: statement.category,
+      originalCategory,
+      globalOriginalCategory: entriesContext?.data.originalCategories[statement.id]
+    });
 
     if (isEditing) {
-      // Only capture initial state when FIRST entering edit mode (when it transitions from false to true)
-      // This ensures we maintain the original state for comparison
-      if (!prevIsEditingRef.current) {
-        setInitialDraft(statementCopy);
+      // Entering edit mode - capture original values if not already set
+      if (originalCategory === null) {
+        console.log(`[CAPTURE ORIGINAL VALUES] ${componentId}`);
+        
+        // Check if we already have an original category stored in the global context
+        const globalOriginalCategory = entriesContext?.data.originalCategories[statement.id];
+        
+        // Use the stored original category if available, otherwise use the current category
+        const originalCategoryValue = globalOriginalCategory || (statement.category ? String(statement.category) : '');
+        
+        console.log(`[FREEZING ORIGINAL CATEGORY] ${componentId}:`, {
+          originalCategoryValue,
+          statementCategory: statement.category,
+          fromGlobalStore: !!globalOriginalCategory
+        });
+        
+        // If the original category isn't already in the global store, save it there
+        if (!globalOriginalCategory && entriesContext) {
+          entriesContext.setData({
+            type: 'SET_ORIGINAL_CATEGORY',
+            payload: {
+              statementId: statement.id,
+              category: originalCategoryValue
+            }
+          });
+        }
+        
+        // Also set it in the local state for immediate use in comparison
+        debugSetOriginalCategory(originalCategoryValue, 'EDIT_MODE_START');
+        setOriginalSubject(statement.atoms.subject);
+        setOriginalVerb(statement.atoms.verb);
+        setOriginalObject(statement.atoms.object);
+        setOriginalPrivacy(statement.isPublic);
+      } else {
+        console.log(`[EDIT CONTINUING - NOT CAPTURING] ${componentId}`, {
+          statementCategory: statement.category,
+          originalCategory,
+          globalOriginalCategory: entriesContext?.data.originalCategories[statement.id]
+        });
+      }
+
+      // Always keep draft updated with latest statement value
+      setDraft(JSON.parse(JSON.stringify(statement)));
+    } else {
+      // Exiting edit mode - reset everything
+      console.log(`[EXIT EDIT MODE] ${componentId} - clearing original values`);
+      
+      // Clear the original category from the global store
+      if (entriesContext) {
+        entriesContext.setData({
+          type: 'CLEAR_ORIGINAL_CATEGORY',
+          payload: statement.id
+        });
       }
       
-      // Always ensure draft is synchronized with current statement
-      setDraft(statementCopy);
-    } else {
-      // Reset both states when exiting edit mode
-      setInitialDraft(statementCopy);
-      setDraft(statementCopy);
+      // Clear local state
+      debugSetOriginalCategory(null, 'EDIT_MODE_EXIT');
+      setOriginalSubject(null);
+      setOriginalVerb(null);
+      setOriginalObject(null);
+      setOriginalPrivacy(null);
+      
+      setDraft(JSON.parse(JSON.stringify(statement)));
     }
-    
-    // Track previous editing state
-    prevIsEditingRef.current = isEditing;
-  }, [isEditing, statement]); // Include statement to ensure we're always using the latest version
-
-  // Second useEffect: Always keep draft updated with latest statement to reflect modal changes
+  // Only depend on isEditing to prevent loops when the entriesContext changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]);
+  
+  // Log every time originalCategory changes
+  useEffect(() => {
+    console.log(`[ORIGINAL CATEGORY CHANGED] ${componentId}:`, {
+      originalCategory,
+      statementCategory: statement.category
+    });
+  }, [originalCategory, componentId, statement.category]);
+  
+  // Separate effect to keep draft updated when statement changes
   useEffect(() => {
     if (isEditing) {
-      // When statement changes while in edit mode, update the draft
-      // This happens when the modal updates the statement
-      setDraft(JSON.parse(JSON.stringify(statement)));
+      // Keep draft updated with latest changes from the statement
+      console.log(`[STATEMENT UPDATE EFFECT] ${componentId}:`, {
+        currentCategory: statement.category,
+        originalCategory: originalCategory,
+        globalOriginalCategory: entriesContext?.data.originalCategories[statement.id],
+        different: statement.category !== originalCategory,
+        editingStatementId: statement.id
+      });
       
-      // DO NOT update initialDraft here - it should stay at its original value
-      // for correct change detection
+      setDraft(JSON.parse(JSON.stringify(statement)));
     }
-  }, [
-    statement,
-    // We're specifically tracking these properties to ensure we detect changes
-    // from the modal even if the statement reference doesn't change
-    statement.atoms.subject,
-    statement.atoms.verb,
-    statement.atoms.object,
-    statement.isPublic,
-    statement.category,
-    isEditing,
-  ]);
+  // We need statement in the deps array, but we'll exclude entriesContext to avoid loops
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statement, isEditing, componentId]);
 
-  // Compute if draft has changed from the initial state
-  const hasSubjectChanged = draft.atoms.subject !== initialDraft.atoms.subject;
-  const hasVerbChanged = draft.atoms.verb !== initialDraft.atoms.verb;
-  const hasObjectChanged = draft.atoms.object !== initialDraft.atoms.object;
-  const hasPrivacyChanged = draft.isPublic !== initialDraft.isPublic;
-  // Check if category has changed
-  const hasCategoryChanged = draft.category !== initialDraft.category;
+  // Helper function to normalize category values for comparison
+  const normalizeCategoryForComparison = (
+    category: string | null | undefined
+  ): string => {
+    if (category === null || category === undefined) return '';
+    // Convert to string in case it's not already a string
+    const categoryStr = String(category).toLowerCase().trim();
+
+    // Handle "uncategorized" variations
+    if (['uncategorized', 'uncategorised'].includes(categoryStr)) {
+      return 'uncategorized';
+    }
+
+    return categoryStr;
+  };
+
+  // Calculate changes based on primitive values and global store
+  // If we're not in edit mode or don't have original values, no changes to detect
+  let hasSubjectChanged = false;
+  let hasVerbChanged = false;
+  let hasObjectChanged = false;
+  let hasPrivacyChanged = false;
+  let hasCategoryChanged = false;
+  let hasChanged = false;
+
+  if (isEditing) {
+    // Use the global store's original category if available, otherwise use the local state
+    // This ensures we always compare against the true original, even after remounting
+    const effectiveOriginalCategory = entriesContext?.data.originalCategories[statement.id] || originalCategory;
+    
+    if (effectiveOriginalCategory !== null) {
+      // Compare current draft with original primitive values
+      hasSubjectChanged = draft.atoms.subject !== originalSubject;
+      hasVerbChanged = draft.atoms.verb !== originalVerb;
+      hasObjectChanged = draft.atoms.object !== originalObject;
+      hasPrivacyChanged = draft.isPublic !== originalPrivacy;
+
+      // Normalize categories for comparison
+      const draftCategory = normalizeCategoryForComparison(draft.category);
+      const originalCategoryNormalized = normalizeCategoryForComparison(effectiveOriginalCategory);
+
+      // Compare normalized categories
+      hasCategoryChanged = draftCategory !== originalCategoryNormalized;
+
+      // Log changes for debugging
+      console.log('[CHANGE DETECTION]', {
+        subject: {
+          draft: draft.atoms.subject,
+          original: originalSubject,
+          changed: hasSubjectChanged,
+        },
+        verb: {
+          draft: draft.atoms.verb,
+          original: originalVerb,
+          changed: hasVerbChanged,
+        },
+        object: {
+          draft: draft.atoms.object,
+          original: originalObject,
+          changed: hasObjectChanged,
+        },
+        privacy: {
+          draft: draft.isPublic,
+          original: originalPrivacy,
+          changed: hasPrivacyChanged,
+        },
+        category: {
+          draft: draft.category,
+          local: originalCategory,
+          global: entriesContext?.data.originalCategories[statement.id],
+          effective: effectiveOriginalCategory,
+          draftNormalized: draftCategory,
+          originalNormalized: originalCategoryNormalized,
+          changed: hasCategoryChanged,
+        },
+      });
+
+      // Calculate overall change status
+      hasChanged =
+        hasSubjectChanged ||
+        hasVerbChanged ||
+        hasObjectChanged ||
+        hasPrivacyChanged ||
+        hasCategoryChanged;
+
+      console.log('[OVERALL CHANGE STATUS]', { 
+        hasChanged,
+        hasSubjectChanged,
+        hasVerbChanged,
+        hasObjectChanged,
+        hasPrivacyChanged,
+        hasCategoryChanged
+      });
+    }
+  }
 
   // Uncomment for debugging if needed
   // console.log('StatementItem change detection:', {
@@ -205,13 +396,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
   //     changed: hasCategoryChanged
   //   }
   // });
-
-  const hasChanged =
-    hasSubjectChanged ||
-    hasVerbChanged ||
-    hasObjectChanged ||
-    hasPrivacyChanged ||
-    hasCategoryChanged;
 
   // Enable save button when any part of the statement has been changed
 
@@ -290,6 +474,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
                       updatedDraft.input = `${
                         draft.atoms.subject
                       } ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
+
+                      console.log(
+                        'SAVE BUTTON CLICKED - submitting draft:',
+                        updatedDraft
+                      );
                       await onLocalSave(updatedDraft);
                       setIsSaving(false);
                     }}
@@ -313,7 +502,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                     variant='outline'
                     size='compact'
                     onClick={() => {
-                      setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                      // Let the parent handle reset since we're using primitive values
                       if (onCancel) onCancel(statement.id);
                     }}
                     className='p-2'
@@ -440,7 +629,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 variant='outline'
                 size='compact'
                 onClick={() => {
-                  setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                  // Let the parent handle reset
                   if (onCancel) onCancel(statement.id);
                 }}
                 className='px-2 py-1 flex items-center'
@@ -459,6 +648,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
                     draft.atoms.verb
                   )} ${draft.atoms.object}`;
+
+                  console.log(
+                    'SAVE BUTTON CLICKED (tablet) - submitting draft:',
+                    updatedDraft
+                  );
                   await onLocalSave(updatedDraft);
                   setIsSaving(false);
                 }}
@@ -564,7 +758,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 variant='outline'
                 size='compact'
                 onClick={() => {
-                  setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                  // Let the parent handle reset
                   if (onCancel) onCancel(statement.id);
                 }}
                 className='min-w-[40px] xs:px-3 py-2 flex justify-center'
@@ -583,6 +777,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
                     draft.atoms.verb
                   )} ${draft.atoms.object}`;
+
+                  console.log(
+                    'SAVE BUTTON CLICKED (mobile) - submitting draft:',
+                    updatedDraft
+                  );
                   await onLocalSave(updatedDraft);
                   setIsSaving(false);
                 }}

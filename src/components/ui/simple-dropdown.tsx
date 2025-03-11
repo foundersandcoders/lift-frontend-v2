@@ -8,6 +8,9 @@ interface SimpleDropdownMenuProps {
 interface SimpleDropdownMenuTriggerProps {
   children: React.ReactNode;
   asChild?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+  className?: string;
+  [key: string]: any; // Allow any other props
 }
 
 interface SimpleDropdownMenuContentProps {
@@ -20,6 +23,7 @@ interface SimpleDropdownMenuContentProps {
 interface SimpleDropdownMenuItemProps {
   children: React.ReactNode;
   className?: string;
+  onClick?: (e: React.MouseEvent) => void;
   [key: string]: any;
 }
 
@@ -55,7 +59,10 @@ const SimpleDropdownMenu: React.FC<SimpleDropdownMenuProps> = ({ children }) => 
         // Pass the open state and toggle function to the children
         if (child.type === SimpleDropdownMenuTrigger) {
           return React.cloneElement(child as React.ReactElement<any>, {
-            onClick: () => setIsOpen(!isOpen),
+            onClick: (e: React.MouseEvent) => {
+              e.stopPropagation(); // Prevent event bubbling
+              setIsOpen(!isOpen);
+            },
           });
         }
 
@@ -73,10 +80,29 @@ const SimpleDropdownMenu: React.FC<SimpleDropdownMenuProps> = ({ children }) => 
 const SimpleDropdownMenuTrigger: React.FC<SimpleDropdownMenuTriggerProps> = ({ 
   children, 
   asChild,
+  onClick,
   ...props 
 }) => {
+  if (asChild && React.isValidElement(children)) {
+    // If asChild is true, clone the child element and add the onClick handler
+    return React.cloneElement(children, {
+      ...props,
+      onClick: (e: React.MouseEvent) => {
+        // Preserve original onClick if it exists
+        if (children.props.onClick) {
+          children.props.onClick(e);
+        }
+        // Call our onClick handler
+        if (onClick) {
+          onClick(e);
+        }
+      }
+    });
+  }
+  
+  // Otherwise, wrap the children in a div with the onClick handler
   return (
-    <div {...props} className="cursor-pointer">
+    <div {...props} onClick={onClick} className="cursor-pointer">
       {children}
     </div>
   );
@@ -104,7 +130,8 @@ SimpleDropdownMenuContent.displayName = 'SimpleDropdownMenuContent';
 
 // Individual dropdown items
 const SimpleDropdownMenuItem = React.forwardRef<HTMLDivElement, SimpleDropdownMenuItemProps>(
-  ({ children, className, ...props }, ref) => {
+  ({ children, className, onClick, ...props }, ref) => {
+    // Create a parent div that contains a custom click handler
     return (
       <div
         ref={ref}
@@ -112,6 +139,14 @@ const SimpleDropdownMenuItem = React.forwardRef<HTMLDivElement, SimpleDropdownMe
           'flex cursor-pointer items-center rounded-sm px-2 py-1 text-sm text-gray-700 hover:bg-gray-100',
           className
         )}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent bubbling
+          
+          // Call the original onClick handler if provided
+          if (onClick) {
+            onClick(e);
+          }
+        }}
         {...props}
       >
         {children}

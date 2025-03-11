@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription } from '../ui/radix-compatibility';
+import { SimpleDialog as Dialog, SimpleDialogContent as DialogContent, SimpleDialogDescription as DialogDescription } from '../ui/simple-dialog';
 import { Button } from '../ui/button';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { sendEmail } from '../../features/email/api/emailApi';
