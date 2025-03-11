@@ -22,6 +22,7 @@ export interface Entry {
   category: string;
   presetId?: string;
   isResolved?: boolean;
+  _needsScroll?: boolean; // Flag to indicate if this entry needs to be scrolled into view
 }
 
 export interface Category {

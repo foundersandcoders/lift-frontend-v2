@@ -179,7 +179,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   // Dedicated effect for scrolling when needed
   useEffect(() => {
     // Check if this statement was updated with a category change (flagged by EditStatementModal)
-    if (isEditing && (statement as any)._needsScroll) {
+    if (isEditing && statement._needsScroll) {
       console.log('Statement flagged for scrolling:', statement.id);
       
       // Use a longer delay to ensure the DOM has fully updated
