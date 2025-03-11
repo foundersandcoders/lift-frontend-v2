@@ -182,145 +182,255 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
   if (isEditing) {
     return (
-      <div className='flex items-center space-x-2 bg-gray-100 p-2 rounded'>
-        {/* Privacy toggle button */}
-        <Button
-          variant={draft.isPublic ? 'success' : 'destructive'}
-          size='compact'
-          onClick={() => {
-            // Create a new draft object to ensure React detects the change
-            setDraft((prevDraft) => {
-              const newDraft = JSON.parse(JSON.stringify(prevDraft));
-              newDraft.isPublic = !prevDraft.isPublic;
-              return newDraft;
-            });
-          }}
-          className='p-2 transition-colors shadow-sm'
-        >
-          {draft.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
-        </Button>
+      <div className='bg-gray-100 p-3 rounded-lg shadow'>
+        {/* Desktop layout - horizontal row */}
+        <div className='hidden md:flex md:items-center md:space-x-2'>
+          {/* Privacy toggle button */}
+          <Button
+            variant={draft.isPublic ? 'success' : 'destructive'}
+            size='compact'
+            onClick={() => {
+              // Create a new draft object to ensure React detects the change
+              setDraft((prevDraft) => {
+                const newDraft = JSON.parse(JSON.stringify(prevDraft));
+                newDraft.isPublic = !prevDraft.isPublic;
+                return newDraft;
+              });
+            }}
+            className='p-2 transition-colors shadow-sm'
+          >
+            {draft.isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
+          </Button>
 
-        <div className='flex flex-1 items-center flex-wrap gap-2'>
-          <div className='flex space-x-2 flex-wrap'>
-            {/* Subject */}
-            <div
-              onClick={() => {
-                // Just call onPartClick to open the modal, and don't try to edit inline
-                onPartClick('subject', draft.id);
-              }}
-              className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
-            >
-              {draft.atoms.subject}
+          <div className='flex flex-1 items-center flex-wrap gap-2'>
+            <div className='flex space-x-2 flex-wrap'>
+              {/* Subject */}
+              <div
+                onClick={() => onPartClick('subject', draft.id)}
+                className='cursor-pointer px-2 py-1 rounded bg-subjectSelector hover:bg-subjectSelectorHover'
+              >
+                {draft.atoms.subject}
+              </div>
+              {/* Verb */}
+              <div
+                onClick={() => onPartClick('verb', draft.id)}
+                className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
+              >
+                <span>{getVerbName(draft.atoms.verb)}</span>
+              </div>
+              {/* Object */}
+              <div
+                onClick={() => onPartClick('object', draft.id)}
+                className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
+              >
+                {draft.atoms.object}
+              </div>
             </div>
-            {/* Verb */}
+            {/* Category */}
             <div
-              onClick={() => {
-                // Just call onPartClick to open the modal, and don't try to edit inline
-                onPartClick('verb', draft.id);
-              }}
-              className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
+              onClick={() => onPartClick('category', draft.id)}
+              className='cursor-pointer px-2 py-1 rounded bg-categorySelector text-black flex items-center gap-1 hover:bg-categorySelectorHover'
             >
-              <span>{getVerbName(draft.atoms.verb)}</span>
-            </div>
-            {/* Object */}
-            <div
-              onClick={() => {
-                // Just call onPartClick to open the modal, and don't try to edit inline
-                onPartClick('object', draft.id);
-              }}
-              className='cursor-pointer px-2 py-1 rounded bg-objectInput hover:bg-objectInputHover'
-            >
-              {draft.atoms.object}
+              <span className='mr-1'>📁</span>
+              {/* Use formatted category name */}
+              {draft.category &&
+              draft.category.toLowerCase() !== 'uncategorized' &&
+              draft.category.toLowerCase() !== 'uncategorised'
+                ? getCategoryDisplayName(draft.category)
+                : 'Uncategorized'}
             </div>
           </div>
-          {/* Category */}
-          <div
-            onClick={() => {
-              // Open the category modal
-              onPartClick('category', draft.id);
-            }}
-            className='cursor-pointer px-2 py-1 rounded bg-categorySelector text-black flex items-center gap-1 hover:bg-categorySelectorHover'
-          >
-            <span className='mr-1'>📁</span>
-            {/* Use formatted category name */}
-            {draft.category &&
-            draft.category.toLowerCase() !== 'uncategorized' &&
-            draft.category.toLowerCase() !== 'uncategorised'
-              ? getCategoryDisplayName(draft.category)
-              : 'Uncategorized'}
+          
+          <div className='flex items-center space-x-2 ml-auto'>
+            {/* Save button with tooltip */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className='inline-block'>
+                  <Button
+                    variant='success'
+                    size='compact'
+                    onClick={async () => {
+                      setIsSaving(true);
+                      const updatedDraft = { ...draft };
+                      updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
+                        draft.atoms.verb
+                      )} ${draft.atoms.object}`;
+                      await onLocalSave(updatedDraft);
+                      setIsSaving(false);
+                    }}
+                    disabled={!hasChanged || isSaving}
+                    className='shadow-sm p-2'
+                  >
+                    <Save size={16} />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                Save changes
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Cancel button with PenOff icon and tooltip */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className='inline-block'>
+                  <Button
+                    variant='outline'
+                    size='compact'
+                    onClick={() => {
+                      setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                      if (onCancel) onCancel(statement.id);
+                    }}
+                    className='p-2'
+                  >
+                    <PenOff size={16} />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                Cancel editing
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Delete button with tooltip */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className='inline-block'>
+                  <Button
+                    variant='destructive'
+                    size='compact'
+                    onClick={() => onDelete(draft.id)}
+                    className='shadow-sm p-2'
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                Delete statement
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
-        <div className='flex items-center space-x-2 ml-auto'>
-          {/* Save button with tooltip */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className='inline-block'>
-                <Button
-                  variant='success'
-                  size='compact'
-                  onClick={async () => {
-                    setIsSaving(true);
-                    // Update the input field to reflect the edited statement
-                    const updatedDraft = { ...draft };
-                    updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
-                      draft.atoms.verb
-                    )} ${draft.atoms.object}`;
-                    await onLocalSave(updatedDraft);
-                    setIsSaving(false);
-                  }}
-                  disabled={!hasChanged || isSaving}
-                  className='shadow-sm p-2'
-                >
-                  <Save size={16} />
-                </Button>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent className='p-2 bg-black text-white rounded'>
-              Save changes
-            </TooltipContent>
-          </Tooltip>
 
-          {/* Cancel button with PenOff icon and tooltip */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className='inline-block'>
-                <Button
-                  variant='outline'
-                  size='compact'
-                  onClick={() => {
-                    // Deep clone to avoid reference issues
-                    setDraft(JSON.parse(JSON.stringify(initialDraft)));
-                    if (onCancel) onCancel(statement.id);
-                  }}
-                  className='p-2'
-                >
-                  <PenOff size={16} />
-                </Button>
+        {/* Mobile layout - vertical stack */}
+        <div className='md:hidden flex flex-col space-y-4'>
+          {/* Statement header with privacy toggle */}
+          <div className='flex items-center justify-between pb-2 border-b border-gray-300'>
+            <h3 className='text-sm font-semibold text-gray-700'>Edit Statement</h3>
+            <Button
+              variant={draft.isPublic ? 'success' : 'destructive'}
+              size='compact'
+              onClick={() => {
+                setDraft((prevDraft) => {
+                  const newDraft = JSON.parse(JSON.stringify(prevDraft));
+                  newDraft.isPublic = !prevDraft.isPublic;
+                  return newDraft;
+                });
+              }}
+              className='p-2 transition-colors shadow-sm'
+            >
+              {draft.isPublic ? 
+                <><MailPlus size={16} /><span className="hidden sm:inline ml-1 text-xs">Public</span></> : 
+                <><MailX size={16} /><span className="hidden sm:inline ml-1 text-xs">Private</span></>
+              }
+            </Button>
+          </div>
+          
+          {/* Statement parts grid */}
+          <div className='grid grid-cols-2 gap-2'>
+            {/* Subject */}
+            <div
+              onClick={() => onPartClick('subject', draft.id)}
+              className='cursor-pointer p-3 rounded bg-subjectSelector hover:bg-subjectSelectorHover flex flex-col'
+            >
+              <span className='text-xs mb-1 opacity-70'>Subject</span>
+              <span className='font-medium truncate'>{draft.atoms.subject}</span>
+            </div>
+            
+            {/* Verb */}
+            <div
+              onClick={() => onPartClick('verb', draft.id)}
+              className='cursor-pointer p-3 rounded bg-verbSelector hover:bg-verbSelectorHover flex flex-col'
+            >
+              <span className='text-xs mb-1 opacity-70'>Verb</span>
+              <span className='font-medium truncate'>{getVerbName(draft.atoms.verb)}</span>
+            </div>
+            
+            {/* Object */}
+            <div
+              onClick={() => onPartClick('object', draft.id)}
+              className='cursor-pointer p-3 rounded bg-objectInput hover:bg-objectInputHover flex flex-col'
+            >
+              <span className='text-xs mb-1 opacity-70'>Object</span>
+              <span className='font-medium truncate'>{draft.atoms.object}</span>
+            </div>
+            
+            {/* Category */}
+            <div
+              onClick={() => onPartClick('category', draft.id)}
+              className='cursor-pointer p-3 rounded bg-categorySelector hover:bg-categorySelectorHover flex flex-col'
+            >
+              <span className='text-xs mb-1 opacity-70'>Category</span>
+              <span className='font-medium truncate'>
+                {draft.category &&
+                draft.category.toLowerCase() !== 'uncategorized' &&
+                draft.category.toLowerCase() !== 'uncategorised'
+                  ? getCategoryDisplayName(draft.category)
+                  : 'Uncategorized'}
               </span>
-            </TooltipTrigger>
-            <TooltipContent className='p-2 bg-black text-white rounded'>
-              Cancel editing
-            </TooltipContent>
-          </Tooltip>
-
-          {/* Delete button with tooltip */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className='inline-block'>
-                <Button
-                  variant='destructive'
-                  size='compact'
-                  onClick={() => onDelete(draft.id)}
-                  className='shadow-sm p-2'
-                >
-                  <Trash2 size={16} />
-                </Button>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent className='p-2 bg-black text-white rounded'>
-              Delete statement
-            </TooltipContent>
-          </Tooltip>
+            </div>
+          </div>
+          
+          {/* Action buttons - bottom fixed bar */}
+          <div className='flex justify-between items-center pt-3 mt-2 border-t border-gray-300'>
+            {/* Delete button */}
+            <Button
+              variant='destructive'
+              size='compact'
+              onClick={() => onDelete(draft.id)}
+              className='min-w-[40px] xs:px-3 py-2 flex justify-center'
+            >
+              <Trash2 size={16} className="xs:mr-1" />
+              <span className="hidden xs:inline text-xs">Delete</span>
+            </Button>
+            
+            <div className='flex space-x-2'>
+              {/* Cancel button */}
+              <Button
+                variant='outline'
+                size='compact'
+                onClick={() => {
+                  setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                  if (onCancel) onCancel(statement.id);
+                }}
+                className='min-w-[40px] xs:px-3 py-2 flex justify-center'
+              >
+                <PenOff size={16} className="xs:mr-1" />
+                <span className="hidden xs:inline text-xs">Cancel</span>
+              </Button>
+              
+              {/* Save button */}
+              <Button
+                variant='success'
+                size='compact'
+                onClick={async () => {
+                  setIsSaving(true);
+                  const updatedDraft = { ...draft };
+                  updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
+                    draft.atoms.verb
+                  )} ${draft.atoms.object}`;
+                  await onLocalSave(updatedDraft);
+                  setIsSaving(false);
+                }}
+                disabled={!hasChanged || isSaving}
+                className='min-w-[40px] xs:px-3 py-2 flex justify-center'
+              >
+                <Save size={16} className="xs:mr-1" />
+                <span className="hidden xs:inline text-xs">Save</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
