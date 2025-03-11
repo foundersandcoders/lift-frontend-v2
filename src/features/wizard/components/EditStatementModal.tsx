@@ -135,7 +135,14 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
               }
             }}
             selection={localValue as string}
-            onUpdate={(val) => setLocalValue(val)}
+            onUpdate={(val) => {
+              // If clicking on the same value, treat it as pressing OK
+              if (val === localValue) {
+                handleSave();
+              } else {
+                setLocalValue(val);
+              }
+            }}
           />
         );
       case 'verb':
@@ -143,7 +150,14 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
           <VerbStep
             subject={statement.atoms.subject}
             selection={localValue as string}
-            onUpdate={(val) => setLocalValue(val)}
+            onUpdate={(val) => {
+              // If clicking on the same value, treat it as pressing OK
+              if (val === localValue) {
+                handleSave();
+              } else {
+                setLocalValue(val);
+              }
+            }}
           />
         );
       case 'object':
@@ -152,21 +166,42 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
             subject={statement.atoms.subject}
             verb={statement.atoms.verb}
             selection={localValue as string}
-            onUpdate={(val) => setLocalValue(val)}
+            onUpdate={(val) => {
+              // If clicking on the same value, treat it as pressing OK
+              if (val === localValue) {
+                handleSave();
+              } else {
+                setLocalValue(val);
+              }
+            }}
           />
         );
       case 'category':
         return (
           <CategoryStep
             selection={localValue as string}
-            onUpdate={(val) => setLocalValue(val)}
+            onUpdate={(val) => {
+              // If clicking on the same value, treat it as pressing OK
+              if (val === localValue) {
+                handleSave();
+              } else {
+                setLocalValue(val);
+              }
+            }}
           />
         );
       case 'privacy':
         return (
           <PrivacyStep
             isPublic={localValue as boolean}
-            onUpdate={(val) => setLocalValue(val)}
+            onUpdate={(val) => {
+              // If clicking on the same value, treat it as pressing OK
+              if (val === localValue) {
+                handleSave();
+              } else {
+                setLocalValue(val);
+              }
+            }}
           />
         );
       default:
