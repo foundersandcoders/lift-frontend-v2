@@ -335,8 +335,8 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     updateEntry(updatedStatement);
   };
 
-  // State for managing the visibility of the snoozed section
-  const [isSnoozedQuestionsSectionExpanded, setIsSnoozedQuestionsSectionExpanded] = useState(false);
+  // State for managing the visibility of the snoozed section - default to expanded
+  const [isSnoozedQuestionsSectionExpanded, setIsSnoozedQuestionsSectionExpanded] = useState(true);
   
   // Move the hook call to the top level
   const { categoryCounts } = useAnsweredCountByCategory();
@@ -458,45 +458,44 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
     
     return (
       <div className='mb-8 mt-4'>
-        {/* Folder Tab Design for Snoozed Questions */}
-        <div className={`relative z-10`}>
+        {/* New and improved Snoozed Questions section */}
+        <div className={`border rounded-lg overflow-hidden bg-white ${isSnoozedQuestionsSectionExpanded ? 'border-blue-300' : 'border-blue-200'}`}>
+          {/* Header/Tab that's always visible */}
           <div 
-            className={`inline-block px-4 py-2 rounded-t-lg bg-blue-100 border-blue-300 border-t border-l border-r border-b-0 cursor-pointer`}
+            className={`flex items-center justify-between px-4 py-3 bg-blue-100 cursor-pointer ${isSnoozedQuestionsSectionExpanded ? 'border-b border-blue-300' : ''}`}
             onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
           >
-            <div className="flex items-center justify-between min-w-[200px]">
-              <h3 className='text-lg font-semibold flex items-center text-blue-700'>
-                <BellOff className='h-5 w-5 mr-2' />
-                Snoozed Questions
-              </h3>
-              <div className='flex items-center'>
-                <span className="mr-2 text-blue-700">({snoozedQuestions.length})</span>
-                {isSnoozedQuestionsSectionExpanded ? (
-                  <ChevronUp className='h-5 w-5 text-blue-600' />
-                ) : (
-                  <ChevronDown className='h-5 w-5 text-blue-600' />
-                )}
-              </div>
+            <h3 className='text-lg font-semibold flex items-center text-blue-700'>
+              <BellOff className='h-5 w-5 mr-2' />
+              Snoozed Questions
+            </h3>
+            <div className='flex items-center'>
+              <span className="mr-2 text-blue-700 font-medium">({snoozedQuestions.length})</span>
+              {isSnoozedQuestionsSectionExpanded ? (
+                <ChevronUp className='h-5 w-5 text-blue-600' />
+              ) : (
+                <ChevronDown className='h-5 w-5 text-blue-600' />
+              )}
             </div>
           </div>
+          
+          {/* Content section that appears/disappears */}
+          {isSnoozedQuestionsSectionExpanded && (
+            <div className="p-4 bg-white">
+              <ul className='space-y-2'>
+                {snoozedQuestions.map((question) => (
+                  <li key={`snoozed-${question.id}`}>
+                    <QuestionCard
+                      presetQuestion={question}
+                      onSelect={() => {/* Disabled for snoozed questions */}}
+                      onToggleSnooze={handleToggleQuestionSnooze}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-        
-        {/* Folder Content for Snoozed Questions */}
-        {isSnoozedQuestionsSectionExpanded && (
-          <div className="border rounded-tr-lg rounded-b-lg p-4 -mt-[1px] bg-white border-blue-300">
-            <ul className='space-y-2'>
-              {snoozedQuestions.map((question) => (
-                <li key={`snoozed-${question.id}`}>
-                  <QuestionCard
-                    presetQuestion={question}
-                    onSelect={() => {/* Disabled for snoozed questions */}}
-                    onToggleSnooze={handleToggleQuestionSnooze}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
     );
   };
