@@ -1,7 +1,7 @@
 /**
  * This module ensures React global methods are available
- * It's particularly needed for Radix components that expect
- * React.useLayoutEffect and React.createContext to be available globally
+ * It's needed for compatibility with Deno Deploy and ensures
+ * methods like React.useLayoutEffect and React.createContext are available globally
  */
 
 // Safely check and set properties

@@ -39,7 +39,7 @@ interface DialogRootProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-// Create a Dialog Root that has the same API as Radix's
+// Create a Dialog Root with similar API to ensure compatibility
 const Dialog: React.FC<DialogRootProps> = ({ children, open, onOpenChange }) => {
   // IMPORTANT: Initialize isOpen to false by default
   const [isOpen, setIsOpen] = useState(open === true ? true : false);
@@ -79,7 +79,7 @@ const PopoverContent: React.FC<{children: React.ReactNode, className?: string}> 
 
 // Using our better tooltip implementation instead of the dummy ones
 
-// Export all components with Radix-compatible names
+// Export all components with consistent naming for compatibility
 export {
   // Dialog components
   Dialog,

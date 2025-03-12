@@ -119,7 +119,7 @@ const SimpleTooltip: React.FC<SimpleTooltipProps> = ({
   );
 };
 
-// For API compatibility with Radix
+// For API compatibility with component structure
 const SimpleTooltipTrigger: React.FC<{ children: React.ReactNode; asChild?: boolean }> = ({ children }) => {
   return <>{children}</>;
 };

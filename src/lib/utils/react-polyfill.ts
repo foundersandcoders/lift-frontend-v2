@@ -1,6 +1,6 @@
 /**
- * Polyfills for Radix UI components that use useLayoutEffect
- * This helps prevent the "Cannot read properties of undefined (reading 'useLayoutEffect')" error
+ * Polyfills for component compatibility with Deno Deploy
+ * This helps prevent the "Cannot read properties of undefined" errors
  * in certain environments like SSR or when window.React isn't properly set
  */
 
@@ -47,7 +47,7 @@ if (typeof window !== 'undefined') {
 }
 
 // Export a dummy function to make TypeScript happy when importing this module
-export default function ensureRadixPolyfill() {
+export default function ensureReactPolyfill() {
   // This function does nothing, it just ensures the side effects above are executed
   return true;
 }
