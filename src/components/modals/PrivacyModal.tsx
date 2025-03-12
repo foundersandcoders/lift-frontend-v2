@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { SimpleDialog as Dialog, SimpleDialogContent as DialogContent } from '../ui/simple-dialog';
+// import { SimpleDialog as Dialog, SimpleDialogContent as DialogContent } from '../ui/simple-dialog';
 import { Button } from '../ui/button';
 import { X, Shield, CheckCircle, Lock, Eye } from 'lucide-react';
 
@@ -19,17 +19,17 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div 
+    <div
       className='fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50'
       onClick={handleOutsideClick}
     >
-      <div 
+      <div
         className='bg-white m-2 sm:m-5 max-w-2xl w-full rounded-lg p-0 overflow-hidden shadow-xl'
         onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing
       >
         <div className='bg-brand-pink p-2 flex items-center justify-between sm:rounded-t-lg'>
           <h2 className='text-xl font-semibold text-white flex items-center'>
-            <Shield className="mr-2" size={20} />
+            <Shield className='mr-2' size={20} />
             Privacy & Data Protection
           </h2>
           <button
@@ -47,37 +47,46 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
           }}
         >
           <div className='p-4 sm:p-6'>
-            <div className="space-y-6">
+            <div className='space-y-6'>
               {/* How We Protect Your Data */}
               <section>
-                <h3 className="text-lg font-semibold flex items-center text-gray-800 mb-3">
-                  <Lock className="mr-2 text-brand-pink" size={20} />
+                <h3 className='text-lg font-semibold flex items-center text-gray-800 mb-3'>
+                  <Lock className='mr-2 text-brand-pink' size={20} />
                   How We Protect Your Data
                 </h3>
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <p className="mb-3 text-gray-700">
-                    At Beacons, we prioritize your privacy and ensure your personal information is handled securely.
+                <div className='bg-white p-4 rounded-lg shadow-sm'>
+                  <p className='mb-3 text-gray-700'>
+                    At Beacons, we prioritize your privacy and ensure your
+                    personal information is handled securely.
                   </p>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                  <ul className='list-disc pl-5 space-y-2 text-gray-700'>
                     <li>Your data is encrypted both in transit and at rest</li>
-                    <li>We use secure passwordless authentication (Magic Links) to protect your account</li>
-                    <li>We only collect the minimum information needed to provide our service</li>
-                    <li>You retain complete control over your data at all times</li>
+                    <li>
+                      We use secure passwordless authentication (Magic Links) to
+                      protect your account
+                    </li>
+                    <li>
+                      We only collect the minimum information needed to provide
+                      our service
+                    </li>
+                    <li>
+                      You retain complete control over your data at all times
+                    </li>
                   </ul>
                 </div>
               </section>
 
               {/* Your Rights */}
               <section>
-                <h3 className="text-lg font-semibold flex items-center text-gray-800 mb-3">
-                  <CheckCircle className="mr-2 text-brand-pink" size={20} />
+                <h3 className='text-lg font-semibold flex items-center text-gray-800 mb-3'>
+                  <CheckCircle className='mr-2 text-brand-pink' size={20} />
                   Your Rights
                 </h3>
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <p className="mb-3 text-gray-700">
+                <div className='bg-white p-4 rounded-lg shadow-sm'>
+                  <p className='mb-3 text-gray-700'>
                     Under data protection law, you have the right to:
                   </p>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                  <ul className='list-disc pl-5 space-y-2 text-gray-700'>
                     <li>Access your personal data</li>
                     <li>Correct inaccurate data</li>
                     <li>Request deletion of your data</li>
@@ -90,25 +99,29 @@ const PrivacyModal: React.FC<PrivacyModalProps> = ({ onClose }) => {
 
               {/* Data Sharing */}
               <section>
-                <h3 className="text-lg font-semibold flex items-center text-gray-800 mb-3">
-                  <Eye className="mr-2 text-brand-pink" size={20} />
+                <h3 className='text-lg font-semibold flex items-center text-gray-800 mb-3'>
+                  <Eye className='mr-2 text-brand-pink' size={20} />
                   Data Sharing
                 </h3>
-                <div className="bg-white p-4 rounded-lg shadow-sm">
-                  <p className="mb-3 text-gray-700">
-                    We only share your data:
-                  </p>
-                  <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                <div className='bg-white p-4 rounded-lg shadow-sm'>
+                  <p className='mb-3 text-gray-700'>We only share your data:</p>
+                  <ul className='list-disc pl-5 space-y-2 text-gray-700'>
                     <li>With your explicit consent</li>
-                    <li>Only statements marked as "public" can be shared with your line manager</li>
+                    <li>
+                      Only statements marked as "public" can be shared with your
+                      line manager
+                    </li>
                     <li>You control when and how your data is shared</li>
-                    <li>Email sharing is initiated by you and only sent to the email address you provide</li>
+                    <li>
+                      Email sharing is initiated by you and only sent to the
+                      email address you provide
+                    </li>
                   </ul>
                 </div>
               </section>
             </div>
 
-            <div className="mt-6 flex justify-center">
+            <div className='mt-6 flex justify-center'>
               <Button
                 variant='outline'
                 className='px-6'

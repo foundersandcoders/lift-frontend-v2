@@ -778,6 +778,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       {isActionsExpanded && (
         <div className='mt-2'>
           <ActionLine
+            statementId={statement.id}
             actions={statement.actions ?? []}
             onEditAction={(
               actionId,
@@ -792,6 +793,42 @@ const StatementItem: React.FC<StatementItemProps> = ({
             onToggleResolved={(actionId) =>
               onToggleActionResolved && onToggleActionResolved(actionId)
             }
+            onGratitudeSent={(actionId, message) => {
+              // Create a copy of the entire statement
+              const statementToUpdate = { ...statement };
+              const updatedActions = [...(statementToUpdate.actions || [])];
+              const actionIndex = updatedActions.findIndex(a => a.id === actionId);
+              
+              if (actionIndex !== -1) {
+                // Create an updated action with gratitude information
+                const action = updatedActions[actionIndex];
+                const updatedAction = {
+                  ...action,
+                  gratitudeSent: true,
+                  gratitudeMessage: message,
+                  gratitudeSentDate: new Date().toISOString()
+                };
+                
+                // Replace the action in the array
+                updatedActions[actionIndex] = updatedAction;
+                
+                // Update the statement with the updated actions
+                statementToUpdate.actions = updatedActions;
+                
+                // Call onEditAction for UI updates (but it won't save the gratitude fields)
+                if (onEditAction) {
+                  onEditAction(statement.id, actionId, {
+                    text: action.action,
+                    dueDate: action.byDate
+                  });
+                }
+                
+                // Call onLocalSave to save the entire updated statement with gratitude info
+                if (onLocalSave) {
+                  onLocalSave(statementToUpdate);
+                }
+              }
+            }}
           />
         </div>
       )}

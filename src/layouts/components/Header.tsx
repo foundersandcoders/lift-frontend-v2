@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import SmallCircularQuestionCounter from '../../components/ui/questionCounter/smallCircularQuestionCounter';
 import UserDataModal from '../../components/modals/UserDataModal';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../../components/ui/better-tooltip';
+// import { Tooltip, TooltipTrigger, TooltipContent } from '../../components/ui/better-tooltip';
 
 const Header: React.FC = () => {
   const { data } = useEntries();

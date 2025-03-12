@@ -5,7 +5,7 @@ import { useEntries } from '../../features/statements/hooks/useEntries';
 import { useAuth } from '../../features/auth/api/hooks';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Save, X, User, Mail, Award, Edit2, LogOut, Shield } from 'lucide-react';
+import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/better-tooltip';
 import { validateEmail } from '../../lib/utils/validateEmail';
 import QuestionCounter from '../ui/questionCounter/QuestionCounter';
@@ -81,11 +81,11 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   };
 
   return (
-    <div 
+    <div
       className='fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50'
       onClick={handleOutsideClick}
     >
-      <div 
+      <div
         className='bg-white m-2 sm:m-5 max-w-3xl w-full min-w-[280px] rounded-lg p-0 overflow-hidden shadow-xl'
         onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing
       >

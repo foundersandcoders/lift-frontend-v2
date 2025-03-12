@@ -11,6 +11,9 @@ export interface Action {
   byDate: string;
   action: string;
   completed: boolean;
+  gratitudeSent?: boolean;
+  gratitudeMessage?: string;
+  gratitudeSentDate?: string;
 }
 
 export interface Entry {
