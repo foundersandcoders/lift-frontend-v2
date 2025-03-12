@@ -51,7 +51,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   if (!hasContent) return null;
 
   return (
-    <div className='w-full pl-2 pr-4 mt-3 -mb-1 flex flex-wrap gap-1.5 items-center justify-start'>
+    <div className='w-full pl-2 pr-4 mt-3 mb-3 flex flex-wrap gap-1.5 items-center justify-start'>
       {/* Statement label */}
       <div className='flex items-center mr-1 text-gray-500'>
         <FileText size={12} className='mr-1' />
@@ -86,11 +86,11 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
       {/* Privacy indicator (only show after privacy step) */}
       {showPrivacyIcon && (
         <span
-          className={`ml-0.5 flex-shrink-0 ${
-            isPublic ? 'text-green-500' : 'text-red-500'
+          className={`ml-0.5 px-1.5 py-0.5 flex-shrink-0 rounded flex items-center ${
+            isPublic ? 'text-green-500 bg-green-50' : 'text-red-500 bg-red-50'
           }`}
         >
-          {isPublic ? <MailPlus size={14} /> : <MailX size={14} />}
+          {isPublic ? <MailPlus size={16} /> : <MailX size={16} />}
         </span>
       )}
 

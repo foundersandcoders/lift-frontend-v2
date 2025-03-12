@@ -8,8 +8,7 @@
     "prod": "vite --mode production",
     "build": "tsc -b && vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview  --mode production",
-    "deploy": "npm run build && gh-pages -d dist"
+    "preview": "vite preview  --mode production"
   },
   "dependencies": {
     "better-auth": "^1.2.3",

@@ -165,7 +165,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
                   <div className="text-sm font-medium text-gray-700 mb-1">
                     Email Address
                   </div>
-                  <div className="px-3 py-2 bg-gray-100 rounded text-gray-800">
+                  <div className="px-3 py-2 bg-gray-100 rounded text-gray-800 break-all">
                     {state.user.email}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">

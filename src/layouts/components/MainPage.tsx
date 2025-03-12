@@ -42,27 +42,48 @@ const MainPage: React.FC = () => {
 
   return (
     <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12'>
-      <h1 className='text-3xl font-bold mb-8 text-center'>
-        {managerName
-          ? `${username} would like to share with ${managerName}`
-          : `${username}'s statements for sharing`}
-      </h1>
+      <div className='container mx-auto px-4 mb-6'>
+        {/* Fixed header layout with 1 or 2 rows */}
+        <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
+          <h1 className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'>
+            {managerName
+              ? `${username} would like to share with ${managerName}`
+              : `${username}'s statements for sharing`}
+          </h1>
+          
+          <Button
+            onClick={handleNewStatement}
+            variant='pink'
+            className='flex items-center px-3 h-10 shadow-sm whitespace-nowrap self-start'
+          >
+            <Plus className='w-5 h-5 mr-1 flex-shrink-0' />
+            <span>Add statement</span>
+          </Button>
+        </div>
+      </div>
+      
       <div className='container mx-auto px-4'>
+        
         <StatementList username={username} />
       </div>
-      {/* Floating Buttons Container with higher z-index */}
-      <div className='fixed bottom-8 right-8 flex items-center space-x-4 z-30'>
+      
+      {/* Floating Email Button (now singular) */}
+      <div className='fixed bottom-8 right-8 z-30'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
         <Tooltip>
           <TooltipTrigger asChild>
             <span>
               <Button
                 onClick={handleShareEmail}
-                variant='outline'
-                className='rounded-full p-3 shadow-lg bg-white hover:bg-gray-100'
+                variant='default'
+                className='rounded-full flex items-center px-3 py-2 sm:px-4 sm:py-3 shadow-lg bg-blue-600 hover:bg-blue-700'
                 disabled={isEmailDisabled}
               >
-                <Mail className='w-6 h-6 text-brand-pink' />
+                <Mail className='w-5 h-5 sm:w-6 sm:h-6 text-white' />
+                <span className='ml-1 sm:ml-2 text-base sm:text-lg text-white'>
+                  <span className='hidden sm:inline'>Send to manager</span>
+                  <span className='sm:hidden'>Email</span>
+                </span>
               </Button>
             </span>
           </TooltipTrigger>
@@ -74,19 +95,11 @@ const MainPage: React.FC = () => {
               : 'Send email with your public statements.'}
           </TooltipContent>
         </Tooltip>
-        {/* Create Your Own Statement Button */}
-        <Button
-          onClick={handleNewStatement}
-          variant='pink'
-          className='rounded-full flex items-center px-3 py-2 sm:px-4 sm:py-3 shadow-lg'
-        >
-          <Plus className='w-5 h-5 sm:w-6 sm:h-6' />
-          <span className='ml-1 sm:ml-2 text-base sm:text-lg'>
-            <span className='hidden sm:inline'>Custom statement</span>
-            <span className='sm:hidden'>Add</span>
-          </span>
-        </Button>
-        <TestStatementButton />
+        
+        {/* Debug button */}
+        <div className='mt-2'>
+          <TestStatementButton />
+        </div>
       </div>
 
       {/* Conditionally render the wizard modal */}
