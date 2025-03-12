@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Tooltip,
   TooltipTrigger,
@@ -12,13 +12,17 @@ import { Button } from '../../components/ui/button';
 import { Plus, Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
+import PrivacyModal from '../../components/modals/PrivacyModal';
+import TermsModal from '../../components/modals/TermsModal';
 // import TestStatementButton from '../../components/debug/TestButton';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
   const { username, managerName, managerEmail, entries } = data;
-  const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // Determine if email button should be disabled:
   const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
@@ -70,9 +74,18 @@ const MainPage: React.FC = () => {
       <footer className="mt-auto pt-6 pb-4 bg-gray-50 border-t border-gray-200">
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row justify-center items-center text-xs text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4">
-            <a href="#" className="hover:text-brand-pink hover:underline">Privacy Policy</a>
-            <a href="#" className="hover:text-brand-pink hover:underline">Terms of Use</a>
-            <a href="#" className="hover:text-brand-pink hover:underline">Data Protection</a>
+            <button 
+              onClick={() => setIsPrivacyModalOpen(true)}
+              className="hover:text-brand-pink hover:underline"
+            >
+              Privacy Policy
+            </button>
+            <button 
+              onClick={() => setIsTermsModalOpen(true)}
+              className="hover:text-brand-pink hover:underline"
+            >
+              Terms of Use
+            </button>
             <span>© {new Date().getFullYear()} Beacons</span>
           </div>
         </div>
@@ -125,6 +138,16 @@ const MainPage: React.FC = () => {
       {/* Conditionally render the share email modal */}
       {isShareModalOpen && (
         <ShareEmailModal onClose={() => setIsShareModalOpen(false)} />
+      )}
+      
+      {/* Conditionally render the privacy modal */}
+      {isPrivacyModalOpen && (
+        <PrivacyModal onClose={() => setIsPrivacyModalOpen(false)} />
+      )}
+      
+      {/* Conditionally render the terms modal */}
+      {isTermsModalOpen && (
+        <TermsModal onClose={() => setIsTermsModalOpen(false)} />
       )}
     </main>
   );

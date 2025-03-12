@@ -8,6 +8,7 @@ import { sendEmail } from '../../features/email/api/emailApi';
 import { Email } from '../../types/emails';
 import { Loader2 } from 'lucide-react';
 import { getVerbName } from '../../lib/utils/verbUtils';
+import PrivacyModal from './PrivacyModal';
 
 const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { data } = useEntries();
@@ -15,6 +16,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [sendSuccess, setSendSuccess] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   // Only include public statements that are not resolved
   const publicStatements = data.entries.filter(
@@ -115,10 +117,12 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <Dialog open onOpenChange={onClose}>
-      <DialogContent
-        headerTitle={`Sharing with ${managerName || 'your manager'}`}
-      >
+    <>
+      {isPrivacyModalOpen && <PrivacyModal onClose={() => setIsPrivacyModalOpen(false)} />}
+      <Dialog open onOpenChange={onClose}>
+        <DialogContent
+          headerTitle={`Sharing with ${managerName || 'your manager'}`}
+        >
         <div
           className='relative rounded-md overflow-hidden'
           style={{
@@ -154,7 +158,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </p>
             )}
             <div className="mt-3 p-2 bg-gray-50 rounded-md text-xs text-gray-600 border border-gray-200">
-              <p>Only public statements will be shared. For details on how we process your data, see our <a href="#" className="text-brand-pink underline">Privacy Policy</a>.</p>
+              <p>Only public statements will be shared. For details on how we process your data, see our <button onClick={() => setIsPrivacyModalOpen(true)} className="text-brand-pink underline">Privacy Policy</button>.</p>
             </div>
           </div>
 
@@ -251,6 +255,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 };
 
