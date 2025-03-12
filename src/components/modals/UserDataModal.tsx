@@ -3,12 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { useAuth } from '../../features/auth/api/hooks';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { DialogOverlay, DialogPortal } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/better-tooltip';
 import { validateEmail } from '../../lib/utils/validateEmail';
 import QuestionCounter from '../ui/questionCounter/QuestionCounter';
 import ProgressWithFeedback from '../ui/progress/ProgressWithFeedback';
@@ -28,11 +26,9 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   const [managerNameInput, setManagerNameInput] = useState(
     data.managerName || ''
   );
-  const [usernameInput, setUsernameInput] = useState(
-    data.username || ''
-  );
+  const [usernameInput, setUsernameInput] = useState(data.username || '');
   const [emailError, setEmailError] = useState('');
-  
+
   const handleSignOut = async () => {
     await signOut();
     // Clear user data from entries context
@@ -52,7 +48,13 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     if (isEditingUsername) {
       setUsernameInput(data.username || '');
     }
-  }, [isEditingContact, isEditingUsername, data.managerEmail, data.managerName, data.username]);
+  }, [
+    isEditingContact,
+    isEditingUsername,
+    data.managerEmail,
+    data.managerName,
+    data.username,
+  ]);
 
   const handleSaveContact = () => {
     if (managerEmailInput.trim() && !validateEmail(managerEmailInput.trim())) {
@@ -64,59 +66,69 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     setIsEditingContact(false);
     setEmailError('');
   };
-  
+
   const handleSaveUsername = () => {
     setData({ type: 'SET_USERNAME', payload: usernameInput });
     setIsEditingUsername(false);
   };
 
+  // Handler for clicks outside the modal
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only close if the click was directly on the overlay (not on the modal content)
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
+
   return (
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Content
-        aria-describedby="user-data-description"
-        className='fixed left-[50%] top-[50%] z-50 grid w-full max-w-3xl translate-x-[-50%] translate-y-[-50%] border-0 bg-background p-0 shadow-lg duration-200 sm:rounded-lg overflow-hidden'
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50'
+      onClick={handleOutsideClick}
+    >
+      <div
+        className='bg-white m-2 sm:m-5 max-w-3xl w-full min-w-[280px] rounded-lg p-0 overflow-hidden shadow-xl'
+        onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing
       >
-        <DialogPrimitive.Description id="user-data-description" className="sr-only">
-          Dashboard with user information and settings.
-        </DialogPrimitive.Description>
-        {/* Custom header without white gap */}
         <div className='bg-brand-pink p-2 flex items-center justify-between sm:rounded-t-lg'>
-          <DialogPrimitive.Title className='text-xl font-semibold text-white'>
-            User's Data
-          </DialogPrimitive.Title>
-          <DialogPrimitive.Close asChild>
-            <button className='text-white' aria-label='Close'>
-              <X size={24} />
-            </button>
-          </DialogPrimitive.Close>
+          <h2 className='text-xl font-semibold text-white'>User's Data</h2>
+          <button
+            className='text-white focus:outline-none focus:ring-2 focus:ring-white rounded-sm'
+            onClick={() => onOpenChange(false)}
+          >
+            <X size={24} />
+          </button>
         </div>
-        
-        <div className='relative overflow-hidden' 
-             style={{
-               background: 'linear-gradient(135deg, #f5f7fa 0%, #f8f9fb 100%)',
-               boxShadow: 'inset 0 0 0 1px rgba(255, 105, 180, 0.15)'
-             }}>
-        
+
+        <p className='sr-only'>Dashboard with user information and settings.</p>
+
+        <div
+          className='relative overflow-auto'
+          style={{
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #f8f9fb 100%)',
+          }}
+        >
           <div className='p-4 sm:p-6'>
             {/* Main content with responsive layout */}
-            <div className='flex flex-col lg:flex-row gap-4'>
+            <div className='flex flex-col sm:flex-row gap-4'>
               {/* Left column for desktop (stacked on mobile) */}
-              <div className='flex flex-col space-y-4 lg:w-1/2'>
+              <div className='flex flex-col space-y-4 sm:w-1/2 sm:self-stretch'>
                 {/* Username section */}
                 <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100'>
                   <div className='flex items-center justify-between mb-1'>
                     <div className='flex items-center'>
                       <User size={16} className='text-brand-pink mr-1' />
-                      <div className='text-xs font-semibold text-gray-700'>Your name</div>
+                      <div className='text-xs font-semibold text-gray-700'>
+                        Your name
+                      </div>
                     </div>
                     {!isEditingUsername && (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
                             className='flex items-center justify-center rounded-full bg-pink-50 p-1 text-brand-pink hover:bg-pink-100 transition-colors'
-                            aria-label="Edit your name"
+                            aria-label='Edit your name'
                             onClick={() => setIsEditingUsername(true)}
+                            type='button'
                           >
                             <Edit2 size={14} />
                           </button>
@@ -125,13 +137,13 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       </Tooltip>
                     )}
                   </div>
-                  
+
                   {isEditingUsername ? (
                     <div className='space-y-2'>
                       <Input
                         value={usernameInput}
                         onChange={(e) => setUsernameInput(e.target.value)}
-                        placeholder="Enter your name"
+                        placeholder='Enter your name'
                         aria-label='Your Name'
                         className='w-full border-pink-200 focus:border-brand-pink text-sm'
                       />
@@ -142,6 +154,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                           size='sm'
                           aria-label='Save Name'
                           className='px-2 py-0.5 h-auto text-xs'
+                          type='button'
                         >
                           <Save size={12} className='mr-1' />
                           Save
@@ -155,6 +168,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                           size='sm'
                           aria-label='Cancel Editing'
                           className='px-2 py-0.5 h-auto text-xs'
+                          type='button'
                         >
                           <X size={12} className='mr-1' />
                           Cancel
@@ -162,18 +176,20 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       </div>
                     </div>
                   ) : (
-                    <div className='bg-pink-50 px-2 py-1 rounded-md text-sm font-medium text-gray-800'>
+                    <div className='bg-pink-50 px-2 py-1 rounded-md text-sm font-medium text-gray-800 break-words'>
                       {data.username || 'Not set'}
                     </div>
                   )}
                 </div>
 
                 {/* Manager contact section */}
-                <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100 flex-grow'>
                   <div className='flex items-center justify-between mb-1'>
                     <div className='flex items-center'>
                       <Mail size={16} className='text-brand-pink mr-1' />
-                      <div className='text-xs font-semibold text-gray-700'>Line manager's details</div>
+                      <div className='text-xs font-semibold text-gray-700'>
+                        Line manager's details
+                      </div>
                     </div>
                     {!isEditingContact && (
                       <Tooltip>
@@ -182,15 +198,18 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                             className='flex items-center justify-center rounded-full bg-pink-50 p-1 text-brand-pink hover:bg-pink-100 transition-colors'
                             aria-label="Edit your line manager's details"
                             onClick={() => setIsEditingContact(true)}
+                            type='button'
                           >
                             <Edit2 size={14} />
                           </button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit line manager's details</TooltipContent>
+                        <TooltipContent>
+                          Edit line manager's details
+                        </TooltipContent>
                       </Tooltip>
                     )}
                   </div>
-                  
+
                   {isEditingContact ? (
                     <div className='space-y-2'>
                       <div>
@@ -211,7 +230,9 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                           className='w-full border-pink-200 focus:border-brand-pink text-sm'
                         />
                         {emailError && (
-                          <div className='text-red-500 text-xs mt-0.5'>{emailError}</div>
+                          <div className='text-red-500 text-xs mt-0.5'>
+                            {emailError}
+                          </div>
                         )}
                       </div>
                       <div className='flex space-x-2'>
@@ -225,6 +246,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                             managerEmailInput.trim() !== '' &&
                             !validateEmail(managerEmailInput.trim())
                           }
+                          type='button'
                         >
                           <Save size={12} className='mr-1' />
                           Save
@@ -240,6 +262,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                           size='sm'
                           aria-label='Cancel Editing'
                           className='px-2 py-0.5 h-auto text-xs'
+                          type='button'
                         >
                           <X size={12} className='mr-1' />
                           Cancel
@@ -250,13 +273,13 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                     <div className='text-sm'>
                       <div className='bg-pink-50 px-2 py-1 rounded-md mb-1'>
                         <span className='text-xs text-gray-500'>Name:</span>{' '}
-                        <span className='font-medium text-gray-800'>
+                        <span className='font-medium text-gray-800 break-words'>
                           {data.managerName || 'Not set'}
                         </span>
                       </div>
                       <div className='bg-pink-50 px-2 py-1 rounded-md'>
                         <span className='text-xs text-gray-500'>Email:</span>{' '}
-                        <span className='font-medium text-gray-800'>
+                        <span className='font-medium text-gray-800 break-all'>
                           {data.managerEmail || 'Not set'}
                         </span>
                       </div>
@@ -264,15 +287,17 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                   )}
                 </div>
               </div>
-              
+
               {/* Right column for desktop (Progress) */}
-              <div className='lg:w-1/2'>
+              <div className='sm:w-1/2 flex sm:self-stretch'>
                 {/* Progress section */}
-                <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100 h-full'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border border-pink-100 w-full'>
                   <div className='flex items-center justify-between mb-2'>
                     <div className='flex items-center'>
                       <Award size={16} className='text-brand-pink mr-1' />
-                      <div className='text-xs font-semibold text-gray-700'>Your progress</div>
+                      <div className='text-xs font-semibold text-gray-700'>
+                        Your progress
+                      </div>
                     </div>
                     <QuestionCounter />
                   </div>
@@ -282,21 +307,23 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                 </div>
               </div>
             </div>
-            
+
             {/* Sign Out and Close buttons in a row at the bottom */}
             <div className='flex justify-between mt-4'>
               <Button
-                onClick={() => onOpenChange(false)}
                 variant='outline'
                 className='px-4'
+                type='button'
+                onClick={() => onOpenChange(false)}
               >
                 <X size={16} className='mr-1.5' />
                 Close
               </Button>
-              
-              <button 
+
+              <button
                 onClick={handleSignOut}
                 className='flex items-center justify-center py-2 px-4 rounded-md border border-pink-100 text-red-600 hover:bg-red-50 transition-colors'
+                type='button'
               >
                 <LogOut size={16} className='mr-1.5' />
                 <span className='font-medium'>Sign Out</span>
@@ -304,8 +331,8 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
             </div>
           </div>
         </div>
-      </DialogPrimitive.Content>
-    </DialogPortal>
+      </div>
+    </div>
   );
 };
 

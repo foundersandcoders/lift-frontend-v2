@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+  SimpleDialog as Dialog,
+  SimpleDialogContent as DialogContent,
+  SimpleDialogTitle as DialogTitle,
+  SimpleDialogDescription as DialogDescription,
+} from '@/components/ui/simple-dialog';
 import { Button } from '@/components/ui/button';
 import type { Entry } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
@@ -60,23 +60,37 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         ...statement,
         atoms: { ...statement.atoms, [editPart]: localValue as string },
       };
-      
+
       // Update the input field to reflect the new statement text
-      const updatedAtoms = { ...statement.atoms, [editPart]: localValue as string };
-      updatedStatement.input = `${updatedAtoms.subject} ${getVerbName(updatedAtoms.verb)} ${updatedAtoms.object}`;
-      
+      const updatedAtoms = {
+        ...statement.atoms,
+        [editPart]: localValue as string,
+      };
+      updatedStatement.input = `${updatedAtoms.subject} ${getVerbName(
+        updatedAtoms.verb
+      )} ${updatedAtoms.object}`;
     } else if (editPart === 'category') {
       console.log('EDIT STATEMENT MODAL - Setting category:');
       console.log('Original statement category:', statement.category);
       console.log('New category value:', localValue);
+
+      // Create a completely new object with a deeper clone to ensure React detects the change
+      // Force category to be a string to avoid type issues
+      const categoryValue = localValue ? String(localValue) : '';
       
-      // Create a completely new object to ensure React detects the change
-      updatedStatement = JSON.parse(JSON.stringify({
+      // Create a new object with the modified category
+      const newStatement = {
         ...statement,
-        category: localValue as string
-      }));
+        // Add a timestamp to force detection of changes
+        _lastModified: Date.now(),
+        _needsScroll: true, // Flag to indicate this needs scrolling
+        category: categoryValue,
+      };
       
-      console.log('Updated statement:', updatedStatement);
+      // Deep clone to ensure all references are fresh
+      updatedStatement = JSON.parse(JSON.stringify(newStatement));
+
+      console.log('Updated statement (category change):', updatedStatement);
     } else if (editPart === 'privacy') {
       updatedStatement = { ...statement, isPublic: localValue as boolean };
     } else {
@@ -115,24 +129,24 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
                   question: '',
                   preset: false,
                   presetAnswer: null,
-                  allowDescriptors: true
+                  allowDescriptors: true,
                 },
                 verb: {
                   question: '',
                   preset: false,
-                  presetAnswer: null
+                  presetAnswer: null,
                 },
                 object: {
                   question: '',
                   preset: false,
-                  presetAnswer: null
+                  presetAnswer: null,
                 },
                 privacy: {
                   question: '',
                   preset: false,
-                  presetAnswer: null
-                }
-              }
+                  presetAnswer: null,
+                },
+              },
             }}
             selection={localValue as string}
             onUpdate={(val) => {
@@ -221,18 +235,17 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         {renderEditComponent()}
         {/* Optionally add a footer for explicit Save/Cancel */}
         <div className='p-4 flex justify-center gap-4'>
-          <Button 
-            onClick={handleSave} 
-            variant='default' 
-            className="inline-flex items-center shadow-sm"
+          <Button
+            onClick={handleSave}
+            variant='default'
+            className='inline-flex items-center shadow-sm'
           >
             OK
           </Button>
-          <Button 
-            onClick={onClose} 
+          <Button
+            onClick={onClose}
             variant='outline'
-
-            className="inline-flex items-center"
+            className='inline-flex items-center'
           >
             Cancel
           </Button>

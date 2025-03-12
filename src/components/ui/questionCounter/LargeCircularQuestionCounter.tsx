@@ -45,8 +45,8 @@ const LargeCircularQuestionCounter: React.FC<
           style={{ transition: 'stroke-dashoffset 0.35s ease-out' }}
         />
       </svg>
-      {/* Percentage Text in Center */}
-      <span className='absolute inset-0 flex items-center justify-center text-lg font-semibold'>
+      {/* Percentage Text in Center - Now black for better contrast */}
+      <span className='absolute inset-0 flex items-center justify-center text-lg font-semibold text-gray-900'>
         {progress}%
       </span>
     </div>

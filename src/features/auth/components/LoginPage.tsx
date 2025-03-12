@@ -8,6 +8,8 @@ import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import { handleMagicLinkVerification } from '../authUtils';
 import { Loader2 } from 'lucide-react';
+import PrivacyModal from '../../../components/modals/PrivacyModal';
+import TermsModal from '../../../components/modals/TermsModal';
 
 interface LoginPageProps {
   onSubmit?: (
@@ -24,6 +26,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
   const [managerName, setManagerName] = useState('');
   const [step, setStep] = useState<'authenticate' | 'profile'>('authenticate');
   const [verifying, setVerifying] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // Handle token verification on initial load and URL changes
   useEffect(() => {
@@ -118,12 +122,26 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
   return (
     <div className='min-h-screen flex items-center justify-center p-4 bg-gray-50'>
       <div className='bg-white shadow-lg rounded-lg p-8 max-w-md w-full'>
+        {isPrivacyModalOpen && (
+          <PrivacyModal onClose={() => setIsPrivacyModalOpen(false)} />
+        )}
+        {isTermsModalOpen && (
+          <TermsModal onClose={() => setIsTermsModalOpen(false)} />
+        )}
         {step === 'authenticate' ? (
           <>
             <h1 className='text-3xl font-bold mb-6 text-center'>Welcome to Beacons</h1>
             <p className='mb-6 text-center text-gray-700'>
               Sign in with your email to access the application.
             </p>
+            <div className="mb-4 p-3 bg-gray-50 rounded-md border border-gray-200 text-sm text-gray-600">
+              <p className="mb-2">
+                By signing in, you agree to our <button onClick={() => setIsPrivacyModalOpen(true)} className="text-brand-pink underline">Privacy Policy</button> and <button onClick={() => setIsTermsModalOpen(true)} className="text-brand-pink underline">Terms of Use</button>.
+              </p>
+              <p>
+                We collect and process your data to provide the Beacons service. You control what information is shared with your employer.
+              </p>
+            </div>
             <MagicLinkForm callbackURL="/main" />
           </>
         ) : (
@@ -165,7 +183,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
                   <div className="text-sm font-medium text-gray-700 mb-1">
                     Email Address
                   </div>
-                  <div className="px-3 py-2 bg-gray-100 rounded text-gray-800">
+                  <div className="px-3 py-2 bg-gray-100 rounded text-gray-800 break-all">
                     {state.user.email}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">

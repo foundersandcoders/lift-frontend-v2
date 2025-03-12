@@ -220,12 +220,14 @@ export const mockUpdateUserProfile = async (
     // Update the user's profile
     if (data.username !== undefined) {
       mockUsers[userEmail].username = data.username;
+      console.log(`MockAuth: Updated username for ${userEmail} to:`, data.username);
     }
     
     // If this is the current user, update the current session
     if (currentSession.user && currentSession.user.id === userId) {
       currentSession.user = { ...mockUsers[userEmail] };
       localStorage.setItem('mockAuthSession', JSON.stringify(currentSession.user));
+      console.log('MockAuth: Updated current session with new profile data:', currentSession.user);
     }
     
     // Save updated users to localStorage

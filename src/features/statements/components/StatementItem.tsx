@@ -16,18 +16,18 @@ import {
 } from 'lucide-react';
 import type { Entry } from '@/types/entries';
 import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
+  SimpleDropdownMenu as DropdownMenu,
+  SimpleDropdownMenuTrigger as DropdownMenuTrigger,
+  SimpleDropdownMenuContent as DropdownMenuContent,
+  SimpleDropdownMenuItem as DropdownMenuItem,
+} from '@/components/ui/simple-dropdown';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '@/components/ui/tooltip';
+} from '@/components/ui/better-tooltip';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
 
@@ -57,6 +57,7 @@ export interface StatementItemProps {
   onReset?: (statementId: string) => void;
   onToggleResolved?: (statementId: string) => void;
   onToggleActionResolved?: (actionId: string) => void;
+  originalCategory?: string; // Add prop for original category from parent
 }
 
 // Helper function to normalize category ID for comparison
@@ -108,81 +109,171 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onReset,
   onToggleResolved = () => {},
   onToggleActionResolved = () => {},
+  originalCategory: externalOriginalCategory, // Get original category from parent
 }) => {
   const [isActionsExpanded, setIsActionsExpanded] = React.useState(false);
 
-  // Local "draft" state to hold unsaved modifications.
+  // Create a ref for the component root element
+  const itemRef = React.useRef<HTMLDivElement>(null);
+
+  // Create refs to track category changes for animations
+  const prevCategoryRef = React.useRef<string | null>(null);
+
+  // Use simple primitive values to store original state
+  // This way we avoid object reference issues
+  const [originalCategory, setOriginalCategory] = React.useState<string | null>(
+    null
+  );
+  const [originalSubject, setOriginalSubject] = React.useState<string | null>(
+    null
+  );
+  const [originalVerb, setOriginalVerb] = React.useState<string | null>(null);
+  const [originalObject, setOriginalObject] = React.useState<string | null>(
+    null
+  );
+  const [originalPrivacy, setOriginalPrivacy] = React.useState<boolean | null>(
+    null
+  );
+
+  // Local "draft" state to track current modifications
   const [draft, setDraft] = React.useState<Entry>(statement);
 
-  // initialDraft freezes the original values when editing begins.
-  const [initialDraft, setInitialDraft] = React.useState<Entry>(statement);
-
-  // Local state to track if we are currently saving the draft.
+  // Local state to track if we are currently saving the draft
   const [isSaving, setIsSaving] = React.useState(false);
 
-  // First useEffect: Capture changes in edit mode status
+  // Effect for edit mode changes - only runs when isEditing changes
   useEffect(() => {
-    // Create a deep copy of the statement to avoid reference issues
-    const statementCopy = JSON.parse(JSON.stringify(statement));
-
     if (isEditing) {
-      // Only capture initial state when entering edit mode
-      // This will be our reference point for comparison
-      setInitialDraft(statementCopy);
-      // Also ensure draft is synchronized with current statement
-      setDraft(statementCopy);
+      // Entering edit mode - capture original values if not already set
+      if (originalCategory === null) {
+        // Use the external original category from parent if available, otherwise use the current category
+        const originalCategoryValue =
+          externalOriginalCategory ||
+          (statement.category ? String(statement.category) : '');
+
+        // Set it in the local state for immediate use in comparison
+        setOriginalCategory(originalCategoryValue);
+        setOriginalSubject(statement.atoms.subject);
+        setOriginalVerb(statement.atoms.verb);
+        setOriginalObject(statement.atoms.object);
+        setOriginalPrivacy(statement.isPublic);
+      }
+
+      // Always keep draft updated with latest statement value
+      setDraft(JSON.parse(JSON.stringify(statement)));
     } else {
-      // Reset both states when exiting edit mode
-      setInitialDraft(statementCopy);
-      setDraft(statementCopy);
-    }
-  }, [isEditing, statement]); // Include statement to ensure we're always using the latest version
+      // Exiting edit mode - reset everything
+      setOriginalCategory(null);
+      setOriginalSubject(null);
+      setOriginalVerb(null);
+      setOriginalObject(null);
+      setOriginalPrivacy(null);
 
-  // Second useEffect: Always keep draft updated with latest statement to reflect modal changes
-  useEffect(() => {
-    if (isEditing) {
-      // When statement changes while in edit mode, update the draft
-      // This happens when the modal updates the statement
       setDraft(JSON.parse(JSON.stringify(statement)));
     }
-  }, [
-    statement,
-    // We're specifically tracking these properties to ensure we detect changes
-    // from the modal even if the statement reference doesn't change
-    statement.atoms.subject,
-    statement.atoms.verb,
-    statement.atoms.object,
-    statement.isPublic,
-    statement.category,
-    isEditing,
-  ]);
+    // Only depend on isEditing to prevent loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]);
 
-  // Compute if draft has changed from the initial state
-  const hasSubjectChanged = draft.atoms.subject !== initialDraft.atoms.subject;
-  const hasVerbChanged = draft.atoms.verb !== initialDraft.atoms.verb;
-  const hasObjectChanged = draft.atoms.object !== initialDraft.atoms.object;
-  const hasPrivacyChanged = draft.isPublic !== initialDraft.isPublic;
-  // Force this to true for now for debugging
-  const hasCategoryChanged = true; // draft.category !== initialDraft.category;
+  // Separate effect to keep draft updated when statement changes
+  useEffect(() => {
+    if (isEditing) {
+      // Keep draft updated with latest changes from the statement
+      setDraft(JSON.parse(JSON.stringify(statement)));
+    }
+  }, [statement, isEditing]);
 
-  console.log('CATEGORY DEBUG:');
-  console.log('Draft category:', draft.category);
-  console.log('Initial draft category:', initialDraft.category);
-  console.log('Normally would be:', draft.category !== initialDraft.category);
-  console.log('Forcing to true for debugging');
+  // Dedicated effect for scrolling when needed
+  useEffect(() => {
+    // Check if this statement was updated with a category change (flagged by EditStatementModal)
+    if (isEditing && statement._needsScroll) {
+      console.log('Statement flagged for scrolling:', statement.id);
 
-  const hasChanged =
-    hasSubjectChanged ||
-    hasVerbChanged ||
-    hasObjectChanged ||
-    hasPrivacyChanged ||
-    hasCategoryChanged;
+      // Use a longer delay to ensure the DOM has fully updated
+      const timer = setTimeout(() => {
+        if (itemRef.current) {
+          console.log('Executing scroll to element');
+          // Force scroll to this element
+          itemRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+          });
+          console.log('Scroll instruction sent');
+        }
+      }, 500);
 
-  // Enable save button when any part of the statement has been changed
+      return () => clearTimeout(timer);
+    }
+
+    // Keep reference updated for category change tracking
+    prevCategoryRef.current = statement.category;
+    // Check this effect whenever the statement reference changes
+  }, [statement, isEditing]);
+
+  // Helper function to normalize category values for comparison
+  const normalizeCategoryForComparison = (
+    category: string | null | undefined
+  ): string => {
+    if (category === null || category === undefined) return '';
+    // Convert to string in case it's not already a string
+    const categoryStr = String(category).toLowerCase().trim();
+
+    // Handle "uncategorized" variations
+    if (['uncategorized', 'uncategorised'].includes(categoryStr)) {
+      return 'uncategorized';
+    }
+
+    return categoryStr;
+  };
+
+  // Calculate changes based on primitive values
+  // If we're not in edit mode or don't have original values, no changes to detect
+  let hasSubjectChanged = false;
+  let hasVerbChanged = false;
+  let hasObjectChanged = false;
+  let hasPrivacyChanged = false;
+  let hasCategoryChanged = false;
+  let hasChanged = false;
+
+  if (isEditing) {
+    // Use the external original category if available, otherwise use local state
+    // This ensures consistent comparison even after component remounts
+    const effectiveOriginalCategory =
+      externalOriginalCategory || originalCategory;
+
+    if (effectiveOriginalCategory !== null || originalCategory !== null) {
+      // Compare current draft with original primitive values
+      hasSubjectChanged = draft.atoms.subject !== originalSubject;
+      hasVerbChanged = draft.atoms.verb !== originalVerb;
+      hasObjectChanged = draft.atoms.object !== originalObject;
+      hasPrivacyChanged = draft.isPublic !== originalPrivacy;
+
+      // Normalize categories for comparison
+      const draftCategory = normalizeCategoryForComparison(draft.category);
+      const originalCategoryNormalized = normalizeCategoryForComparison(
+        effectiveOriginalCategory
+      );
+
+      // Compare normalized categories
+      hasCategoryChanged = draftCategory !== originalCategoryNormalized;
+
+      // Calculate overall change status
+      hasChanged =
+        hasSubjectChanged ||
+        hasVerbChanged ||
+        hasObjectChanged ||
+        hasPrivacyChanged ||
+        hasCategoryChanged;
+    }
+  }
 
   if (isEditing) {
     return (
-      <div className='bg-gray-100 p-3 rounded-lg shadow'>
+      <div
+        ref={itemRef}
+        id={`statement-${statement.id}`}
+        className='bg-gray-100 p-3 rounded-lg shadow'
+      >
         {/* Desktop layout - horizontal row */}
         <div className='hidden md:flex md:items-center md:space-x-2'>
           {/* Privacy toggle button */}
@@ -240,7 +331,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 : 'Uncategorized'}
             </div>
           </div>
-          
+
           <div className='flex items-center space-x-2 ml-auto'>
             {/* Save button with tooltip */}
             <Tooltip>
@@ -252,9 +343,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
                     onClick={async () => {
                       setIsSaving(true);
                       const updatedDraft = { ...draft };
-                      updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
-                        draft.atoms.verb
-                      )} ${draft.atoms.object}`;
+                      updatedDraft.input = `${
+                        draft.atoms.subject
+                      } ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
+
                       await onLocalSave(updatedDraft);
                       setIsSaving(false);
                     }}
@@ -278,7 +370,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                     variant='outline'
                     size='compact'
                     onClick={() => {
-                      setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                      // Let the parent handle reset since we're using primitive values
                       if (onCancel) onCancel(statement.id);
                     }}
                     className='p-2'
@@ -324,15 +416,17 @@ const StatementItem: React.FC<StatementItemProps> = ({
             >
               <span className='font-medium'>{draft.atoms.subject}</span>
             </div>
-            
+
             {/* Verb */}
             <div
               onClick={() => onPartClick('verb', draft.id)}
               className='cursor-pointer p-2 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
-              <span className='font-medium'>{getVerbName(draft.atoms.verb)}</span>
+              <span className='font-medium'>
+                {getVerbName(draft.atoms.verb)}
+              </span>
             </div>
-            
+
             {/* Object */}
             <div
               onClick={() => onPartClick('object', draft.id)}
@@ -340,7 +434,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
             >
               <span className='font-medium'>{draft.atoms.object}</span>
             </div>
-            
+
             {/* Category */}
             <div
               onClick={() => onPartClick('category', draft.id)}
@@ -356,7 +450,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               </span>
             </div>
           </div>
-          
+
           {/* Bottom row: Privacy toggle (left), Action buttons (right) */}
           <div className='flex items-center justify-between pt-3 border-t border-gray-300'>
             {/* Left: Privacy toggle */}
@@ -372,12 +466,19 @@ const StatementItem: React.FC<StatementItemProps> = ({
               }}
               className='p-2 transition-colors shadow-sm'
             >
-              {draft.isPublic ? 
-                <><MailPlus size={16} /><span className="ml-1 text-xs">Public</span></> : 
-                <><MailX size={16} /><span className="ml-1 text-xs">Private</span></>
-              }
+              {draft.isPublic ? (
+                <>
+                  <MailPlus size={16} />
+                  <span className='ml-1 text-xs'>Public</span>
+                </>
+              ) : (
+                <>
+                  <MailX size={16} />
+                  <span className='ml-1 text-xs'>Private</span>
+                </>
+              )}
             </Button>
-            
+
             {/* Right: Action buttons */}
             <div className='flex items-center space-x-2'>
               {/* Delete button */}
@@ -387,24 +488,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 onClick={() => onDelete(draft.id)}
                 className='px-2 py-1 flex items-center'
               >
-                <Trash2 size={16} className="mr-1" />
-                <span className="text-xs">Delete</span>
+                <Trash2 size={16} className='mr-1' />
+                <span className='text-xs'>Delete</span>
               </Button>
-              
+
               {/* Cancel button */}
               <Button
                 variant='outline'
                 size='compact'
                 onClick={() => {
-                  setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                  // Let the parent handle reset
                   if (onCancel) onCancel(statement.id);
                 }}
                 className='px-2 py-1 flex items-center'
               >
-                <PenOff size={16} className="mr-1" />
-                <span className="text-xs">Cancel</span>
+                <PenOff size={16} className='mr-1' />
+                <span className='text-xs'>Cancel</span>
               </Button>
-              
+
               {/* Save button */}
               <Button
                 variant='success'
@@ -415,14 +516,15 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
                     draft.atoms.verb
                   )} ${draft.atoms.object}`;
+
                   await onLocalSave(updatedDraft);
                   setIsSaving(false);
                 }}
                 disabled={!hasChanged || isSaving}
                 className='px-2 py-1 flex items-center'
               >
-                <Save size={16} className="mr-1" />
-                <span className="text-xs">Save</span>
+                <Save size={16} className='mr-1' />
+                <span className='text-xs'>Save</span>
               </Button>
             </div>
           </div>
@@ -430,7 +532,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
         {/* Mobile layout - vertical stack */}
         <div className='sm:hidden flex flex-col space-y-4'>
-          
           {/* Statement parts column - single column vertical layout */}
           <div className='flex flex-col space-y-2'>
             {/* Subject */}
@@ -440,15 +541,17 @@ const StatementItem: React.FC<StatementItemProps> = ({
             >
               <span className='font-medium'>{draft.atoms.subject}</span>
             </div>
-            
+
             {/* Verb */}
             <div
               onClick={() => onPartClick('verb', draft.id)}
               className='cursor-pointer p-3 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
-              <span className='font-medium'>{getVerbName(draft.atoms.verb)}</span>
+              <span className='font-medium'>
+                {getVerbName(draft.atoms.verb)}
+              </span>
             </div>
-            
+
             {/* Object */}
             <div
               onClick={() => onPartClick('object', draft.id)}
@@ -456,7 +559,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
             >
               <span className='font-medium'>{draft.atoms.object}</span>
             </div>
-            
+
             {/* Category */}
             <div
               onClick={() => onPartClick('category', draft.id)}
@@ -472,7 +575,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               </span>
             </div>
           </div>
-          
+
           {/* Action buttons - bottom fixed bar */}
           <div className='flex justify-between items-center pt-3 mt-2 border-t border-gray-300'>
             {/* Left: Privacy toggle */}
@@ -488,12 +591,19 @@ const StatementItem: React.FC<StatementItemProps> = ({
               }}
               className='min-w-[40px] xs:px-3 py-2 flex justify-center'
             >
-              {draft.isPublic ? 
-                <><MailPlus size={16} className="xs:mr-1" /><span className="hidden xs:inline text-xs">Public</span></> : 
-                <><MailX size={16} className="xs:mr-1" /><span className="hidden xs:inline text-xs">Private</span></>
-              }
+              {draft.isPublic ? (
+                <>
+                  <MailPlus size={16} className='xs:mr-1' />
+                  <span className='hidden xs:inline text-xs'>Public</span>
+                </>
+              ) : (
+                <>
+                  <MailX size={16} className='xs:mr-1' />
+                  <span className='hidden xs:inline text-xs'>Private</span>
+                </>
+              )}
             </Button>
-            
+
             {/* Right: Action buttons */}
             <div className='flex space-x-2'>
               {/* Delete button */}
@@ -503,24 +613,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 onClick={() => onDelete(draft.id)}
                 className='min-w-[40px] xs:px-3 py-2 flex justify-center'
               >
-                <Trash2 size={16} className="xs:mr-1" />
-                <span className="hidden xs:inline text-xs">Delete</span>
+                <Trash2 size={16} className='xs:mr-1' />
+                <span className='hidden xs:inline text-xs'>Delete</span>
               </Button>
-              
+
               {/* Cancel button */}
               <Button
                 variant='outline'
                 size='compact'
                 onClick={() => {
-                  setDraft(JSON.parse(JSON.stringify(initialDraft)));
+                  // Let the parent handle reset
                   if (onCancel) onCancel(statement.id);
                 }}
                 className='min-w-[40px] xs:px-3 py-2 flex justify-center'
               >
-                <PenOff size={16} className="xs:mr-1" />
-                <span className="hidden xs:inline text-xs">Cancel</span>
+                <PenOff size={16} className='xs:mr-1' />
+                <span className='hidden xs:inline text-xs'>Cancel</span>
               </Button>
-              
+
               {/* Save button */}
               <Button
                 variant='success'
@@ -531,14 +641,15 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
                     draft.atoms.verb
                   )} ${draft.atoms.object}`;
+
                   await onLocalSave(updatedDraft);
                   setIsSaving(false);
                 }}
                 disabled={!hasChanged || isSaving}
                 className='min-w-[40px] xs:px-3 py-2 flex justify-center'
               >
-                <Save size={16} className="xs:mr-1" />
-                <span className="hidden xs:inline text-xs">Save</span>
+                <Save size={16} className='xs:mr-1' />
+                <span className='hidden xs:inline text-xs'>Save</span>
               </Button>
             </div>
           </div>
@@ -550,6 +661,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
   // Static view when not in editing mode.
   return (
     <div
+      ref={itemRef}
+      id={`statement-${statement.id}`}
       className={`border rounded-md p-3 space-y-2 relative ${
         statement.isResolved
           ? 'bg-gray-100 border-gray-300 opacity-80'
@@ -665,6 +778,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       {isActionsExpanded && (
         <div className='mt-2'>
           <ActionLine
+            statementId={statement.id}
             actions={statement.actions ?? []}
             onEditAction={(
               actionId,
@@ -679,6 +793,42 @@ const StatementItem: React.FC<StatementItemProps> = ({
             onToggleResolved={(actionId) =>
               onToggleActionResolved && onToggleActionResolved(actionId)
             }
+            onGratitudeSent={(actionId, message) => {
+              // Create a copy of the entire statement
+              const statementToUpdate = { ...statement };
+              const updatedActions = [...(statementToUpdate.actions || [])];
+              const actionIndex = updatedActions.findIndex(a => a.id === actionId);
+              
+              if (actionIndex !== -1) {
+                // Create an updated action with gratitude information
+                const action = updatedActions[actionIndex];
+                const updatedAction = {
+                  ...action,
+                  gratitudeSent: true,
+                  gratitudeMessage: message,
+                  gratitudeSentDate: new Date().toISOString()
+                };
+                
+                // Replace the action in the array
+                updatedActions[actionIndex] = updatedAction;
+                
+                // Update the statement with the updated actions
+                statementToUpdate.actions = updatedActions;
+                
+                // Call onEditAction for UI updates (but it won't save the gratitude fields)
+                if (onEditAction) {
+                  onEditAction(statement.id, actionId, {
+                    text: action.action,
+                    dueDate: action.byDate
+                  });
+                }
+                
+                // Call onLocalSave to save the entire updated statement with gratitude info
+                if (onLocalSave) {
+                  onLocalSave(statementToUpdate);
+                }
+              }
+            }}
           />
         </div>
       )}
