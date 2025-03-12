@@ -37,13 +37,17 @@ const SimpleDialogPortal: React.FC<{ children: React.ReactNode }> = ({ children 
   return <>{children}</>;
 };
 
-const SimpleDialogOverlay: React.FC<{ className?: string }> = ({ className }) => {
+const SimpleDialogOverlay: React.FC<{ className?: string; onClick?: () => void }> = ({ 
+  className,
+  onClick 
+}) => {
   return (
     <div 
       className={cn(
         'fixed inset-0 z-50 bg-black/80',
         className
-      )} 
+      )}
+      onClick={onClick}
     />
   );
 };
@@ -61,6 +65,11 @@ const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContent
       }, [onOpenAutoFocus]);
     }
 
+    // Stop click propagation to prevent closing the dialog when clicking content
+    const handleContentClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+    };
+
     return (
       <div
         ref={ref}
@@ -68,6 +77,7 @@ const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContent
           'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border-0 bg-background p-0 shadow-lg duration-200',
           className
         )}
+        onClick={handleContentClick}
         {...props}
       >
         {children}
@@ -162,7 +172,7 @@ const SimpleDialog: React.FC<SimpleDialogProps> = ({
     <SimpleDialogContext.Provider value={{ isOpen: isDialogOpen, onOpenChange }}>
       {isDialogOpen ? (
         <div className={cn('fixed inset-0 z-50', className)}>
-          <SimpleDialogOverlay />
+          <SimpleDialogOverlay onClick={() => onOpenChange(false)} />
           {children}
         </div>
       ) : (

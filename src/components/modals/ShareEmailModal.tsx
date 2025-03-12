@@ -129,6 +129,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             margin: '-8px',
             background: '#f9f9f9',
           }}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Postal stamp decoration */}
           <div className='absolute top-4 right-4 w-16 h-20 border-2 border-gray-400 border-dashed rounded-sm opacity-20 flex items-center justify-center pointer-events-none'>

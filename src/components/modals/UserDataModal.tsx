@@ -72,9 +72,23 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     setIsEditingUsername(false);
   };
 
+  // Handler for clicks outside the modal
+  const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only close if the click was directly on the overlay (not on the modal content)
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
+
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50'>
-      <div className='bg-white m-2 sm:m-5 max-w-3xl w-full min-w-[280px] rounded-lg p-0 overflow-hidden shadow-xl'>
+    <div 
+      className='fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50'
+      onClick={handleOutsideClick}
+    >
+      <div 
+        className='bg-white m-2 sm:m-5 max-w-3xl w-full min-w-[280px] rounded-lg p-0 overflow-hidden shadow-xl'
+        onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing
+      >
         <div className='bg-brand-pink p-2 flex items-center justify-between sm:rounded-t-lg'>
           <h2 className='text-xl font-semibold text-white'>User's Data</h2>
           <button
