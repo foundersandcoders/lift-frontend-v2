@@ -14,7 +14,7 @@ import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
 import PrivacyModal from '../../components/modals/PrivacyModal';
 import TermsModal from '../../components/modals/TermsModal';
-// import TestStatementButton from '../../components/debug/TestButton';
+import TestStatementButton from '../../components/debug/TestButton';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
@@ -115,9 +115,9 @@ const MainPage: React.FC = () => {
         </Tooltip>
 
         {/* Debug button */}
-        {/* <div className='mt-2'>
+        <div className='mt-2'>
           <TestStatementButton />
-        </div> */}
+        </div>
       </div>
 
       {/* Conditionally render the wizard modal */}

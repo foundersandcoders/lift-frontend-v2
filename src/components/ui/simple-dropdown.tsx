@@ -127,7 +127,7 @@ const SimpleDropdownMenuContent = React.forwardRef<HTMLDivElement, SimpleDropdow
       <div 
         ref={ref}
         className={cn(
-          'absolute z-50 min-w-[8rem] overflow-hidden rounded-md border bg-white p-2 shadow-md',
+          'absolute z-50 min-w-[10rem] overflow-hidden rounded-md border bg-white p-2 shadow-md',
           'top-full right-0 mt-1',
           className
         )}
@@ -148,7 +148,7 @@ const SimpleDropdownMenuItem = React.forwardRef<HTMLDivElement, SimpleDropdownMe
       <div
         ref={ref}
         className={cn(
-          'flex cursor-pointer items-center rounded-sm px-2 py-1 text-sm text-gray-700 hover:bg-gray-100',
+          'flex cursor-pointer items-center rounded-sm px-2 py-1 text-sm text-gray-700 hover:bg-gray-100 whitespace-nowrap',
           className
         )}
         onClick={(e) => {

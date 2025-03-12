@@ -1,11 +1,4 @@
 import { Button } from './button';
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogFooter,
-//   DialogDescription,
-// } from './radix-compatibility';
-
 interface ConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;
