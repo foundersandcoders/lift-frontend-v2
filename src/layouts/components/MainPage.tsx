@@ -12,7 +12,7 @@ import { Button } from '../../components/ui/button';
 import { Plus, Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
-import TestStatementButton from '../../components/debug/TestButton';
+// import TestStatementButton from '../../components/debug/TestButton';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
@@ -41,7 +41,7 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12'>
+    <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 flex flex-col'>
       <div className='container mx-auto px-4 mb-6'>
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
@@ -50,7 +50,7 @@ const MainPage: React.FC = () => {
               ? `${username} would like to share with ${managerName}`
               : `${username}'s statements for sharing`}
           </h1>
-          
+
           <Button
             onClick={handleNewStatement}
             variant='pink'
@@ -61,12 +61,23 @@ const MainPage: React.FC = () => {
           </Button>
         </div>
       </div>
-      
-      <div className='container mx-auto px-4'>
-        
+
+      <div className='container mx-auto px-4 flex-grow'>
         <StatementList username={username} />
       </div>
       
+      {/* Footer with privacy links */}
+      <footer className="mt-auto pt-6 pb-4 bg-gray-50 border-t border-gray-200">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row justify-center items-center text-xs text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4">
+            <a href="#" className="hover:text-brand-pink hover:underline">Privacy Policy</a>
+            <a href="#" className="hover:text-brand-pink hover:underline">Terms of Use</a>
+            <a href="#" className="hover:text-brand-pink hover:underline">Data Protection</a>
+            <span>© {new Date().getFullYear()} Beacons</span>
+          </div>
+        </div>
+      </footer>
+
       {/* Floating Email Button (now singular) */}
       <div className='fixed bottom-8 right-8 z-30'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
@@ -95,11 +106,11 @@ const MainPage: React.FC = () => {
               : 'Send email with your public statements.'}
           </TooltipContent>
         </Tooltip>
-        
+
         {/* Debug button */}
-        <div className='mt-2'>
+        {/* <div className='mt-2'>
           <TestStatementButton />
-        </div>
+        </div> */}
       </div>
 
       {/* Conditionally render the wizard modal */}

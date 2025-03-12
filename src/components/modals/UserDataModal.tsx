@@ -5,7 +5,7 @@ import { useEntries } from '../../features/statements/hooks/useEntries';
 import { useAuth } from '../../features/auth/api/hooks';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
+import { Save, X, User, Mail, Award, Edit2, LogOut, Shield } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/better-tooltip';
 import { validateEmail } from '../../lib/utils/validateEmail';
 import QuestionCounter from '../ui/questionCounter/QuestionCounter';

@@ -153,6 +153,9 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 ✓ Email sent successfully!
               </p>
             )}
+            <div className="mt-3 p-2 bg-gray-50 rounded-md text-xs text-gray-600 border border-gray-200">
+              <p>Only public statements will be shared. For details on how we process your data, see our <a href="#" className="text-brand-pink underline">Privacy Policy</a>.</p>
+            </div>
           </div>
 
           {sendError && (

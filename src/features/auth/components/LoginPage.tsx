@@ -124,6 +124,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
             <p className='mb-6 text-center text-gray-700'>
               Sign in with your email to access the application.
             </p>
+            <div className="mb-4 p-3 bg-gray-50 rounded-md border border-gray-200 text-sm text-gray-600">
+              <p className="mb-2">
+                By signing in, you agree to our <a href="#" className="text-brand-pink underline">Privacy Policy</a> and <a href="#" className="text-brand-pink underline">Terms of Use</a>.
+              </p>
+              <p>
+                We collect and process your data to provide the Beacons service. You control what information is shared with your employer.
+              </p>
+            </div>
             <MagicLinkForm callbackURL="/main" />
           </>
         ) : (
