@@ -1,6 +1,3 @@
-// Import the polyfill first, before any other imports
-import './lib/react-shim';
-
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
