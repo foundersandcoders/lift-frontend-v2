@@ -20,6 +20,7 @@ import type { Action } from '../../../types/entries';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import GratitudeModal from '../../../components/modals/GratitudeModal';
 import { markGratitudeSent } from '../../../features/email/api/gratitudeApi';
+import { useEntries } from '../hooks/useEntries';
 import { 
   Tooltip, 
   TooltipTrigger, 
@@ -60,6 +61,10 @@ const ActionLine: React.FC<ActionLineProps> = ({
     isOpen: boolean;
     action: Action | null;
   }>({ isOpen: false, action: null });
+  
+  // Get entries data to check for manager email
+  const { data } = useEntries();
+  const hasManagerEmail = data.managerEmail && data.managerEmail.trim() !== '';
 
   // --- Handlers for Editing ---
   const handleStartEdit = (action: Action) => {
@@ -215,15 +220,30 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     {!action.gratitudeSent && (
                       <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setGratitudeModal({ isOpen: true, action })
-                          }
-                          className='text-pink-600'
-                        >
-                          <Heart className='mr-2 h-4 w-4' />
-                          Send gratitude
-                        </DropdownMenuItem>
+                        {/* Determine if manager email is set */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="w-full">
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  if (hasManagerEmail) {
+                                    setGratitudeModal({ isOpen: true, action });
+                                  }
+                                }}
+                                className={`${hasManagerEmail ? 'text-pink-600' : 'text-pink-300 cursor-not-allowed'}`}
+                                disabled={!hasManagerEmail}
+                              >
+                                <Heart className='mr-2 h-4 w-4' />
+                                Send gratitude
+                              </DropdownMenuItem>
+                            </div>
+                          </TooltipTrigger>
+                          {!hasManagerEmail && (
+                            <TooltipContent className='p-2 bg-black text-white rounded'>
+                              Manager's email is required to send gratitude
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
                       </>
                     )}
                   </DropdownMenuContent>
