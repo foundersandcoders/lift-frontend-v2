@@ -9,7 +9,7 @@ import {
 import StatementList from '../../features/statements/components/StatementList';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { Button } from '../../components/ui/button';
-import { Plus, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
 import PrivacyModal from '../../components/modals/PrivacyModal';
@@ -54,35 +54,29 @@ const MainPage: React.FC = () => {
               ? `${username} would like to share with ${managerName}`
               : `${username}'s statements for sharing`}
           </h1>
-
-          <Button
-            onClick={handleNewStatement}
-            variant='pink'
-            className='flex items-center px-3 h-10 shadow-sm whitespace-nowrap self-start'
-          >
-            <Plus className='w-5 h-5 mr-1 flex-shrink-0' />
-            <span>Add statement</span>
-          </Button>
         </div>
       </div>
 
       <div className='container mx-auto px-4 flex-grow'>
-        <StatementList username={username} />
+        <StatementList
+          username={username}
+          onAddCustomStatement={handleNewStatement}
+        />
       </div>
-      
+
       {/* Footer with privacy links */}
-      <footer className="mt-auto pt-6 pb-4 bg-gray-50 border-t border-gray-200">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row justify-center items-center text-xs text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4">
-            <button 
+      <footer className='mt-auto pt-6 pb-4 bg-gray-50 border-t border-gray-200'>
+        <div className='container mx-auto px-4'>
+          <div className='flex flex-col sm:flex-row justify-center items-center text-xs text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4'>
+            <button
               onClick={() => setIsPrivacyModalOpen(true)}
-              className="hover:text-brand-pink hover:underline"
+              className='hover:text-brand-pink hover:underline'
             >
               Privacy Policy
             </button>
-            <button 
+            <button
               onClick={() => setIsTermsModalOpen(true)}
-              className="hover:text-brand-pink hover:underline"
+              className='hover:text-brand-pink hover:underline'
             >
               Terms of Use
             </button>
@@ -139,12 +133,12 @@ const MainPage: React.FC = () => {
       {isShareModalOpen && (
         <ShareEmailModal onClose={() => setIsShareModalOpen(false)} />
       )}
-      
+
       {/* Conditionally render the privacy modal */}
       {isPrivacyModalOpen && (
         <PrivacyModal onClose={() => setIsPrivacyModalOpen(false)} />
       )}
-      
+
       {/* Conditionally render the terms modal */}
       {isTermsModalOpen && (
         <TermsModal onClose={() => setIsTermsModalOpen(false)} />

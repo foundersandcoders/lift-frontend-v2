@@ -13,7 +13,8 @@ import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
 import { updateEntry } from '../api/entriesApi';
 import { EditStatementModal } from '../../wizard/components/EditStatementModal';
-import { BellOff, ChevronUp, ChevronDown } from 'lucide-react';
+import { BellOff, ChevronUp, ChevronDown, Plus } from 'lucide-react';
+import { Button } from '../../../components/ui/button';
 
 // Helper function to normalize category IDs for consistent comparison
 const normalizeCategoryIdForGrouping = (id: string): string => {
@@ -58,7 +59,15 @@ const groupStatementsByCategory = (statements: Entry[]) => {
   }, {});
 };
 
-const StatementList: React.FC<{ username: string }> = ({ username }) => {
+interface StatementListProps {
+  username: string;
+  onAddCustomStatement?: () => void;
+}
+
+const StatementList: React.FC<StatementListProps> = ({ 
+  username,
+  onAddCustomStatement 
+}) => {
   const { data, setData } = useEntries();
   const { entries } = data;
 
@@ -540,6 +549,26 @@ const StatementList: React.FC<{ username: string }> = ({ username }) => {
         
         {/* Snoozed sections */}
         {renderSnoozedQuestionsSection()}
+        
+        {/* Add custom statement section */}
+        {onAddCustomStatement && (
+          <div className="mt-8 border-t pt-8 text-center">
+            <div className="max-w-md mx-auto">
+              <h3 className="text-lg font-medium text-gray-700 mb-2">Want to add your own statement?</h3>
+              <p className="text-gray-500 mb-4">
+                Create a custom statement to add anything that's not covered by the questions above.
+              </p>
+              <Button
+                onClick={onAddCustomStatement}
+                variant="pink"
+                className="flex items-center px-6 py-2 mx-auto shadow-sm"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                <span>Add custom statement</span>
+              </Button>
+            </div>
+          </div>
+        )}
         
         <ConfirmationDialog
           isOpen={deleteConfirmation.isOpen}
