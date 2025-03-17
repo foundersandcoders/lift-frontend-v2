@@ -1,4 +1,4 @@
-import React, { useReducer, ReactNode } from 'react';
+import React, { useReducer, ReactNode, useEffect } from 'react';
 import {
   EntriesContext,
   EntriesContextType,
@@ -20,18 +20,40 @@ const EntriesReducer = (
       return { ...data, entries: action.payload };
     case 'ADD_ENTRY':
       return { ...data, entries: [...data.entries, action.payload] };
-    case 'UPDATE_ENTRY':
-      return {
+    case 'UPDATE_ENTRY': {
+      const result = {
         ...data,
-        entries: data.entries.map((entry) =>
-          entry.id === action.payload.id ? action.payload : entry
-        ),
+        entries: data.entries.map((entry) => {
+          if (entry.id === action.payload.id) {
+            return action.payload;
+          }
+          return entry;
+        }),
       };
+      
+      return result;
+    }
     case 'DELETE_ENTRY':
       return {
         ...data,
         entries: data.entries.filter((entry) => entry.id !== action.payload),
       };
+    case 'SET_ORIGINAL_CATEGORY':
+      return {
+        ...data,
+        originalCategories: {
+          ...data.originalCategories,
+          [action.payload.statementId]: action.payload.category
+        }
+      };
+    case 'CLEAR_ORIGINAL_CATEGORY': {
+      const updatedCategories = { ...data.originalCategories };
+      delete updatedCategories[action.payload];
+      return {
+        ...data,
+        originalCategories: updatedCategories
+      };
+    }
     default:
       return data;
   }
@@ -39,6 +61,16 @@ const EntriesReducer = (
 
 interface EntriesProviderProps {
   children: ReactNode;
+}
+
+// Define the shape of the CustomEvent for auth state changes
+interface AuthStateChangedEvent extends CustomEvent {
+  detail: {
+    user?: {
+      username?: string;
+      email?: string;
+    };
+  };
 }
 
 export const EntriesProvider: React.FC<EntriesProviderProps> = ({
@@ -49,7 +81,34 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
     username: '',
     managerName: '',
     managerEmail: '',
+    originalCategories: {} // Initialize the originalCategories store
   });
+
+  // Listen for auth state changes
+  useEffect(() => {
+    // Handler for auth state changes
+    const handleAuthStateChange = (event: AuthStateChangedEvent) => {
+      // If we have a user object with a username
+      if (event.detail?.user?.username) {
+        // Update username from auth state - ALWAYS update, don't check if empty
+        setData({ type: 'SET_USERNAME', payload: event.detail.user.username });
+      }
+      
+      // If we have a user object with an email
+      if (event.detail?.user?.email) {
+        // Update manager email from auth state - ALWAYS update, don't check if empty
+        setData({ type: 'SET_MANAGER_EMAIL', payload: event.detail.user.email });
+      }
+    };
+    
+    // Listen for the auth state change event
+    window.addEventListener('authStateChanged', handleAuthStateChange as unknown as EventListener);
+    
+    // Clean up
+    return () => {
+      window.removeEventListener('authStateChanged', handleAuthStateChange as unknown as EventListener);
+    };
+  }, []);
 
   return (
     <EntriesContext.Provider value={{ data, setData }}>

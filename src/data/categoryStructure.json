@@ -24,7 +24,7 @@
             "id": "support_assistance",
             "name": "Support & Assistance",
             "displayName": "Support & Assistance",
-            "color": "#34495e",
+            "color": "#34495f",
             "icon": "🤝",
             "children": [
               {

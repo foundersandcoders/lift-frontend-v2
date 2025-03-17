@@ -61,7 +61,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { user, error } = await getCurrentUser();
         
         if (user) {
+          console.log('AuthProvider: User found during checkAuthStatus', user);
           dispatch({ type: 'AUTH_SUCCESS', payload: user });
+          
+          // Dispatch a custom event for EntriesProvider to listen to
+          window.dispatchEvent(new CustomEvent('authStateChanged', { 
+            detail: { user }
+          }));
+          console.log('AuthProvider: Dispatched authStateChanged event with user:', user);
         } else {
           dispatch({ type: 'AUTH_FAILURE', payload: error || 'No user found' });
         }
@@ -126,6 +133,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (result.success && result.user) {
       dispatch({ type: 'AUTH_SUCCESS', payload: result.user });
+      
+      // Dispatch event for EntriesProvider
+      window.dispatchEvent(new CustomEvent('authStateChanged', { 
+        detail: { user: result.user }
+      }));
+      
       return { success: true };
     } else {
       dispatch({ 

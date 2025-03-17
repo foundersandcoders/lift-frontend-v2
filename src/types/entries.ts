@@ -11,6 +11,9 @@ export interface Action {
   byDate: string;
   action: string;
   completed: boolean;
+  gratitudeSent?: boolean;
+  gratitudeMessage?: string;
+  gratitudeSentDate?: string;
 }
 
 export interface Entry {
@@ -22,6 +25,8 @@ export interface Entry {
   category: string;
   presetId?: string;
   isResolved?: boolean;
+  _needsScroll?: boolean; // Flag to indicate if this entry needs to be scrolled into view
+  _updateTimestamp?: number; // Optional timestamp for tracking updates
 }
 
 export interface Category {

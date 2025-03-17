@@ -15,11 +15,11 @@ export default {
       },
     },
     screens: {
-      'xs': '480px',
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
+      xs: '480px',
+      sm: '480px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
       '2xl': '1536px',
     },
     extend: {
@@ -100,10 +100,10 @@ export default {
       keyframes: {
         'accordion-down': {
           from: { height: 0 },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 'var(--accordion-content-height, auto)' },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
+          from: { height: 'var(--accordion-content-height, auto)' },
           to: { height: 0 },
         },
       },
