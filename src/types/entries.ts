@@ -11,9 +11,11 @@ export interface Action {
   byDate: string;
   action: string;
   completed: boolean;
-  gratitudeSent?: boolean;
-  gratitudeMessage?: string;
-  gratitudeSentDate?: string;
+  gratitude?: {
+    sent?: boolean;
+    message?: string;
+    sentDate?: string;
+  };
 }
 
 export interface Entry {
@@ -44,7 +46,7 @@ export interface Verb {
   popularity: number;
   categories: string[];
   color: string;
-  presentTenseForm?: string;  // Optional field for verbs that need explicit present tense form
+  presentTenseForm?: string; // Optional field for verbs that need explicit present tense form
 }
 
 export interface SubjectData {
