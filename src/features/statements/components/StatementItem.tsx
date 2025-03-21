@@ -804,9 +804,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 const action = updatedActions[actionIndex];
                 const updatedAction = {
                   ...action,
-                  gratitudeSent: true,
-                  gratitudeMessage: message,
-                  gratitudeSentDate: new Date().toISOString()
+                  gratitude: {
+                    sent: true,
+                    message: message,
+                    sentDate: new Date().toISOString()
+                  }
                 };
                 
                 // Replace the action in the array

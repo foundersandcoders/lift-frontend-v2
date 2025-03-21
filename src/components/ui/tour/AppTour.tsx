@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import './tour.css'; // Import our custom tour styles
 
 // Define a type for our tour steps
 interface TourStep {
@@ -8,7 +9,8 @@ interface TourStep {
   popover: {
     title: string;
     description: string;
-    position?: string;
+    side?: "top" | "right" | "bottom" | "left";
+    align?: "start" | "center" | "end";
   };
 }
 
@@ -19,33 +21,40 @@ const tourSteps: TourStep[] = [
     popover: {
       title: 'Welcome to Beacons!',
       description: 'This is where all your statements will appear.',
-      position: 'bottom'
-    }
+      side: 'right',
+      align: 'start'
+    },
   },
   {
     element: '.category-section',
     popover: {
       title: 'Categories',
-      description: 'Statements are organized by categories to help you navigate them easily.',
-      position: 'bottom'
-    }
+      description:
+        'Statements are organized by categories to help you navigate them easily.',
+      side: 'right',
+      align: 'start'
+    },
   },
   {
     element: '.question-card',
     popover: {
       title: 'Questions',
-      description: 'These are questions that will help you create meaningful statements.',
-      position: 'top'
-    }
+      description:
+        'These are questions that will help you create meaningful statements.',
+      side: 'right',
+      align: 'start'
+    },
   },
   {
     element: '.add-custom-button',
     popover: {
       title: 'Add Custom Statements',
-      description: 'You can also create your own custom statements from scratch!',
-      position: 'top'
-    }
-  }
+      description:
+        'You can also create your own custom statements from scratch!',
+      side: 'left',
+      align: 'start'
+    },
+  },
 ];
 
 // Create a custom hook to manage the tour
@@ -67,6 +76,10 @@ export const useTour = () => {
       nextBtnText: 'Next',
       prevBtnText: 'Previous',
       doneBtnText: 'Done',
+      stagePadding: 10,       // Add stage padding around highlighted element
+      popoverOffset: 15,      // Distance between popover and element
+      smoothScroll: true,     // Use built-in smooth scrolling
+      
       onDestroyed: () => {
         // Mark tour as completed when finished
         localStorage.setItem('tour_completed', 'true');
@@ -101,8 +114,8 @@ export const TourButton: React.FC = () => {
   return (
     <button
       onClick={startTour}
-      className="ml-4 text-white hover:bg-pink-600 transition-colors border-2 border-white rounded-full px-3 py-1"
-      aria-label="Start Tour"
+      className='ml-4 text-white hover:bg-pink-600 transition-colors border-2 border-white rounded-full px-3 py-1'
+      aria-label='Start Tour'
     >
       Tour
     </button>

@@ -1,0 +1,22 @@
+/* Custom styles for driver.js tour */
+.driver-popover {
+  max-width: 300px;
+}
+
+/* Style the next button with app's pink color theme */
+.driver-popover-next-btn {
+  background-color: #ec4899;
+}
+
+.driver-popover-next-btn:hover {
+  background-color: #db2777;
+}
+
+/* Fix for z-index to ensure popover is above sticky header */
+.driver-active {
+  z-index: 1000;
+}
+
+.driver-active .driver-highlighted-element {
+  z-index: 1001;
+}
