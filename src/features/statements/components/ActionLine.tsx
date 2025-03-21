@@ -143,7 +143,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
                 )}
 
                 {/* Show gratitude sent icon with tooltip */}
-                {action.gratitudeSent && (
+                {action.gratitude?.sent && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className='relative inline-flex items-center cursor-pointer'>
@@ -158,14 +158,14 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     <TooltipContent className='p-2 bg-black text-white rounded max-w-xs'>
                       <div className="text-center">
                         <p className="font-semibold mb-1">Gratitude Sent</p>
-                        {action.gratitudeSentDate && (
+                        {action.gratitude?.sentDate && (
                           <p className="text-xs opacity-80">
-                            {new Date(action.gratitudeSentDate).toLocaleDateString()}
+                            {new Date(action.gratitude.sentDate).toLocaleDateString()}
                           </p>
                         )}
-                        {action.gratitudeMessage && (
+                        {action.gratitude?.message && (
                           <p className="text-xs italic mt-1 max-w-xs break-words">
-                            "{action.gratitudeMessage}"
+                            "{action.gratitude.message}"
                           </p>
                         )}
                       </div>
@@ -217,7 +217,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     </DropdownMenuItem>
 
                     {/* Only hide gratitude option for actions that already had gratitude sent */}
-                    {!action.gratitudeSent && (
+                    {!action.gratitude?.sent && (
                       <>
                         <DropdownMenuSeparator />
                         {/* Determine if manager email is set */}

@@ -24,7 +24,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   };
 
   return (
-    <div className='relative'>
+    <div className='relative question-card'>
       {/* Question Card */}
       <div 
         onClick={presetQuestion.isSnoozed ? () => {} : () => onSelect(presetQuestion)} 

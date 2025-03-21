@@ -45,9 +45,11 @@ const mockMarkGratitudeSent = async (statementId: string, actionId: string, mess
     byDate: '',
     action: `Mock action for statement ${statementId}`,
     completed: true,
-    gratitudeSent: true,
-    gratitudeMessage: message,
-    gratitudeSentDate: new Date().toISOString()
+    gratitude: {
+      sent: true,
+      message: message,
+      sentDate: new Date().toISOString()
+    }
   };
 };
 
