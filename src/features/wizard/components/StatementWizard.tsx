@@ -343,8 +343,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         </div>
 
         {/* Divider to separate preview from wizard content */}
-        <div className='w-full border-t border-gray-200 my-3 relative'>
-          <span className='absolute left-0 right-0 text-center bg-white text-xs text-gray-400 px-2 -top-2 mx-auto w-fit'>
+        <div className='w-full border-t border-black my-3 relative'>
+          <span className='absolute left-0 right-0 text-center bg-white text-xs text-black px-2 -top-2 mx-auto w-fit'>
             Statement Preview
           </span>
         </div>
