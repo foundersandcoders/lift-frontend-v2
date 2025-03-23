@@ -145,7 +145,6 @@ const ActionLine: React.FC<ActionLineProps> = ({
 
                 {/* Right side holds icons and dropdown menu. */}
                 <div className='flex items-center space-x-4 ml-2 flex-shrink-0'>
-
                   {/* Show gratitude sent icon with tooltip */}
                   {action.gratitude?.sent && (
                     <Tooltip>
@@ -187,13 +186,13 @@ const ActionLine: React.FC<ActionLineProps> = ({
                   )}
                 </div>
               </div>
-              
+
               {/* Mobile layout (smaller than xs breakpoint) - two rows if due date exists */}
               <div className='xs:hidden w-full'>
                 {/* First row: action text */}
                 <div className='flex items-center'>
                   <span className='flex-1 mr-2'>{action.action}</span>
-                  
+
                   {/* Status icons */}
                   <div className='flex items-center space-x-1 flex-shrink-0'>
                     {action.gratitude?.sent && (
@@ -201,7 +200,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     )}
                   </div>
                 </div>
-                
+
                 {/* Second row: due date if exists */}
                 {dueDateText && (
                   <div className='flex justify-end mt-1 pt-1 border-t border-gray-100'>
@@ -211,7 +210,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
                   </div>
                 )}
               </div>
-              
+
               {/* Dropdown menu for both layouts - aligned to top */}
               <div className='ml-2 flex-shrink-0 self-start mt-1'>
                 <DropdownMenu>
@@ -254,34 +253,21 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     {!action.gratitude?.sent && (
                       <>
                         <DropdownMenuSeparator />
-                        {/* Determine if manager email is set */}
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className='w-full'>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  if (hasManagerEmail) {
-                                    setGratitudeModal({ isOpen: true, action });
-                                  }
-                                }}
-                                className={`${
-                                  hasManagerEmail
-                                    ? 'text-pink-600'
-                                    : 'text-pink-300 cursor-not-allowed'
-                                }`}
-                                disabled={!hasManagerEmail}
-                              >
-                                <Heart className='mr-2 h-4 w-4' />
-                                Send gratitude
-                              </DropdownMenuItem>
-                            </div>
-                          </TooltipTrigger>
-                          {!hasManagerEmail && (
-                            <TooltipContent className='p-2 bg-black text-white rounded'>
-                              Manager's email is required to send gratitude
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
+                        <div className="w-full">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              if (hasManagerEmail) {
+                                setGratitudeModal({ isOpen: true, action });
+                              }
+                            }}
+                            className={hasManagerEmail ? "text-pink-600" : "text-pink-300 cursor-not-allowed"}
+                            disabled={!hasManagerEmail}
+                            title={!hasManagerEmail ? "Manager's email is required to send gratitude" : ""}
+                          >
+                            <Heart className='mr-2 h-4 w-4' />
+                            Send gratitude
+                          </DropdownMenuItem>
+                        </div>
                       </>
                     )}
                   </DropdownMenuContent>

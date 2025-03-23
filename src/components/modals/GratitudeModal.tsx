@@ -61,10 +61,10 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
       };
 
       // Check if we're in mock mode
-      const isMockMode = 
-        typeof import.meta.env.VITE_MOCK_EMAIL_SENDING === 'undefined' || 
+      const isMockMode =
+        typeof import.meta.env.VITE_MOCK_EMAIL_SENDING === 'undefined' ||
         import.meta.env.VITE_MOCK_EMAIL_SENDING === 'true';
-      
+
       try {
         // Try to send gratitude via API
         await sendGratitude(gratitudeRequest);
@@ -141,7 +141,6 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
 
             <div className='mb-6 p-4 bg-white rounded-md shadow-sm border border-pink-100'>
               <h3 className='font-semibold text-gray-700 mb-2 flex items-center'>
-                <span className='mr-2'>→</span>
                 Action
               </h3>
               <p className='text-gray-600'>{action.action}</p>
