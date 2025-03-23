@@ -117,7 +117,7 @@ const StatementList: React.FC<StatementListProps> = ({
   const handleToggleResolved = (statementId: string) => {
     const stmt = entries.find((s) => s.id === statementId);
     if (!stmt) return;
-    const updated = { ...stmt, isResolved: !stmt.isResolved };
+    const updated = { ...stmt, isArchived: !stmt.isArchived };
     setData({ type: 'UPDATE_ENTRY', payload: updated });
     updateEntry(updated);
   };

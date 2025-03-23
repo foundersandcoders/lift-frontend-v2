@@ -5,14 +5,13 @@ import {
   Trash2,
   Edit2,
   Save,
-  MoreVertical,
   RotateCcw,
-  CheckCircle2,
   Archive,
   ArchiveRestore,
   MailPlus,
   MailX,
   PenOff,
+  Settings,
 } from 'lucide-react';
 import type { Entry } from '@/types/entries';
 import {
@@ -663,14 +662,14 @@ const StatementItem: React.FC<StatementItemProps> = ({
     <div
       ref={itemRef}
       id={`statement-${statement.id}`}
-      className={`border rounded-md p-3 space-y-2 relative ${
-        statement.isResolved
+      className={`border rounded-md p-1 md:p-3 space-y-2 relative ${
+        statement.isArchived
           ? 'bg-gray-100 border-gray-300 opacity-80'
           : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
       {/* Archived badge - positioned in top right corner */}
-      {statement.isResolved && (
+      {statement.isArchived && (
         <span className='absolute -top-2 -right-2 bg-gray-200 text-gray-600 text-xs gap-1 px-2 py-0.5 rounded-full flex'>
           <Archive size={14} />
           Archived
@@ -685,7 +684,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <span
                 className={`inline-flex items-center justify-center ${
                   statement.isPublic ? 'text-green-500' : 'text-red-500'
-                } ${statement.isResolved ? 'opacity-70' : ''}`}
+                } ${statement.isArchived ? 'opacity-70' : ''}`}
               >
                 {statement.isPublic ? (
                   <MailPlus size={16} />
@@ -703,7 +702,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
           {/* Statement text with archived styling if needed */}
           <div className='flex flex-col'>
-            <span className={statement.isResolved ? 'text-gray-500' : ''}>
+            <span className={statement.isArchived ? 'text-gray-500' : ''}>
               {`${statement.atoms.subject} ${getVerbName(
                 statement.atoms.verb
               )} ${statement.atoms.object}`}
@@ -711,7 +710,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
         <div className='flex items-center space-x-4'>
-          {statement.isResolved && (
+          {/* {statement.isArchived && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className='inline-flex items-center justify-center text-green-600'>
@@ -719,10 +718,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 </span>
               </TooltipTrigger>
               <TooltipContent className='p-2 bg-black text-white rounded'>
-                This statement is resolved.
+                This statement is archived.
               </TooltipContent>
             </Tooltip>
-          )}
+          )} */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
             className='cursor-pointer'
@@ -734,8 +733,11 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button onClick={(e) => e.stopPropagation()}>
-                <MoreVertical size={18} className='text-gray-500' />
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors'
+              >
+                <Settings size={18} className='text-gray-600' />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
@@ -751,7 +753,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 Delete
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
-                {statement.isResolved ? (
+                {statement.isArchived ? (
                   <>
                     <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
                     Unarchive
@@ -797,8 +799,10 @@ const StatementItem: React.FC<StatementItemProps> = ({
               // Create a copy of the entire statement
               const statementToUpdate = { ...statement };
               const updatedActions = [...(statementToUpdate.actions || [])];
-              const actionIndex = updatedActions.findIndex(a => a.id === actionId);
-              
+              const actionIndex = updatedActions.findIndex(
+                (a) => a.id === actionId
+              );
+
               if (actionIndex !== -1) {
                 // Create an updated action with gratitude information
                 const action = updatedActions[actionIndex];
@@ -807,24 +811,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   gratitude: {
                     sent: true,
                     message: message,
-                    sentDate: new Date().toISOString()
-                  }
+                    sentDate: new Date().toISOString(),
+                  },
                 };
-                
+
                 // Replace the action in the array
                 updatedActions[actionIndex] = updatedAction;
-                
+
                 // Update the statement with the updated actions
                 statementToUpdate.actions = updatedActions;
-                
+
                 // Call onEditAction for UI updates (but it won't save the gratitude fields)
                 if (onEditAction) {
                   onEditAction(statement.id, actionId, {
                     text: action.action,
-                    dueDate: action.byDate
+                    dueDate: action.byDate,
                   });
                 }
-                
+
                 // Call onLocalSave to save the entire updated statement with gratitude info
                 if (onLocalSave) {
                   onLocalSave(statementToUpdate);

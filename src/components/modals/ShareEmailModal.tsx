@@ -18,9 +18,9 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [sendSuccess, setSendSuccess] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
-  // Only include public statements that are not resolved
+  // Only include public statements that are not archived
   const publicStatements = data.entries.filter(
-    (entry) => entry.isPublic && !entry.isResolved
+    (entry) => entry.isPublic && !entry.isArchived
   );
 
   const generateEmailHtml = () => {
@@ -145,7 +145,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
 
           <DialogDescription className='mt-0 text-center'>
-            Below are your public, unresolved statements
+            Below are your public, unarchived statements
           </DialogDescription>
 
           <div className='text-center mb-6'>
@@ -225,7 +225,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               ))
             ) : (
               <div className='text-gray-600 text-center p-8 bg-white border border-gray-200 rounded-sm'>
-                No public unresolved statements available.
+                No public unarchived statements available.
               </div>
             )}
           </div>

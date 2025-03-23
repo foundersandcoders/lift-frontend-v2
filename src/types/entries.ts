@@ -26,7 +26,7 @@ export interface Entry {
   actions?: Action[];
   category: string;
   presetId?: string;
-  isResolved?: boolean;
+  isArchived?: boolean;
   _needsScroll?: boolean; // Flag to indicate if this entry needs to be scrolled into view
   _updateTimestamp?: number; // Optional timestamp for tracking updates
 }
