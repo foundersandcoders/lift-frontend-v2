@@ -20,12 +20,12 @@ import { Button } from '../../../components/ui/button';
 const normalizeCategoryIdForGrouping = (id: string): string => {
   // Convert to lowercase and handle special cases
   const normalized = id ? id.toLowerCase() : '';
-  
+
   // Handle variations of "uncategorized"
   if (['uncategorized', 'uncategorised'].includes(normalized)) {
     return 'uncategorized';
   }
-  
+
   return normalized;
 };
 
@@ -33,9 +33,9 @@ const normalizeCategoryIdForGrouping = (id: string): string => {
 const mapToPredefinedCategoryId = (categoryId: string): string => {
   const normalized = normalizeCategoryIdForGrouping(categoryId);
   const predefinedCategory = statementsCategories.categories.find(
-    c => normalizeCategoryIdForGrouping(c.id) === normalized
+    (c) => normalizeCategoryIdForGrouping(c.id) === normalized
   );
-  
+
   return predefinedCategory ? predefinedCategory.id : categoryId;
 };
 
@@ -52,7 +52,9 @@ const groupQuestionsByCategory = (questions: SetQuestion[]) => {
 const groupStatementsByCategory = (statements: Entry[]) => {
   return statements.reduce<Record<string, Entry[]>>((acc, statement) => {
     // Use the predefined category ID if it exists, otherwise use the normalized ID
-    const cat = mapToPredefinedCategoryId(statement.category || 'Uncategorized');
+    const cat = mapToPredefinedCategoryId(
+      statement.category || 'Uncategorized'
+    );
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(statement);
     return acc;
@@ -64,16 +66,16 @@ interface StatementListProps {
   onAddCustomStatement?: () => void;
 }
 
-const StatementList: React.FC<StatementListProps> = ({ 
+const StatementList: React.FC<StatementListProps> = ({
   username,
-  onAddCustomStatement 
+  onAddCustomStatement,
 }) => {
   const { data, setData } = useEntries();
   const { entries } = data;
 
   const [usedPresetQuestions, setUsedPresetQuestions] = useState<string[]>([]);
   const { questions, setQuestions } = useQuestions();
-  
+
   // Get available preset questions (not used and not in snoozed section)
   const presetQuestions = questions.filter(
     (q) => !usedPresetQuestions.includes(q.id) && !q.isSnoozed
@@ -100,12 +102,16 @@ const StatementList: React.FC<StatementListProps> = ({
     statement: Entry;
     editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
   } | null>(null);
-  
+
   // Keep a backup of the original entries when entering edit mode
-  const [originalEntries, setOriginalEntries] = useState<{[id: string]: Entry}>({});
-  
+  const [originalEntries, setOriginalEntries] = useState<{
+    [id: string]: Entry;
+  }>({});
+
   // Store original categories to compare when statements are edited
-  const [originalCategories, setOriginalCategories] = useState<{[id: string]: string}>({});
+  const [originalCategories, setOriginalCategories] = useState<{
+    [id: string]: string;
+  }>({});
 
   // Handle toggling the resolved state (archive/unarchive)
   const handleToggleResolved = (statementId: string) => {
@@ -115,23 +121,22 @@ const StatementList: React.FC<StatementListProps> = ({
     setData({ type: 'UPDATE_ENTRY', payload: updated });
     updateEntry(updated);
   };
-  
-  
+
   // Handle toggling the snoozed state for questions
   const handleToggleQuestionSnooze = (questionId: string) => {
     // Find the question in the questions array
-    const questionToToggle = questions.find(q => q.id === questionId);
+    const questionToToggle = questions.find((q) => q.id === questionId);
     if (!questionToToggle) return;
-    
+
     // Create a new array with the updated question
-    const updatedQuestions = questions.map(q => {
+    const updatedQuestions = questions.map((q) => {
       if (q.id === questionId) {
         if (q.isSnoozed) {
           // Unsnooze - restore to original category if available
           return {
             ...q,
             isSnoozed: false,
-            category: q.originalCategory || q.category
+            category: q.originalCategory || q.category,
           };
         } else {
           // Snooze - store original category and move to snoozed
@@ -139,13 +144,13 @@ const StatementList: React.FC<StatementListProps> = ({
             ...q,
             isSnoozed: true,
             originalCategory: q.category,
-            category: 'snoozed'
+            category: 'snoozed',
           };
         }
       }
       return q;
     });
-    
+
     // Update the questions in context
     setQuestions(updatedQuestions);
   };
@@ -171,24 +176,24 @@ const StatementList: React.FC<StatementListProps> = ({
     try {
       // Call the backend API with the updated entry
       await updateEntry(updatedEntry);
-      
+
       // Update the context with the new entry
       setData({ type: 'UPDATE_ENTRY', payload: updatedEntry });
-      
+
       // Remove from originalEntries since we've saved
-      setOriginalEntries(prev => {
-        const newEntries = {...prev};
+      setOriginalEntries((prev) => {
+        const newEntries = { ...prev };
         delete newEntries[updatedEntry.id];
         return newEntries;
       });
-      
+
       // Remove from originalCategories
-      setOriginalCategories(prev => {
-        const newCategories = {...prev};
+      setOriginalCategories((prev) => {
+        const newCategories = { ...prev };
         delete newCategories[updatedEntry.id];
         return newCategories;
       });
-      
+
       // Exit editing mode for this statement
       setEditingStatementId(null);
     } catch (error) {
@@ -237,21 +242,21 @@ const StatementList: React.FC<StatementListProps> = ({
   // Single edit option: when user clicks "Edit" in the dropdown
   const handleEditClick = (statementId: string) => {
     // Store the original entry for possible reversion later
-    const entryToEdit = entries.find(e => e.id === statementId);
+    const entryToEdit = entries.find((e) => e.id === statementId);
     if (entryToEdit) {
       // Store the full entry for restoring on cancel
-      setOriginalEntries(prev => ({
+      setOriginalEntries((prev) => ({
         ...prev,
-        [statementId]: JSON.parse(JSON.stringify(entryToEdit))
+        [statementId]: JSON.parse(JSON.stringify(entryToEdit)),
       }));
-      
+
       // Store the original category for change detection
-      setOriginalCategories(prev => ({
+      setOriginalCategories((prev) => ({
         ...prev,
-        [statementId]: entryToEdit.category || ''
+        [statementId]: entryToEdit.category || '',
       }));
     }
-    
+
     // Enable edit mode
     setEditingStatementId(statementId);
   };
@@ -345,44 +350,61 @@ const StatementList: React.FC<StatementListProps> = ({
   };
 
   // State for managing the visibility of the snoozed section - default to expanded
-  const [isSnoozedQuestionsSectionExpanded, setIsSnoozedQuestionsSectionExpanded] = useState(true);
-  
+  const [
+    isSnoozedQuestionsSectionExpanded,
+    setIsSnoozedQuestionsSectionExpanded,
+  ] = useState(true);
+
   // Move the hook call to the top level
   const { categoryCounts } = useAnsweredCountByCategory();
-  
+
   const renderCategorySection = (catId: string, catLabel: string) => {
     // Don't render the snoozed category in the normal flow
     if (catId === 'snoozed') return null;
-    
+
     const presetForCat = questionsByCategory[catId] || [];
     const statementsForCat = statementsByCategory[catId] || [];
     if (presetForCat.length === 0 && statementsForCat.length === 0) return null;
 
     // Normalize the category ID for consistent comparison
     const normalizedCatId = normalizeCategoryIdForGrouping(catId);
-    
+
     // We're now using a consistent styling regardless of category
-    
+
     // Use the pre-fetched category counts
-    const categoryStatus = categoryCounts[normalizedCatId] || { answered: 0, total: 0 };
-    const isComplete = categoryStatus.total > 0 && categoryStatus.answered === categoryStatus.total;
-    
-    
+    const categoryStatus = categoryCounts[normalizedCatId] || {
+      answered: 0,
+      total: 0,
+    };
+    const isComplete =
+      categoryStatus.total > 0 &&
+      categoryStatus.answered === categoryStatus.total;
+
     return (
       <div key={catId} className='mb-8 category-section'>
         {/* Folder Tab Design */}
         <div className={`relative z-10`}>
-          <div 
-            className={`inline-block px-4 py-2 rounded-t-lg ${isComplete ? 'bg-green-200 border-green-500' : 'bg-slate-100 border-slate-300'} border-t border-l border-r border-b-0`}
+          <div
+            className={`inline-block px-4 py-2 rounded-t-lg ${
+              isComplete
+                ? 'bg-green-200 border-green-500'
+                : 'bg-slate-100 border-slate-300'
+            } border-t border-l border-r border-b-0`}
           >
             <h3 className='text-lg font-semibold'>
               {formatCategoryName(catLabel)}
             </h3>
           </div>
         </div>
-        
+
         {/* Folder Content */}
-        <div className={`border rounded-tr-lg rounded-b-lg p-4 -mt-[1px] ${isComplete ? 'bg-white border-green-500' : 'bg-white border-slate-300'}`}>
+        <div
+          className={`border rounded-tr-lg rounded-b-lg p-4 -mt-[1px] ${
+            isComplete
+              ? 'bg-white border-green-500'
+              : 'bg-white border-slate-300'
+          }`}
+        >
           {presetForCat.length > 0 && (
             <ul className='space-y-2'>
               {presetForCat.map((presetQuestion) => (
@@ -413,24 +435,24 @@ const StatementList: React.FC<StatementListProps> = ({
                         // Restore the original entry from our backup
                         setData({
                           type: 'UPDATE_ENTRY',
-                          payload: originalEntries[statement.id]
+                          payload: originalEntries[statement.id],
                         });
-                        
+
                         // Remove from originalEntries and originalCategories
-                        setOriginalEntries(prev => {
-                          const newEntries = {...prev};
+                        setOriginalEntries((prev) => {
+                          const newEntries = { ...prev };
                           delete newEntries[statement.id];
                           return newEntries;
                         });
-                        
+
                         // Also clear from original categories
-                        setOriginalCategories(prev => {
-                          const newCategories = {...prev};
+                        setOriginalCategories((prev) => {
+                          const newCategories = { ...prev };
                           delete newCategories[statement.id];
                           return newCategories;
                         });
                       }
-                      
+
                       // Exit edit mode
                       setEditingStatementId(null);
                     }}
@@ -457,29 +479,44 @@ const StatementList: React.FC<StatementListProps> = ({
       </div>
     );
   };
-  
-  
+
   // Special renderer for the snoozed questions section
   const renderSnoozedQuestionsSection = () => {
     // Filter questions to get snoozed ones
-    const snoozedQuestions = questions.filter(q => q.isSnoozed);
+    const snoozedQuestions = questions.filter((q) => q.isSnoozed);
     if (snoozedQuestions.length === 0) return null;
-    
+
     return (
       <div className='mb-8 mt-4'>
         {/* New and improved Snoozed Questions section */}
-        <div className={`border rounded-lg overflow-hidden bg-white ${isSnoozedQuestionsSectionExpanded ? 'border-blue-300' : 'border-blue-200'}`}>
+        <div
+          className={`border rounded-lg overflow-hidden bg-white ${
+            isSnoozedQuestionsSectionExpanded
+              ? 'border-blue-300'
+              : 'border-blue-200'
+          }`}
+        >
           {/* Header/Tab that's always visible */}
-          <div 
-            className={`flex items-center justify-between px-4 py-3 bg-blue-100 cursor-pointer ${isSnoozedQuestionsSectionExpanded ? 'border-b border-blue-300' : ''}`}
-            onClick={() => setIsSnoozedQuestionsSectionExpanded(!isSnoozedQuestionsSectionExpanded)}
+          <div
+            className={`flex items-center justify-between px-4 py-3 bg-blue-100 cursor-pointer ${
+              isSnoozedQuestionsSectionExpanded
+                ? 'border-b border-blue-300'
+                : ''
+            }`}
+            onClick={() =>
+              setIsSnoozedQuestionsSectionExpanded(
+                !isSnoozedQuestionsSectionExpanded
+              )
+            }
           >
             <h3 className='text-lg font-semibold flex items-center text-blue-700'>
               <BellOff className='h-5 w-5 mr-2' />
               Snoozed Questions
             </h3>
             <div className='flex items-center'>
-              <span className="mr-2 text-blue-700 font-medium">({snoozedQuestions.length})</span>
+              <span className='mr-2 text-blue-700 font-medium'>
+                ({snoozedQuestions.length})
+              </span>
               {isSnoozedQuestionsSectionExpanded ? (
                 <ChevronUp className='h-5 w-5 text-blue-600' />
               ) : (
@@ -487,16 +524,18 @@ const StatementList: React.FC<StatementListProps> = ({
               )}
             </div>
           </div>
-          
+
           {/* Content section that appears/disappears */}
           {isSnoozedQuestionsSectionExpanded && (
-            <div className="p-4 bg-white">
+            <div className='p-4 bg-white'>
               <ul className='space-y-2'>
                 {snoozedQuestions.map((question) => (
                   <li key={`snoozed-${question.id}`}>
                     <QuestionCard
                       presetQuestion={question}
-                      onSelect={() => {/* Disabled for snoozed questions */}}
+                      onSelect={() => {
+                        /* Disabled for snoozed questions */
+                      }}
                       onToggleSnooze={handleToggleQuestionSnooze}
                     />
                   </li>
@@ -521,55 +560,69 @@ const StatementList: React.FC<StatementListProps> = ({
   // Helper function to find category name from ID
   const getCategoryName = (categoryId: string): string => {
     // First check if it's in our defined categories
-    const category = definedCategories.find(c => 
-      normalizeCategoryIdForGrouping(c.id) === normalizeCategoryIdForGrouping(categoryId)
+    const category = definedCategories.find(
+      (c) =>
+        normalizeCategoryIdForGrouping(c.id) ===
+        normalizeCategoryIdForGrouping(categoryId)
     );
-    
+
     if (category) {
       return category.name;
     }
-    
+
     // Check for uncategorized variations
-    if (['uncategorized', 'uncategorised'].includes(normalizeCategoryIdForGrouping(categoryId))) {
+    if (
+      ['uncategorized', 'uncategorised'].includes(
+        normalizeCategoryIdForGrouping(categoryId)
+      )
+    ) {
       return 'Uncategorized';
     }
-    
+
     // If not found, return the ID with formatting
     return formatCategoryName(categoryId);
   };
 
   return (
     <>
-      <div id="mainContentArea" className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
+      <div
+        id='mainContentArea'
+        className='mt-2 md:mt-8 bg-white rounded-xl shadow-lg p-3 md:p-6 w-full'
+      >
         {/* Regular categories */}
         {definedCategories.map((cat) =>
           renderCategorySection(cat.id, cat.name)
         )}
-        {extraCategoryIds.map((catId) => renderCategorySection(catId, getCategoryName(catId)))}
-        
+        {extraCategoryIds.map((catId) =>
+          renderCategorySection(catId, getCategoryName(catId))
+        )}
+
         {/* Snoozed sections */}
         {renderSnoozedQuestionsSection()}
-        
+
         {/* Add custom statement section */}
         {onAddCustomStatement && (
-          <div className="mt-8 border-t pt-8 text-center">
-            <div className="max-w-md mx-auto">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Want to add your own statement?</h3>
-              <p className="text-gray-500 mb-4">
-                Create a custom statement to add anything that's not covered by the questions above.
+          <div className='mt-8 border-t pt-8 text-center'>
+            <div className='max-w-md mx-auto'>
+              <h3 className='text-lg font-medium text-gray-700 mb-2'>
+                Want to add your own statement?
+              </h3>
+              <p className='text-gray-500 mb-4'>
+                Create a custom statement to add anything that's not covered by
+                the questions above.
               </p>
               <Button
                 onClick={onAddCustomStatement}
-                variant="pink"
-                className="flex items-center px-6 py-2 mx-auto shadow-sm add-custom-button"
+                variant='pink'
+                className='flex items-center px-6 py-2 mx-auto shadow-sm add-custom-button'
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className='w-5 h-5 mr-2' />
                 <span>Add custom statement</span>
               </Button>
             </div>
           </div>
         )}
-        
+
         <ConfirmationDialog
           isOpen={deleteConfirmation.isOpen}
           onClose={handleDeleteCancel}
@@ -592,22 +645,27 @@ const StatementList: React.FC<StatementListProps> = ({
           editPart={editModalData.editPart}
           username={username}
           onUpdate={(updatedStatement) => {
-            console.log("====== MODAL UPDATE SEQUENCE START ======");
-            console.log("1. EditStatementModal returned updated statement:", updatedStatement);
-            console.log("2. Current editing state:", { 
+            console.log('====== MODAL UPDATE SEQUENCE START ======');
+            console.log(
+              '1. EditStatementModal returned updated statement:',
+              updatedStatement
+            );
+            console.log('2. Current editing state:', {
               isEditing: editingStatementId === updatedStatement.id,
-              editingStatementId, 
-              updatedStatementId: updatedStatement.id 
+              editingStatementId,
+              updatedStatementId: updatedStatement.id,
             });
-            
+
             // If we're in editing mode for this statement:
             if (editingStatementId === updatedStatement.id) {
-              console.log("3. EDIT MODE PATH: Will update UI without saving to backend");
-              console.log("4. Original entries stored:", originalEntries);
-              
+              console.log(
+                '3. EDIT MODE PATH: Will update UI without saving to backend'
+              );
+              console.log('4. Original entries stored:', originalEntries);
+
               // In edit mode, we need to update the data without saving to backend yet
               // But we must ensure the original values in StatementItem aren't updated
-              
+
               // Create a completely isolated copy with a unique timestamp
               const markedEntry = {
                 ...JSON.parse(JSON.stringify(updatedStatement)),
@@ -615,44 +673,51 @@ const StatementList: React.FC<StatementListProps> = ({
                 _updateTimestamp: Date.now(),
                 _forceUpdate: Math.random().toString(),
               };
-              
-              console.log("5. Will dispatch UPDATE_ENTRY with:", markedEntry);
-              
+
+              console.log('5. Will dispatch UPDATE_ENTRY with:', markedEntry);
+
               // Before updating the global state, log the current statements
-              const existingEntry = entries.find(e => e.id === updatedStatement.id);
-              console.log("6. Current entries before update:", existingEntry);
-              
+              const existingEntry = entries.find(
+                (e) => e.id === updatedStatement.id
+              );
+              console.log('6. Current entries before update:', existingEntry);
+
               // Log potential category changes
-              console.log("CATEGORY CHANGE CHECK:", {
+              console.log('CATEGORY CHANGE CHECK:', {
                 existingCategory: existingEntry?.category,
                 newCategory: markedEntry.category,
                 changed: existingEntry?.category !== markedEntry.category,
-                equal: existingEntry?.category === markedEntry.category
+                equal: existingEntry?.category === markedEntry.category,
               });
-              
+
               // Update the UI with the new values
               setData({ type: 'UPDATE_ENTRY', payload: markedEntry });
-              
-              console.log("7. UPDATE_ENTRY action dispatched");
-              
+
+              console.log('7. UPDATE_ENTRY action dispatched');
+
               // Log what will happen next
-              console.log("8. This will trigger a re-render of StatementItem with:", {
-                statementId: updatedStatement.id,
-                isEditing: true,
-                newStatementCategory: markedEntry.category,
-                editingStatementId
-              });
+              console.log(
+                '8. This will trigger a re-render of StatementItem with:',
+                {
+                  statementId: updatedStatement.id,
+                  isEditing: true,
+                  newStatementCategory: markedEntry.category,
+                  editingStatementId,
+                }
+              );
             } else {
-              console.log("3. DIRECT SAVE PATH: Will update both UI and backend");
-              
+              console.log(
+                '3. DIRECT SAVE PATH: Will update both UI and backend'
+              );
+
               // If we're not in edit mode, save directly when modal is closed
               setData({ type: 'UPDATE_ENTRY', payload: updatedStatement });
               // Also update backend
               updateEntry(updatedStatement);
-              
-              console.log("4. Direct save completed");
+
+              console.log('4. Direct save completed');
             }
-            console.log("====== MODAL UPDATE SEQUENCE END ======");
+            console.log('====== MODAL UPDATE SEQUENCE END ======');
           }}
           onClose={() => setEditModalData(null)}
         />

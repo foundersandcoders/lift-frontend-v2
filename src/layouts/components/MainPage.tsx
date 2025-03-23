@@ -62,8 +62,8 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 flex flex-col'>
-      <div className='container mx-auto px-4 mb-6'>
+    <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-4 md:py-8 flex flex-col'>
+      <div className='container mx-auto px-4 mb-0'>
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
           <h1
