@@ -676,7 +676,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </span>
       )}
 
-      <div className='flex items-center justify-between'>
+      {/* Desktop layout (larger than 580px) */}
+      <div className='hidden min-[580px]:flex min-[580px]:items-center min-[580px]:justify-between'>
         <div className='flex items-center space-x-2'>
           {/* Privacy status icon */}
           <Tooltip>
@@ -710,18 +711,6 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
         <div className='flex items-center space-x-4'>
-          {/* {statement.isArchived && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className='inline-flex items-center justify-center text-green-600'>
-                  <CheckCircle2 size={18} />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className='p-2 bg-black text-white rounded'>
-                This statement is archived.
-              </TooltipContent>
-            </Tooltip>
-          )} */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
             className='cursor-pointer'
@@ -774,6 +763,107 @@ const StatementItem: React.FC<StatementItemProps> = ({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Mobile layout (smaller than 580px) - Two row layout */}
+      <div className='min-[580px]:hidden flex flex-col space-y-2'>
+        {/* First row: Privacy icon, Statement text, Menu icon */}
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center space-x-2 flex-1 min-w-0'>
+            {/* Privacy status icon */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className={`inline-flex items-center justify-center flex-shrink-0 ${
+                    statement.isPublic ? 'text-green-500' : 'text-red-500'
+                  } ${statement.isArchived ? 'opacity-70' : ''}`}
+                >
+                  {statement.isPublic ? (
+                    <MailPlus size={16} />
+                  ) : (
+                    <MailX size={16} />
+                  )}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                {statement.isPublic
+                  ? 'You are sharing this statement'
+                  : 'This statement is private'}
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Statement text with archived styling if needed */}
+            <div className='flex-1 min-w-0'>
+              <span
+                className={`${
+                  statement.isArchived ? 'text-gray-500' : ''
+                } break-words line-clamp-2`}
+              >
+                {`${statement.atoms.subject} ${getVerbName(
+                  statement.atoms.verb
+                )} ${statement.atoms.object}`}
+              </span>
+            </div>
+          </div>
+
+          {/* Menu dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors'
+              >
+                <Settings size={18} className='text-gray-600' />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onClick={() => onEditClick(statement.id)}>
+                <Edit2 className='mr-2 h-4 w-4' />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(statement.id)}
+                className='text-red-600'
+              >
+                <Trash2 className='mr-2 h-4 w-4' />
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
+                {statement.isArchived ? (
+                  <>
+                    <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
+                    Unarchive
+                  </>
+                ) : (
+                  <>
+                    <Archive className='mr-2 h-4 w-4 text-green-500' />
+                    Archive
+                  </>
+                )}
+              </DropdownMenuItem>
+
+              {onReset && (
+                <DropdownMenuItem onClick={() => onReset(statement.id)}>
+                  <RotateCcw className='mr-2 h-4 w-4' />
+                  Reset
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Second row: Action counter */}
+        <div className='border-t border-gray-100 pt-2 flex justify-end'>
+          <div
+            onClick={() => setIsActionsExpanded((prev) => !prev)}
+            className='cursor-pointer'
+          >
+            <ActionsCounter
+              count={statement.actions?.length ?? 0}
+              expanded={isActionsExpanded}
+            />
+          </div>
         </div>
       </div>
 

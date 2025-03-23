@@ -24,7 +24,7 @@ const ActionsCounter: React.FC<ActionsCounterProps> = ({
   // Determine the display text.
   let displayText = '';
   if (count === 0) {
-    displayText = 'no actions';
+    displayText = 'No actions';
   } else if (count === 1) {
     displayText = '1 action';
   } else {
