@@ -83,12 +83,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
       <div className='bg-gray-50 px-3 py-1 flex-1'>
         {/* CASE 1: No filter selected → show top-level categories in a grid */}
         {!currentCategory && (
-          <div className='grid grid-cols-3 gap-1.5 sm:grid-cols-4 md:grid-cols-5 justify-items-center'>
+          <div className='grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 justify-items-stretch'>
             {topCategories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat)}
-                className='flex flex-col items-center justify-center gap-1 p-1.5 rounded hover:bg-gray-100 transition-colors text-center w-full max-w-[90px]'
+                className='flex flex-col items-center justify-center gap-1 p-1.5 rounded hover:bg-gray-100 transition-colors text-center w-full min-w-[80px]'
                 style={{
                   color: getContrastColor(cat.color),
                 }}
@@ -99,7 +99,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 >
                   {cat.icon || '•'}
                 </div>
-                <span className='text-xs font-medium text-gray-700 line-clamp-1'>
+                <span className='text-xs font-medium text-gray-700 break-words'>
                   {cat.displayName}
                 </span>
               </button>
@@ -111,12 +111,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
         {currentCategory &&
           currentCategory.children &&
           currentCategory.children.length > 0 && (
-            <div className='grid grid-cols-3 gap-1.5 sm:grid-cols-4 md:grid-cols-5 justify-items-center'>
+            <div className='grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 justify-items-stretch'>
               {currentCategory.children.map((child) => (
                 <button
                   key={child.id}
                   onClick={() => onSelectCategory(child)}
-                  className='flex flex-col items-center justify-center gap-1 p-1.5 rounded hover:bg-gray-100 transition-colors text-center w-full max-w-[90px]'
+                  className='flex flex-col items-center justify-center gap-1 p-1.5 rounded hover:bg-gray-100 transition-colors text-center w-full min-w-[80px]'
                   style={{
                     color: getContrastColor(child.color),
                   }}
@@ -127,7 +127,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   >
                     {child.icon || '•'}
                   </div>
-                  <span className='text-xs font-medium text-gray-700 line-clamp-1'>
+                  <span className='text-xs font-medium text-gray-700 break-words'>
                     {child.displayName}
                   </span>
                 </button>

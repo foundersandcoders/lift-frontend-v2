@@ -3,8 +3,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import type { Verb, Category } from '@/types/entries';
-import { getContrastColor } from '@/lib/utils/colorUtils';
 import { getVerbColor } from '@/lib/utils/categoryUtils';
+import { getContrastColor } from '@/lib/utils/colorUtils';
 
 interface VerbGridProps {
   verbs: Verb[];
@@ -24,8 +24,8 @@ const VerbGrid: React.FC<VerbGridProps> = ({
     <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 md:gap-4 p-2 overflow-scroll border '>
       {sortedVerbs.map((verb) => {
         const tileColor = getVerbColor(verb, rootCategory);
-
         const isSelected = verb.id === selectedVerbId;
+        
         return (
           <Button
             key={verb.name}
@@ -36,8 +36,9 @@ const VerbGrid: React.FC<VerbGridProps> = ({
             style={
               {
                 '--tile-color': tileColor,
-                color: isSelected ? getContrastColor(tileColor) : 'inherit',
                 borderColor: tileColor,
+                backgroundColor: isSelected ? tileColor : 'white',
+                color: isSelected ? getContrastColor(tileColor) : 'black',
               } as React.CSSProperties
             }
           >
