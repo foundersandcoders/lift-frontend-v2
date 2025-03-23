@@ -321,7 +321,7 @@
     },
     {
       "id": "q12",
-      "category": "colleague_Sharing",
+      "category": "Colleague_Sharing",
       "mainQuestion": "Share the information about your work needs that would be helpful for your colleagues.",
       "steps": {
         "subject": {

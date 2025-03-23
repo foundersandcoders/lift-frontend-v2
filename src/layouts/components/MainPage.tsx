@@ -15,7 +15,7 @@ import ShareEmailModal from '../../components/modals/ShareEmailModal';
 import PrivacyModal from '../../components/modals/PrivacyModal';
 import TermsModal from '../../components/modals/TermsModal';
 import TestStatementButton from '../../components/debug/TestButton';
-import { useTour } from '../../components/ui/tour/AppTour';
+import { useTour } from '../../components/ui/tour/useTour';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
@@ -66,7 +66,7 @@ const MainPage: React.FC = () => {
       <div className='container mx-auto px-4 mb-6'>
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
-          <h1 className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'>
+          <h1 id="page-title" className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'>
             {managerName
               ? `${username} would like to share with ${managerName}`
               : `${username}'s statements for sharing`}

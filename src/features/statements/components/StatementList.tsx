@@ -540,7 +540,7 @@ const StatementList: React.FC<StatementListProps> = ({
 
   return (
     <>
-      <div id="statementList" className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
+      <div id="mainContentArea" className='mt-8 bg-white rounded-xl shadow-lg p-6 w-full'>
         {/* Regular categories */}
         {definedCategories.map((cat) =>
           renderCategorySection(cat.id, cat.name)
