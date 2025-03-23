@@ -63,13 +63,9 @@ const groupStatementsByCategory = (statements: Entry[]) => {
 
 interface StatementListProps {
   username: string;
-  onAddCustomStatement?: () => void;
 }
 
-const StatementList: React.FC<StatementListProps> = ({
-  username,
-  onAddCustomStatement,
-}) => {
+const StatementList: React.FC<StatementListProps> = ({ username }) => {
   const { data, setData } = useEntries();
   const { entries } = data;
 
@@ -90,8 +86,9 @@ const StatementList: React.FC<StatementListProps> = ({
     statementId: string | null;
   }>({ isOpen: false, statementId: null });
   const [isWizardOpen, setIsWizardOpen] = useState(false);
-  const [selectedPresetQuestion, setSelectedPresetQuestion] =
-    useState<SetQuestion | null>(null);
+  const [selectedPresetQuestion, setSelectedPresetQuestion] = useState<
+    SetQuestion | undefined
+  >(undefined);
 
   // State for editing mode:
   const [editingStatementId, setEditingStatementId] = useState<string | null>(
@@ -213,12 +210,12 @@ const StatementList: React.FC<StatementListProps> = ({
       setUsedPresetQuestions((prev) => [...prev, selectedPresetQuestion.id]);
     }
     setIsWizardOpen(false);
-    setSelectedPresetQuestion(null);
+    setSelectedPresetQuestion(undefined);
   };
 
   const handleWizardClose = () => {
     setIsWizardOpen(false);
-    setSelectedPresetQuestion(null);
+    setSelectedPresetQuestion(undefined);
   };
 
   const handleDeleteClick = (statementId: string) => {
@@ -271,20 +268,6 @@ const StatementList: React.FC<StatementListProps> = ({
       setEditModalData({ statement: statementToEdit, editPart: part });
     }
   };
-
-  // const handlePartUpdate = (
-  //   statementId: string,
-  //   part: 'subject' | 'verb' | 'object',
-  //   value: string
-  // ) => {
-  //   const updatedEntries = entries.map((entry) =>
-  //     entry.id === statementId
-  //       ? { ...entry, atoms: { ...entry.atoms, [part]: value } }
-  //       : entry
-  //   );
-  //   // Update only context
-  //   setData({ type: 'SET_ENTRIES', payload: updatedEntries });
-  // };
 
   const handleResetClick = (statementId: string) => {
     const statementToReset = entries.find((s) => s.id === statementId);
@@ -488,7 +471,7 @@ const StatementList: React.FC<StatementListProps> = ({
 
     return (
       <div className='mb-8 mt-4'>
-        {/* New and improved Snoozed Questions section */}
+        {/* Snoozed Questions section */}
         <div
           className={`border rounded-lg overflow-hidden bg-white ${
             isSnoozedQuestionsSectionExpanded
@@ -509,10 +492,10 @@ const StatementList: React.FC<StatementListProps> = ({
               )
             }
           >
-            <h3 className='text-lg font-semibold flex items-center text-blue-700'>
+            <h2 className='text-lg font-semibold flex items-center text-blue-700'>
               <BellOff className='h-5 w-5 mr-2' />
               Snoozed Questions
-            </h3>
+            </h2>
             <div className='flex items-center'>
               <span className='mr-2 text-blue-700 font-medium'>
                 ({snoozedQuestions.length})
@@ -527,7 +510,7 @@ const StatementList: React.FC<StatementListProps> = ({
 
           {/* Content section that appears/disappears */}
           {isSnoozedQuestionsSectionExpanded && (
-            <div className='p-4 bg-white'>
+            <div className='p-2 sm:p-4 bg-white'>
               <ul className='space-y-2'>
                 {snoozedQuestions.map((question) => (
                   <li key={`snoozed-${question.id}`}>
@@ -587,7 +570,7 @@ const StatementList: React.FC<StatementListProps> = ({
     <>
       <div
         id='mainContentArea'
-        className='mt-2 md:mt-8 bg-white rounded-xl shadow-lg p-3 md:p-6 w-full'
+        className='my-2 md:my-8 bg-white rounded-xl shadow-lg p-3 md:p-6 w-full'
       >
         {/* Regular categories */}
         {definedCategories.map((cat) =>
@@ -597,31 +580,29 @@ const StatementList: React.FC<StatementListProps> = ({
           renderCategorySection(catId, getCategoryName(catId))
         )}
 
+        {/* Add custom statement section */}
+        <div className='my-8 text-center'>
+          <div className='max-w-md mx-auto'>
+            <h2 className='text-lg font-medium text-gray-700 mb-2'>
+              Want to add your own statement?
+            </h2>
+
+            <Button
+              onClick={() => {
+                setSelectedPresetQuestion(undefined);
+                setIsWizardOpen(true);
+              }}
+              variant='pink'
+              className='flex items-center px-6 py-2 mx-auto shadow-sm add-custom-button'
+            >
+              <Plus className='w-5 h-5 mr-2' />
+              <span>Add custom statement</span>
+            </Button>
+          </div>
+        </div>
+
         {/* Snoozed sections */}
         {renderSnoozedQuestionsSection()}
-
-        {/* Add custom statement section */}
-        {onAddCustomStatement && (
-          <div className='mt-8 border-t pt-8 text-center'>
-            <div className='max-w-md mx-auto'>
-              <h3 className='text-lg font-medium text-gray-700 mb-2'>
-                Want to add your own statement?
-              </h3>
-              <p className='text-gray-500 mb-4'>
-                Create a custom statement to add anything that's not covered by
-                the questions above.
-              </p>
-              <Button
-                onClick={onAddCustomStatement}
-                variant='pink'
-                className='flex items-center px-6 py-2 mx-auto shadow-sm add-custom-button'
-              >
-                <Plus className='w-5 h-5 mr-2' />
-                <span>Add custom statement</span>
-              </Button>
-            </div>
-          </div>
-        )}
 
         <ConfirmationDialog
           isOpen={deleteConfirmation.isOpen}
@@ -631,7 +612,7 @@ const StatementList: React.FC<StatementListProps> = ({
           description='Are you sure you want to delete this statement? This action cannot be undone.'
         />
       </div>
-      {isWizardOpen && selectedPresetQuestion && (
+      {isWizardOpen && (
         <StatementWizard
           username={username}
           presetQuestion={selectedPresetQuestion}

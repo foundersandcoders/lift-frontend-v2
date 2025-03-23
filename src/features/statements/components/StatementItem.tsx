@@ -772,8 +772,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
       {/* Mobile layout (smaller than xs breakpoint) - Two row layout */}
       <div className='xs:hidden flex flex-col space-y-2'>
         {/* First row: Privacy icon, Statement text, Menu button */}
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center space-x-2 flex-1 min-w-0'>
+        <div className='flex items-start justify-between'>
+          <div className='flex items-start space-x-2 flex-1 min-w-0'>
             {/* Privacy status icon */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -783,7 +783,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   } ${statement.isArchived ? 'opacity-70' : ''}`}
                 >
                   {statement.isPublic ? (
-                    <MailPlus size={16} />
+                    <MailPlus size={16} className=' m-1' />
                   ) : (
                     <MailX size={16} />
                   )}
