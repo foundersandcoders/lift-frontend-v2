@@ -381,7 +381,7 @@ const StatementList: React.FC<StatementListProps> = ({
       categoryStatus.answered === categoryStatus.total;
 
     return (
-      <div key={catId} className='mb-8 category-section'>
+      <div key={catId} className='mb-4 md:mb-8 category-section'>
         {/* Folder Tab Design */}
         <div className={`relative z-10`}>
           <div
@@ -399,7 +399,7 @@ const StatementList: React.FC<StatementListProps> = ({
 
         {/* Folder Content */}
         <div
-          className={`border rounded-tr-lg rounded-b-lg p-4 -mt-[1px] ${
+          className={`border rounded-tr-lg rounded-b-lg p-2 md:p-4 -mt-[1px] ${
             isComplete
               ? 'bg-white border-green-500'
               : 'bg-white border-slate-300'
