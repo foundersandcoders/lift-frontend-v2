@@ -113,8 +113,8 @@ const StatementList: React.FC<StatementListProps> = ({
     [id: string]: string;
   }>({});
 
-  // Handle toggling the resolved state (archive/unarchive)
-  const handleToggleResolved = (statementId: string) => {
+  // Handle toggling the archive state (archive/unarchive)
+  const handleToggleArchived = (statementId: string) => {
     const stmt = entries.find((s) => s.id === statementId);
     if (!stmt) return;
     const updated = { ...stmt, isArchived: !stmt.isArchived };
@@ -466,7 +466,7 @@ const StatementList: React.FC<StatementListProps> = ({
                         ? () => handleResetClick(statement.id)
                         : undefined
                     }
-                    onToggleResolved={handleToggleResolved}
+                    onToggleArchived={handleToggleArchived}
                     onToggleActionResolved={(actionId: string) =>
                       handleToggleActionResolved(statement.id, actionId)
                     }

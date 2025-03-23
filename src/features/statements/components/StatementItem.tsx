@@ -54,7 +54,7 @@ export interface StatementItemProps {
     newAction: { text: string; dueDate?: string }
   ) => void;
   onReset?: (statementId: string) => void;
-  onToggleResolved?: (statementId: string) => void;
+  onToggleArchived?: (statementId: string) => void;
   onToggleActionResolved?: (actionId: string) => void;
   originalCategory?: string; // Add prop for original category from parent
 }
@@ -106,7 +106,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onDeleteAction = () => {},
   onAddAction = () => {},
   onReset,
-  onToggleResolved = () => {},
+  onToggleArchived = () => {},
   onToggleActionResolved = () => {},
   originalCategory: externalOriginalCategory, // Get original category from parent
 }) => {
@@ -662,7 +662,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
     <div
       ref={itemRef}
       id={`statement-${statement.id}`}
-      className={`border rounded-md p-3 space-y-2 relative ${
+      className={`border rounded-md p-1 md:p-3 space-y-2 relative ${
         statement.isArchived
           ? 'bg-gray-100 border-gray-300 opacity-80'
           : 'bg-white border-gray-200 shadow-sm'
@@ -733,7 +733,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
+              <DropdownMenuItem onClick={() => onToggleArchived(statement.id)}>
                 {statement.isArchived ? (
                   <>
                     <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
@@ -759,7 +759,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
           {/* Actions counter - now the rightmost element */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer relative z-10'
+            className='cursor-pointer relative z-10 self-end'
           >
             <ActionsCounter
               count={statement.actions?.length ?? 0}
@@ -832,7 +832,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
+              <DropdownMenuItem onClick={() => onToggleArchived(statement.id)}>
                 {statement.isArchived ? (
                   <>
                     <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
@@ -861,7 +861,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
           {/* Action counter - rightmost element */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer relative z-10 flex-shrink-0'
+            className='cursor-pointer relative z-10 flex-shrink-0 self-end'
           >
             <ActionsCounter
               count={statement.actions?.length ?? 0}
@@ -872,7 +872,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       </div>
 
       {isActionsExpanded && (
-        <div className='border border-gray-200 rounded-b-lg rounded-tl-lg p-2 bg-white !mt-0'>
+        <div className='border md:border-2 border-brand-pink rounded-b-lg rounded-tl-lg p-2 bg-white !mt-0'>
           <ActionLine
             statementId={statement.id}
             actions={statement.actions ?? []}

@@ -43,7 +43,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           className={cn(
             'bg-white rounded-md p-1 md:p-3 shadow-sm flex items-center',
             !presetQuestion.isSnoozed && 'hover:bg-gray-100',
-            'transition-colors border-2 md:border-2 border-dashed',
+            'transition-colors border md:border-2 border-dashed',
             presetQuestion.isSnoozed ? 'border-blue-300' : 'border-brand-pink'
           )}
         >
