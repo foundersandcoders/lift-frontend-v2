@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import SmallCircularQuestionCounter from '../../components/ui/questionCounter/smallCircularQuestionCounter';
 import UserDataModal from '../../components/modals/UserDataModal';
-import { TourButton } from '../../components/ui/tour/TourButton';
+// import { TourButton } from '../../components/ui/tour/TourButton';
 // import { Tooltip, TooltipTrigger, TooltipContent } from '../../components/ui/better-tooltip';
 
 const Header: React.FC = () => {
@@ -20,19 +20,15 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className='bg-brand-pink text-white p-4 shadow-md sticky top-0 z-50'>
-      <div className='container mx-auto'>
+    <header className='bg-brand-pink text-white py-3 px-2 sm:p-4 shadow-md sticky top-0 z-50'>
+      <div className='px-1 sm:px-4 md:container md:mx-auto'>
         {/* Simplified header layout */}
-        <div className='flex flex-wrap items-center justify-between'>
-          {/* Left section: Logo */}
+        <div className='flex items-center justify-between'>
+          {/* Left section: Logo and Title */}
           <div className='flex items-center'>
             <img src='/lift_logo.png' alt='Logo' className='h-8 sm:h-10 mr-2' />
+            <h1 className='text-3xl md:text-4xl font-bold'>Beacons</h1>
           </div>
-
-          {/* Center section: Title */}
-          <h1 className='text-xl sm:text-2xl font-bold order-last w-full sm:order-none sm:w-auto text-center my-2 sm:my-0'>
-            Beacons
-          </h1>
 
           {/* Right section: Login button and Tour button */}
           <div className='flex items-center relative'>
@@ -47,7 +43,7 @@ const Header: React.FC = () => {
                   </span>
                   <SmallCircularQuestionCounter size={18} />
                 </button>
-                <TourButton />
+                {/* <TourButton /> */}
               </div>
             ) : (
               <div className='flex items-center border-2 border-white rounded-full px-2 py-1 sm:px-4 sm:py-2'>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Tooltip,
   TooltipTrigger,
@@ -15,7 +15,7 @@ import ShareEmailModal from '../../components/modals/ShareEmailModal';
 import PrivacyModal from '../../components/modals/PrivacyModal';
 import TermsModal from '../../components/modals/TermsModal';
 import TestStatementButton from '../../components/debug/TestButton';
-import { useTour } from '../../components/ui/tour/useTour';
+// import { useTour } from '../../components/ui/tour/useTour';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
@@ -24,22 +24,22 @@ const MainPage: React.FC = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
-  
+
   // Get tour functionality
-  const { startTour, hasSeenTour } = useTour();
-  
+  // const { startTour, hasSeenTour } = useTour();
+
   // Auto-start tour for new users
-  useEffect(() => {
-    // Check if the user is authenticated and has not seen the tour
-    if (username && !hasSeenTour) {
-      // Wait for the UI to fully render before starting the tour
-      const tourTimeout = setTimeout(() => {
-        startTour();
-      }, 1000);
-      
-      return () => clearTimeout(tourTimeout);
-    }
-  }, [username, hasSeenTour, startTour]);
+  // useEffect(() => {
+  //   // Check if the user is authenticated and has not seen the tour
+  //   if (username && !hasSeenTour) {
+  //     // Wait for the UI to fully render before starting the tour
+  //     const tourTimeout = setTimeout(() => {
+  //       startTour();
+  //     }, 1000);
+
+  //     return () => clearTimeout(tourTimeout);
+  //   }
+  // }, [username, hasSeenTour, startTour]);
 
   // Determine if email button should be disabled:
   const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
@@ -66,7 +66,10 @@ const MainPage: React.FC = () => {
       <div className='container mx-auto px-4 mb-6'>
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
-          <h1 id="page-title" className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'>
+          <h1
+            id='page-title'
+            className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'
+          >
             {managerName
               ? `${username} would like to share with ${managerName}`
               : `${username}'s statements for sharing`}

@@ -76,7 +76,6 @@ interface CustomStepOptions {
 
 // Create the predefined tour steps with intro.js format
 // Will be populated in the hook
-let _introInstance: IntroJs | null = null;
 
 export const tourSteps: CustomStepOptions[] = [
   {
@@ -357,8 +356,6 @@ export function useTour(): TourHookResult {
     });
 
     setIntroInstance(intro);
-    // Store for access from steps
-    _introInstance = intro;
 
     return () => {
       // Cleanup when component unmounts
@@ -451,7 +448,7 @@ export function useTour(): TourHookResult {
                 (div as HTMLElement).click();
                 console.log('Tried clicking div in card', div);
                 clicked = true;
-              } catch (e) {
+              } catch {
                 // Continue to next div
               }
             }
