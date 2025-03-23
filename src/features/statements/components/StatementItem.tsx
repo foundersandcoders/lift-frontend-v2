@@ -676,8 +676,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </span>
       )}
 
-      {/* Desktop layout (larger than 580px) */}
-      <div className='hidden min-[580px]:flex min-[580px]:items-center min-[580px]:justify-between'>
+      {/* Desktop layout (xs breakpoint and above) */}
+      <div className='hidden xs:flex xs:items-center xs:justify-between'>
         <div className='flex items-center space-x-2'>
           {/* Privacy status icon */}
           <Tooltip>
@@ -769,8 +769,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </div>
       </div>
 
-      {/* Mobile layout (smaller than 580px) - Two row layout */}
-      <div className='min-[580px]:hidden flex flex-col space-y-2'>
+      {/* Mobile layout (smaller than xs breakpoint) - Two row layout */}
+      <div className='xs:hidden flex flex-col space-y-2'>
         {/* First row: Privacy icon, Statement text, Menu button */}
         <div className='flex items-center justify-between'>
           <div className='flex items-center space-x-2 flex-1 min-w-0'>
