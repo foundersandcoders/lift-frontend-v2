@@ -21,10 +21,10 @@ import { CheckCircle2, XCircle } from 'lucide-react';
 import GratitudeModal from '../../../components/modals/GratitudeModal';
 import { markGratitudeSent } from '../../../features/email/api/gratitudeApi';
 import { useEntries } from '../hooks/useEntries';
-import { 
-  Tooltip, 
-  TooltipTrigger, 
-  TooltipContent 
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from '../../../components/ui/better-tooltip';
 
 export interface ActionLineProps {
@@ -61,7 +61,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
     isOpen: boolean;
     action: Action | null;
   }>({ isOpen: false, action: null });
-  
+
   // Get entries data to check for manager email
   const { data } = useEntries();
   const hasManagerEmail = data.managerEmail && data.managerEmail.trim() !== '';
@@ -114,7 +114,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
   };
 
   return (
-    <div className='ml-1 pl-3 border-gray-200 space-y-2 mt-2'>
+    <div className='ml-0 pl-0 md:pl-2 border-gray-200 space-y-2 mt-2'>
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
         if (!isEditing) {
@@ -152,19 +152,21 @@ const ActionLine: React.FC<ActionLineProps> = ({
                           className='text-pink-500'
                         />
                         {/* Small dot indicator */}
-                        <span className="absolute top-0 right-0 block w-2 h-2 bg-pink-500 border border-white rounded-full"></span>
+                        <span className='absolute top-0 right-0 block w-2 h-2 bg-pink-500 border border-white rounded-full'></span>
                       </div>
                     </TooltipTrigger>
                     <TooltipContent className='p-2 bg-black text-white rounded max-w-xs'>
-                      <div className="text-center">
-                        <p className="font-semibold mb-1">Gratitude Sent</p>
+                      <div className='text-center'>
+                        <p className='font-semibold mb-1'>Gratitude Sent</p>
                         {action.gratitude?.sentDate && (
-                          <p className="text-xs opacity-80">
-                            {new Date(action.gratitude.sentDate).toLocaleDateString()}
+                          <p className='text-xs opacity-80'>
+                            {new Date(
+                              action.gratitude.sentDate
+                            ).toLocaleDateString()}
                           </p>
                         )}
                         {action.gratitude?.message && (
-                          <p className="text-xs italic mt-1 max-w-xs break-words">
+                          <p className='text-xs italic mt-1 max-w-xs break-words'>
                             "{action.gratitude.message}"
                           </p>
                         )}
@@ -223,14 +225,18 @@ const ActionLine: React.FC<ActionLineProps> = ({
                         {/* Determine if manager email is set */}
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div className="w-full">
+                            <div className='w-full'>
                               <DropdownMenuItem
                                 onClick={() => {
                                   if (hasManagerEmail) {
                                     setGratitudeModal({ isOpen: true, action });
                                   }
                                 }}
-                                className={`${hasManagerEmail ? 'text-pink-600' : 'text-pink-300 cursor-not-allowed'}`}
+                                className={`${
+                                  hasManagerEmail
+                                    ? 'text-pink-600'
+                                    : 'text-pink-300 cursor-not-allowed'
+                                }`}
                                 disabled={!hasManagerEmail}
                               >
                                 <Heart className='mr-2 h-4 w-4' />

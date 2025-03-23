@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, List } from 'lucide-react';
+import React, { useRef } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ActionsCounterProps {
   count: number;
@@ -13,13 +13,20 @@ const ActionsCounter: React.FC<ActionsCounterProps> = ({
   expanded = false,
 }) => {
   const containerRef = useRef<HTMLSpanElement>(null);
-  const [isOverflowing, setIsOverflowing] = useState(false);
 
-  // We force a max width so the text might actually overflow.
+  // Tab-like styling similar to category tabs
   const baseClasses =
-    'inline-flex items-center rounded-full px-3 py-1 text-sm transition-colors cursor-pointer whitespace-nowrap max-w-[150px] overflow-hidden';
+    'inline-flex items-center px-3 py-1 text-sm transition-colors cursor-pointer whitespace-nowrap';
+  
+  // Determine border radius and border styling based on expanded state
+  const borderStyles = expanded 
+    ? 'rounded-t-lg border-t border-l border-r' 
+    : 'rounded-lg border';
+    
   const backgroundClasses =
-    count > 0 ? 'bg-brand-pink text-white' : 'bg-gray-100 text-gray-600';
+    count > 0
+      ? `bg-brand-pink text-white ${borderStyles} border-brand-pink`
+      : `bg-slate-100 text-gray-600 ${borderStyles} border-slate-300`;
 
   // Determine the display text.
   let displayText = '';
@@ -31,19 +38,10 @@ const ActionsCounter: React.FC<ActionsCounterProps> = ({
     displayText = `${count} actions`;
   }
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const el = containerRef.current;
-    // Compare the actual content width vs. the visible width.
-    setIsOverflowing(el.scrollWidth > el.clientWidth);
-  }, [count, displayText]);
-
-  // If overflowing, show an icon; otherwise show the text.
-  const content = isOverflowing ? <List size={16} /> : displayText;
-
+  // Always show text for tab-like design
   return (
     <span ref={containerRef} className={`${baseClasses} ${backgroundClasses}`}>
-      {content}
+      <span className='font-medium'>{displayText}</span>
       <span className='ml-1'>
         {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
       </span>

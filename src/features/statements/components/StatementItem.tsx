@@ -662,7 +662,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
     <div
       ref={itemRef}
       id={`statement-${statement.id}`}
-      className={`border rounded-md p-1 md:p-3 space-y-2 relative ${
+      className={`border rounded-md p-3 space-y-2 relative ${
         statement.isArchived
           ? 'bg-gray-100 border-gray-300 opacity-80'
           : 'bg-white border-gray-200 shadow-sm'
@@ -711,15 +711,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
         <div className='flex items-center space-x-4'>
-          <div
-            onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer'
-          >
-            <ActionsCounter
-              count={statement.actions?.length ?? 0}
-              expanded={isActionsExpanded}
-            />
-          </div>
+          {/* Menu button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -763,12 +755,23 @@ const StatementItem: React.FC<StatementItemProps> = ({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Actions counter - now the rightmost element */}
+          <div
+            onClick={() => setIsActionsExpanded((prev) => !prev)}
+            className='cursor-pointer relative z-10'
+          >
+            <ActionsCounter
+              count={statement.actions?.length ?? 0}
+              expanded={isActionsExpanded}
+            />
+          </div>
         </div>
       </div>
 
       {/* Mobile layout (smaller than 580px) - Two row layout */}
       <div className='min-[580px]:hidden flex flex-col space-y-2'>
-        {/* First row: Privacy icon, Statement text, Menu icon */}
+        {/* First row: Privacy icon, Statement text, Menu button */}
         <div className='flex items-center justify-between'>
           <div className='flex items-center space-x-2 flex-1 min-w-0'>
             {/* Privacy status icon */}
@@ -807,12 +810,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
             </div>
           </div>
 
-          {/* Menu dropdown */}
+          {/* Menu button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 onClick={(e) => e.stopPropagation()}
-                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors'
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors ml-2 flex-shrink-0'
               >
                 <Settings size={18} className='text-gray-600' />
               </button>
@@ -853,11 +856,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </DropdownMenu>
         </div>
 
-        {/* Second row: Action counter */}
-        <div className='border-t border-gray-100 pt-2 flex justify-end'>
+        {/* Second row: Action counter (right aligned) */}
+        <div className='flex justify-end mb-0'>
+          {/* Action counter - rightmost element */}
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer'
+            className='cursor-pointer relative z-10 flex-shrink-0'
           >
             <ActionsCounter
               count={statement.actions?.length ?? 0}
@@ -868,7 +872,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       </div>
 
       {isActionsExpanded && (
-        <div className='mt-2'>
+        <div className='border border-gray-200 rounded-b-lg rounded-tl-lg p-2 bg-white !mt-0'>
           <ActionLine
             statementId={statement.id}
             actions={statement.actions ?? []}
