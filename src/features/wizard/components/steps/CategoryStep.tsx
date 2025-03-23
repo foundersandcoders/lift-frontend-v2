@@ -19,33 +19,34 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
 }) => {
   const subQuestion = `You can set a category for your statement`;
   const categories = statementsCategories.categories || [];
-  
+
   // Helper function to normalize category IDs
   const normalizeCategoryId = (id: string): string => {
     return id ? id.toLowerCase() : '';
   };
-  
+
   // Handle all possible variations of "uncategorized"
   const normalizedSelection = normalizeCategoryId(selection);
-  const uncategorisedSelected = !selection || 
-    normalizedSelection === 'uncategorised' || 
+  const uncategorisedSelected =
+    !selection ||
+    normalizedSelection === 'uncategorised' ||
     normalizedSelection === 'uncategorized';
 
   return (
-    <StepContainer 
-      subQuestion={subQuestion} 
+    <StepContainer
+      subQuestion={subQuestion}
       showBack
       currentStep={currentStep}
       totalSteps={totalSteps}
     >
-      <div className='grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-2'>
+      <div className='grid grid-cols-2 gap-2 max-h-[60vh] overflow-y-auto p-2'>
         {categories.map((cat: { id: string; name: string }) => (
           <Button
             key={cat.id}
-            onClick={() => onUpdate(cat.id)} 
+            onClick={() => onUpdate(cat.id)}
             variant={'outline'}
             selected={normalizedSelection === normalizeCategoryId(cat.id)}
-            className='h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words'
+            className='h-auto p-2 sm:py-4 text-left flex flex-col items-start transition-all whitespace-normal break-words border-3 box-border'
             style={
               {
                 // Set the CSS variable to the category selector color. This is used on buttonVariants.ts
@@ -57,10 +58,10 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
           </Button>
         ))}
         <Button
-          onClick={() => onUpdate('uncategorized')} 
+          onClick={() => onUpdate('uncategorized')}
           variant={'outline'}
           selected={uncategorisedSelected}
-          className='h-auto py-4 px-6 text-left flex flex-col items-start transition-all whitespace-normal break-words'
+          className='h-auto p-2 sm:py-4 text-left flex flex-col items-start transition-all whitespace-normal break-words border-3 box-border'
           style={
             {
               // Set the CSS variable to the category selector color. This is used on buttonVariants.ts
