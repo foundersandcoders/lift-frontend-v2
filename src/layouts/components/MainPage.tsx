@@ -12,9 +12,8 @@ import { Button } from '../../components/ui/button';
 import { Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
-import PrivacyModal from '../../components/modals/PrivacyModal';
-import TermsModal from '../../components/modals/TermsModal';
 import TestStatementButton from '../../components/debug/TestButton';
+import Footer from './Footer';
 // import { useTour } from '../../components/ui/tour/useTour';
 
 const MainPage: React.FC = () => {
@@ -22,8 +21,6 @@ const MainPage: React.FC = () => {
   const { username, managerName, managerEmail, entries } = data;
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // Get tour functionality
   // const { startTour, hasSeenTour } = useTour();
@@ -84,26 +81,8 @@ const MainPage: React.FC = () => {
         />
       </div>
 
-      {/* Footer with privacy links */}
-      <footer className='mt-auto pt-6 pb-4 bg-gray-50 border-t border-gray-200'>
-        <div className='container mx-auto px-4'>
-          <div className='flex flex-col sm:flex-row justify-center items-center text-xs text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4'>
-            <button
-              onClick={() => setIsPrivacyModalOpen(true)}
-              className='hover:text-brand-pink hover:underline'
-            >
-              Privacy Policy
-            </button>
-            <button
-              onClick={() => setIsTermsModalOpen(true)}
-              className='hover:text-brand-pink hover:underline'
-            >
-              Terms of Use
-            </button>
-            <span>© {new Date().getFullYear()} Beacons</span>
-          </div>
-        </div>
-      </footer>
+      {/* Footer component */}
+      <Footer />
 
       {/* Floating Email Button (now singular) */}
       <div className='fixed bottom-8 right-8 z-30'>
@@ -152,16 +131,6 @@ const MainPage: React.FC = () => {
       {/* Conditionally render the share email modal */}
       {isShareModalOpen && (
         <ShareEmailModal onClose={() => setIsShareModalOpen(false)} />
-      )}
-
-      {/* Conditionally render the privacy modal */}
-      {isPrivacyModalOpen && (
-        <PrivacyModal onClose={() => setIsPrivacyModalOpen(false)} />
-      )}
-
-      {/* Conditionally render the terms modal */}
-      {isTermsModalOpen && (
-        <TermsModal onClose={() => setIsTermsModalOpen(false)} />
       )}
     </main>
   );

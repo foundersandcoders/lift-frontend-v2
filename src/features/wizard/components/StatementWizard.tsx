@@ -107,9 +107,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       presetId: presetQuestion ? presetQuestion.id : undefined,
       // Use the category ID directly - display name will be handled by the UI
       category:
-        presetQuestion?.category ||
-        selection.category ||
-        'Uncategorized',
+        presetQuestion?.category || selection.category || 'Uncategorized',
     };
 
     try {
@@ -129,10 +127,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     if (isTransitioning) {
       return; // Prevent multiple rapid transitions
     }
-    
+
     // Set transitioning flag to prevent additional advances
     setIsTransitioning(true);
-    
+
     // Add a small delay to prevent double-click issues
     setTimeout(() => {
       if (currentStepIndex < steps.length - 1) {
@@ -140,7 +138,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       } else {
         handleComplete();
       }
-      
+
       // Reset transition flag after a slightly longer delay
       setTimeout(() => {
         setIsTransitioning(false);
@@ -156,7 +154,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     }
   };
 
-  // Optional: Define a validation function for the current step.
+  // Validation function for the current step.
   // This function should return true if the current step’s required data is valid.
   const isStepValid = (step: Exclude<Step, 'closed'>): boolean => {
     switch (step) {
@@ -292,13 +290,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
-        className={`sm:max-w-[600px] p-0 w-full border-8 ${getBorderColor(
+        className={`sm:max-w-[600px] p-0 w-full border-8 gap-2 md:gap-4 ${getBorderColor(
           currentStep
         )}`}
       >
         {presetQuestion && (
-          <div className='px-4 py-3 bg-gray-200 border-b'>
-            <h2 className='text-xl font-bold'>{presetQuestion.mainQuestion}</h2>
+          <div className='p-2 md:p-5 bg-gray-200 border-b'>
+            <h2 className='text-base md:text-xl font-bold'>
+              {presetQuestion.mainQuestion}
+            </h2>
           </div>
         )}
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
@@ -315,18 +315,18 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           </motion.div>
         </AnimatePresence>
         {/* Navigation Panel */}
-        <div className='flex justify-center p-4 pb-4 mb-0 gap-4'>
+        <div className='flex justify-center p-0 md:p-4 pb-2 mb-0 gap-6'>
           <Button
             onClick={goBack}
             disabled={currentStepIndex === 0}
             variant='outline'
-            className='shadow-sm'
+            className='shadow-sm p-2'
           >
             <span>Back</span>
           </Button>
           <Button
             variant='default'
-            className='shadow-sm'
+            className='shadow-sm p-2'
             onClick={
               currentStepIndex === steps.length - 1 ? handleComplete : goNext
             }
@@ -341,7 +341,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </span>
           </Button>
         </div>
-        <StatementPreview selection={{...selection, currentStep}} />
+
+        {/* Divider to separate preview from wizard content */}
+        <div className='w-full border-t border-gray-200 my-3 relative'>
+          <span className='absolute left-0 right-0 text-center bg-white text-xs text-gray-400 px-2 -top-2 mx-auto w-fit'>
+            Statement Preview
+          </span>
+        </div>
+
+        <StatementPreview selection={{ ...selection, currentStep }} />
       </DialogContent>
     </Dialog>
   );

@@ -28,12 +28,12 @@ const StepContainer: React.FC<StepContainerProps> = ({
           variant='outline'
           size='compact'
           onClick={onBack}
-          className='mr-2 p-2'
+          className='mr-2 p-0 md:p-2'
         >
           <ArrowLeft className='w-4 h-4' />
         </Button>
       )}
-      <div className='flex items-center'>
+      <div className='flex items-center '>
         <div className='flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 bg-gray-50 mr-2'>
           <span className='text-xs font-medium text-gray-500'>
             {currentStep}/{totalSteps}

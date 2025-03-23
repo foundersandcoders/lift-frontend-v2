@@ -385,7 +385,7 @@ const StatementList: React.FC<StatementListProps> = ({
         {/* Folder Tab Design */}
         <div className={`relative z-10`}>
           <div
-            className={`inline-block px-4 py-2 rounded-t-lg ${
+            className={`inline-block px-4 py-1 md:py-2 rounded-t-lg ${
               isComplete
                 ? 'bg-green-200 border-green-500'
                 : 'bg-slate-100 border-slate-300'

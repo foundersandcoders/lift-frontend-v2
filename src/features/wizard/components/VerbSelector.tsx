@@ -154,7 +154,7 @@ const VerbSelector: React.FC<VerbSelectorProps> = ({ onVerbSelect }) => {
   };
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4'>
+    <div className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-0'>
       <div className='bg-white rounded-xl shadow-lg w-full max-w-2xl h-[80vh] flex flex-col overflow-hidden'>
         <div className='flex items-center p-4 border-b border-gray-200'>
           {categoryPath.length > 0 && (

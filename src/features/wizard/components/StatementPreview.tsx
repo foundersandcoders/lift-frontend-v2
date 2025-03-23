@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Entry, Step } from '@/types/entries';
 import { getVerbName } from '@/lib/utils/verbUtils';
-import { MailPlus, MailX, FileText } from 'lucide-react';
+import { MailPlus, MailX } from 'lucide-react';
 import statementsCategories from '@/data/statementsCategories.json';
 
 interface StatementPreviewProps {
@@ -51,12 +51,12 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   if (!hasContent) return null;
 
   return (
-    <div className='w-full pl-2 pr-4 mt-3 mb-3 flex flex-wrap gap-1.5 items-center justify-start'>
+    <div className='w-full pl-2 pr-4 mt-0 mb-3 flex flex-wrap gap-1.5 items-center justify-start'>
       {/* Statement label */}
-      <div className='flex items-center mr-1 text-gray-500'>
+      {/* <div className='flex items-center mr-1 text-gray-500'>
         <FileText size={12} className='mr-1' />
         <span className='text-xs font-medium'>Statement:</span>
-      </div>
+      </div> */}
 
       {/* Statement parts */}
       {subject && (

@@ -12,7 +12,7 @@ export const buttonVariants = cva(
         outline:
           'border border-pink-200 bg-white text-gray-700  hover:border-pink-300 transition-colors',
         outlineVerbs:
-          'border border-pink-200 bg-white text-gray-700 hover:bg-brand-pink hover:border-pink-300 transition-colors',
+          'border-2 bg-white text-gray-700 hover:bg-brand-pink hover:border-pink-300 transition-colors',
         secondary:
           'bg-pink-100 text-brand-pink border border-pink-200  transition-colors',
         ghost: 'hover:bg-pink-50 hover:text-brand-pink transition-colors',

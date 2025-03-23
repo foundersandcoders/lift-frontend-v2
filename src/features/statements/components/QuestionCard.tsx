@@ -41,9 +41,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       >
         <div
           className={cn(
-            'bg-white rounded-md p-2 md:p-3 shadow-sm flex items-center',
+            'bg-white rounded-md p-1 md:p-3 shadow-sm flex items-center',
             !presetQuestion.isSnoozed && 'hover:bg-gray-100',
-            'transition-colors border-2 border-dotted',
+            'transition-colors border-2 md:border-2 border-dashed',
             presetQuestion.isSnoozed ? 'border-blue-300' : 'border-brand-pink'
           )}
         >
@@ -51,7 +51,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           {!presetQuestion.isSnoozed && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className='inline-flex items-center justify-center mr-2 text-brand-pink bg-pink-50 p-1 rounded-full'>
+                <span className='inline-flex items-center justify-center mr-1 md:mr-2 text-brand-pink bg-pink-50 p-1 rounded-full'>
                   <HelpCircle size={16} />
                 </span>
               </TooltipTrigger>
@@ -62,7 +62,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           )}
 
           {/* Main question text (truncated if too long) */}
-          <span className='flex-1 truncate text-lg'>
+          <span className='flex-1 truncate text-base md:text-lg'>
             {presetQuestion.mainQuestion}
           </span>
 
@@ -73,7 +73,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 <button
                   onClick={handleSnoozeClick}
                   className={cn(
-                    'mr-2 p-1.5 rounded-full transition-colors flex items-center justify-center',
+                    'mr-1 md:mr-2 p-1.5 rounded-full transition-colors flex items-center justify-center',
                     'border border-gray-200 shadow-sm',
                     presetQuestion.isSnoozed
                       ? 'hover:bg-blue-100 bg-blue-50'
