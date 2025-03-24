@@ -33,6 +33,9 @@ EXCLUDE_FILES = {
     ".DS_Store",
     ".aider.chat.history.md",
     ".aider.input.history",
+    "MAGIC_LINK_AUTH.md",
+    "CLADE.md",
+    "GRATITUDE_API.md",
 }
 
 

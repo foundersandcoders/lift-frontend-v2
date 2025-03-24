@@ -14,8 +14,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "what?",
@@ -43,8 +42,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Express",
-          "allowedVerbs": ["Express", "Share"]
+          "presetAnswer": "Express"
         },
         "object": {
           "question": "Describe your feelings and actions on a good day.",
@@ -72,8 +70,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "List any changes in behavior, communication, or appearance that signal a difficult day.",
@@ -101,8 +98,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Support",
-          "allowedVerbs": ["Support", "Help", "Assist"]
+          "presetAnswer": "Support"
         },
         "object": {
           "question": "Detail the actions and approach you prefer for support.",
@@ -130,8 +126,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "List the symptoms affecting your work readiness.",
@@ -159,8 +154,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "Describe any parental or caring responsibilities you have.",
@@ -188,8 +182,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Support",
-          "allowedVerbs": ["Support", "Help"]
+          "presetAnswer": "Support"
         },
         "object": {
           "question": "Detail the support or arrangements you require.",
@@ -217,8 +210,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Support",
-          "allowedVerbs": ["Support", "Help"]
+          "presetAnswer": "Support"
         },
         "object": {
           "question": "Describe any necessary accommodations for your religious practices (e.g., prayer space, holidays).",
@@ -246,8 +238,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "Provide any extra details, such as dietary requirements or other relevant religious information.",
@@ -275,8 +266,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "Detail the impact and any related conditions affecting your work.",
@@ -304,8 +294,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "List the challenges and how they impact your job performance.",
@@ -333,8 +322,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Share",
-          "allowedVerbs": ["Share"]
+          "presetAnswer": "Share"
         },
         "object": {
           "question": "Detail what your colleagues should know and how you prefer this information to be shared.",
@@ -362,8 +350,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Support",
-          "allowedVerbs": ["Support", "Help", "Assist"]
+          "presetAnswer": "Support"
         },
         "object": {
           "question": "Describe how we can better support and communicate with you.",
@@ -391,8 +378,7 @@
         "verb": {
           "question": "Select the action verb for your statement.",
           "preset": true,
-          "presetAnswer": "Introduce",
-          "allowedVerbs": ["Introduce", "Share"]
+          "presetAnswer": "Introduce"
         },
         "object": {
           "question": "Provide a brief personal and professional introduction including key details.",

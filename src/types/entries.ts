@@ -60,7 +60,6 @@ export interface SetQuestionStep {
   presetAnswer: string | null;
   allowDescriptors?: boolean;
   descriptorCategory?: string;
-  allowedVerbs?: string[];
 }
 
 export interface SetQuestion {

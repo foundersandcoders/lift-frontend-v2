@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { SimpleDialogContext } from './simple-dialog-context';
 
 interface SimpleDialogProps {
   isOpen?: boolean;
@@ -13,7 +14,7 @@ interface SimpleDialogContentProps {
   children: React.ReactNode;
   className?: string;
   headerTitle?: string;
-  onOpenAutoFocus?: (e: FocusEvent) => void;
+  onOpenAutoFocus?: (e: Event) => void;
   onEscapeKeyDown?: () => void;
   onPointerDownOutside?: () => void;
 }
@@ -57,7 +58,7 @@ const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContent
     // Always define the useEffect, but make its behavior conditional inside
     useEffect(() => {
       if (onOpenAutoFocus) {
-        const handler = (e: FocusEvent) => {
+        const handler = (e: Event) => {
           onOpenAutoFocus(e);
         };
         document.addEventListener('focus', handler, { once: true });
@@ -126,14 +127,7 @@ const SimpleDialogDescription: React.FC<SimpleDialogDescriptionProps> = ({ child
   );
 };
 
-// Context for communicating between Dialog and DialogTrigger
-export const SimpleDialogContext = React.createContext<{
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-}>({
-  isOpen: false,
-  onOpenChange: () => {},
-});
+// Context is now imported from separate file
 
 const SimpleDialogTrigger: React.FC<SimpleDialogTriggerProps> = ({ children }) => {
   // Get the dialog context to control the dialog's open state
