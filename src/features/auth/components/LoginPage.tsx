@@ -24,6 +24,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
   const { setData } = useEntries();
   const [name, setName] = useState('');
   const [managerName, setManagerName] = useState('');
+  const [managerEmail, setManagerEmail] = useState('');
   const [step, setStep] = useState<'authenticate' | 'profile'>('authenticate');
   const [verifying, setVerifying] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
@@ -91,20 +92,27 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
 
     // Save user profile data
     if (name.trim()) {
+      // Set user's name
       setData({ type: 'SET_USERNAME', payload: name.trim() });
 
+      // If manager name is provided, save it
       if (managerName.trim()) {
         setData({ type: 'SET_MANAGER_NAME', payload: managerName.trim() });
       }
 
-      // If user provided email in auth, use it for manager email
+      // If manager email is provided, save it
+      if (managerEmail.trim()) {
+        setData({ type: 'SET_MANAGER_EMAIL', payload: managerEmail.trim() });
+      }
+
+      // Store user's email from auth in userEmail field
       if (state.user?.email) {
-        setData({ type: 'SET_MANAGER_EMAIL', payload: state.user.email });
+        setData({ type: 'SET_USER_EMAIL', payload: state.user.email });
       }
 
       // Call original onSubmit if provided (for backward compatibility)
       if (onSubmit) {
-        onSubmit(name.trim(), managerName.trim(), state.user?.email || '');
+        onSubmit(name.trim(), managerName.trim(), managerEmail.trim());
       }
     }
   };
@@ -172,58 +180,88 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
               Please enter your name and, optionally, your line manager's name
               to continue.
             </p>
-            <form onSubmit={handleProfileSubmit} className='space-y-4'>
-              <div>
-                <label
-                  htmlFor='name'
-                  className='block text-sm font-medium text-gray-700 mb-1'
-                >
-                  Your Name
-                </label>
-                <Input
-                  id='name'
-                  placeholder='Enter your name'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className='w-full'
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor='managerName'
-                  className='block text-sm font-medium text-gray-700 mb-1'
-                >
-                  Line Manager's Name (optional)
-                </label>
-                <Input
-                  id='managerName'
-                  placeholder="Enter your manager's name"
-                  value={managerName}
-                  onChange={(e) => setManagerName(e.target.value)}
-                  className='w-full'
-                />
-              </div>
-
-              {state.user?.email && (
-                <div className='mt-2'>
-                  <div className='text-sm font-medium text-gray-700 mb-1'>
-                    Email Address
-                  </div>
-                  <div className='px-3 py-2 bg-gray-100 rounded text-gray-800 break-all'>
-                    {state.user.email}
-                  </div>
-                  <p className='text-xs text-gray-500 mt-1'>
-                    You signed in with this email address
-                  </p>
+            <form onSubmit={handleProfileSubmit}>
+              {/* User Information Section */}
+              <div className="mb-6 p-4 bg-pink-50 rounded-lg border border-pink-100">
+                <h3 className="text-md font-semibold text-brand-pink mb-3 border-b pb-2 border-pink-200">
+                  Your Information
+                </h3>
+                
+                <div className="mb-4">
+                  <label
+                    htmlFor='name'
+                    className='block text-sm font-medium text-gray-700 mb-1'
+                  >
+                    Your Name <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    id='name'
+                    placeholder='Enter your name'
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className='w-full'
+                    required
+                  />
                 </div>
-              )}
+
+                {state.user?.email && (
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>
+                      Your Email Address
+                    </label>
+                    <div className='px-3 py-2 bg-white border border-gray-200 rounded text-gray-800 break-all'>
+                      {state.user.email}
+                    </div>
+                    <p className='text-xs text-gray-500 mt-1'>
+                      You signed in with this email address
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Manager Information Section */}
+              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <h3 className="text-md font-semibold text-blue-600 mb-3 border-b pb-2 border-blue-200">
+                  Manager Information (Optional)
+                </h3>
+                
+                <div className="mb-4">
+                  <label
+                    htmlFor='managerName'
+                    className='block text-sm font-medium text-gray-700 mb-1'
+                  >
+                    Line Manager's Name
+                  </label>
+                  <Input
+                    id='managerName'
+                    placeholder="Enter your manager's name"
+                    value={managerName}
+                    onChange={(e) => setManagerName(e.target.value)}
+                    className='w-full'
+                  />
+                </div>
+                
+                <div>
+                  <label
+                    htmlFor='managerEmail'
+                    className='block text-sm font-medium text-gray-700 mb-1'
+                  >
+                    Line Manager's Email
+                  </label>
+                  <Input
+                    id='managerEmail'
+                    placeholder="Enter your manager's email"
+                    value={managerEmail}
+                    onChange={(e) => setManagerEmail(e.target.value)}
+                    className='w-full'
+                  />
+                </div>
+              </div>
 
               <Button
                 type='submit'
                 variant='pink'
-                className='mx-auto shadow-sm w-full mt-6'
+                className='mx-auto shadow-sm w-full'
                 disabled={!name.trim()}
               >
                 Continue

@@ -10,6 +10,7 @@ export interface EntriesContextType {
   data: {
     entries: Entry[];
     username: string;
+    userEmail: string;
     managerName: string;
     managerEmail: string;
     // Add originalCategories to the context data
@@ -20,6 +21,7 @@ export interface EntriesContextType {
 
 export type EntriesAction =
   | { type: 'SET_USERNAME'; payload: string }
+  | { type: 'SET_USER_EMAIL'; payload: string }
   | { type: 'SET_MANAGER_NAME'; payload: string }
   | { type: 'SET_MANAGER_EMAIL'; payload: string }
   | { type: 'SET_ENTRIES'; payload: Entry[] }

@@ -104,46 +104,47 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
           <div
             className='relative rounded-md overflow-hidden'
             style={{
-              border: '8px solid transparent',
+              border: '6px solid transparent', // Reduced from 8px for mobile
               borderImage:
                 'repeating-linear-gradient(45deg, #ff69b4, #ff69b4 10px, #fb86b0 10px, #fb86b0 20px) 8',
-              padding: '16px',
-              margin: '-8px',
+              padding: '12px', // Reduced from 16px for mobile
+              margin: '-6px', // Reduced from -8px to match border
               background: '#f9f9f9',
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Heart decoration */}
-            <div className='absolute top-4 right-4 text-pink-400 opacity-20 pointer-events-none'>
-              <Heart size={40} />
+            {/* Heart decoration - smaller on mobile */}
+            <div className='absolute top-2 right-2 sm:top-4 sm:right-4 text-pink-400 opacity-20 pointer-events-none'>
+              <Heart size={24} className="sm:hidden" />
+              <Heart size={40} className="hidden sm:block" />
             </div>
 
-            <DialogDescription className='mt-0 text-center'>
+            <DialogDescription className='mt-0 text-center text-sm'>
               Express gratitude for this action
             </DialogDescription>
 
-            <div className='text-center mb-4'>
-              <p className='text-sm text-gray-500 mt-1'>
+            <div className='text-center mb-3 sm:mb-4'>
+              <p className='text-xs sm:text-sm text-gray-500 mt-1'>
                 To: {managerName || managerEmail || 'No recipient set'}
               </p>
               {sendSuccess && (
-                <p className='text-green-600 text-sm font-medium mt-2 bg-green-50 py-1 px-2 rounded-full inline-block'>
+                <p className='text-green-600 text-xs sm:text-sm font-medium mt-2 bg-green-50 py-1 px-2 rounded-full inline-block'>
                   ✓ Gratitude sent successfully!
                 </p>
               )}
             </div>
 
             {sendError && (
-              <div className='bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4'>
+              <div className='bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded mb-3 sm:mb-4 text-xs sm:text-sm'>
                 {sendError}
               </div>
             )}
 
-            <div className='mb-6 p-4 bg-white rounded-md shadow-sm border border-pink-100'>
-              <h3 className='font-semibold text-gray-700 mb-2 flex items-center'>
+            <div className='mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-md shadow-sm border border-pink-100'>
+              <h3 className='font-semibold text-gray-700 mb-1 sm:mb-2 flex items-center text-sm sm:text-base'>
                 Action
               </h3>
-              <p className='text-gray-600'>{action.action}</p>
+              <p className='text-gray-600 text-xs sm:text-sm break-words'>{action.action}</p>
               {action.byDate && (
                 <p className='text-xs text-gray-500 mt-1'>
                   Due by: {action.byDate}
@@ -151,17 +152,17 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
               )}
             </div>
 
-            <div className='mb-6'>
+            <div className='mb-4 sm:mb-6'>
               <label
                 htmlFor='gratitude-message'
-                className='block text-sm font-medium text-gray-700 mb-2'
+                className='block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2'
               >
                 Your gratitude message:
               </label>
               <textarea
                 id='gratitude-message'
-                rows={4}
-                className='w-full rounded-md border border-pink-200 focus:border-pink-500 focus:ring-pink-500 text-gray-900 p-3'
+                rows={3} // Reduced from 4 for mobile
+                className='w-full rounded-md border border-pink-200 focus:border-pink-500 focus:ring-pink-500 text-gray-900 p-2 sm:p-3 text-sm'
                 placeholder='Express your thanks and appreciation here...'
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -171,26 +172,30 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
               </p>
             </div>
 
-            <div className='mt-6 flex justify-center gap-4'>
+            <div className='mt-4 sm:mt-6 flex justify-center gap-2 sm:gap-4'>
               <Button
                 variant='default'
                 onClick={handleSendGratitude}
                 disabled={isSending || !message.trim() || !managerEmail}
-                className='shadow-sm bg-pink-600 hover:bg-pink-700 text-white'
+                className='shadow-sm bg-pink-600 hover:bg-pink-700 text-white text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2'
               >
                 {isSending ? (
                   <>
-                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    <Loader2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
                     <span>Sending...</span>
                   </>
                 ) : (
                   <>
-                    <Heart className='mr-2 h-4 w-4' />
+                    <Heart className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                     <span>Send Gratitude</span>
                   </>
                 )}
               </Button>
-              <Button variant='outline' onClick={onClose}>
+              <Button 
+                variant='outline' 
+                onClick={onClose}
+                className='text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2'
+              >
                 <span>Cancel</span>
               </Button>
             </div>

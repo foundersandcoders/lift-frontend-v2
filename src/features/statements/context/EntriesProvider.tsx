@@ -12,6 +12,8 @@ const EntriesReducer = (
   switch (action.type) {
     case 'SET_USERNAME':
       return { ...data, username: action.payload };
+    case 'SET_USER_EMAIL':
+      return { ...data, userEmail: action.payload };
     case 'SET_MANAGER_NAME':
       return { ...data, managerName: action.payload };
     case 'SET_MANAGER_EMAIL':
@@ -79,6 +81,7 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
   const [data, setData] = useReducer(EntriesReducer, {
     entries: [],
     username: '',
+    userEmail: '',
     managerName: '',
     managerEmail: '',
     originalCategories: {} // Initialize the originalCategories store
@@ -96,8 +99,8 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
       
       // If we have a user object with an email
       if (event.detail?.user?.email) {
-        // Update manager email from auth state - ALWAYS update, don't check if empty
-        setData({ type: 'SET_MANAGER_EMAIL', payload: event.detail.user.email });
+        // Store user email from auth (this is the email they used for magic link)
+        setData({ type: 'SET_USER_EMAIL', payload: event.detail.user.email });
       }
     };
     

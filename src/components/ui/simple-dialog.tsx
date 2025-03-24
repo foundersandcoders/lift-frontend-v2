@@ -74,13 +74,23 @@ const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContent
       <div
         ref={ref}
         className={cn(
-          'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border-0 bg-background p-0 shadow-lg duration-200',
+          'fixed left-[50%] top-[50%] z-50 flex flex-col w-full translate-x-[-50%] translate-y-[-50%] border-0 bg-background p-0 shadow-lg duration-200',
+          'max-w-[95vw] max-h-[90vh] sm:max-w-lg rounded-lg overflow-hidden',
           className
         )}
         onClick={handleContentClick}
         {...props}
       >
-        {children}
+        {/* If there's a header title, add it as a styled header */}
+        {headerTitle && (
+          <div className="flex items-center justify-between bg-brand-pink p-2 sm:p-4 flex-shrink-0">
+            <h2 className="text-base sm:text-lg font-semibold text-white">{headerTitle}</h2>
+          </div>
+        )}
+        {/* Main content with scroll capability */}
+        <div className="overflow-y-auto flex-grow">
+          {children}
+        </div>
       </div>
     );
   }
@@ -108,7 +118,7 @@ const SimpleDialogTitle: React.FC<SimpleDialogTitleProps> = ({ children, classNa
 
 const SimpleDialogDescription: React.FC<SimpleDialogDescriptionProps> = ({ children, className }) => {
   return (
-    <p className={cn('text-sm text-muted-foreground', className)}>
+    <p className={cn('text-xs sm:text-sm text-muted-foreground mt-1 mb-2 sm:mb-3', className)}>
       {children}
     </p>
   );

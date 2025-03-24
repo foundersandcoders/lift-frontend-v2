@@ -51,3 +51,47 @@ export async function sendEmail(email: Email) {
     throw error;
   }
 }
+
+// Mock implementation of sharing statements
+const mockShareStatements = async (recipientEmail: string) => {
+  console.log('MOCK: Sharing statements with:', recipientEmail);
+  
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  // Return mock success response
+  return {
+    success: true,
+    message: 'Statements shared successfully (mock)',
+    id: `mock-share-${Date.now()}`
+  };
+};
+
+// Share statements via backend API or mock
+export async function shareStatements(recipientEmail: string) {
+  // Use mock implementation if enabled
+  if (shouldUseMock()) {
+    return mockShareStatements(recipientEmail);
+  }
+  
+  // Real implementation
+  try {
+    const response = await fetch('/api/email/share-statements', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ recipientEmail }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to share statements');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error sharing statements:", error);
+    throw error;
+  }
+}
