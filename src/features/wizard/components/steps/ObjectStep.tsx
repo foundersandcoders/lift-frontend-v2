@@ -18,7 +18,7 @@ export const ObjectStep: React.FC<ObjectStepProps> = ({
   verb,
   selection,
   onUpdate,
-  currentStep = 3,
+  currentStep = 4, // Updated since category, subject, and verb now come first
   totalSteps = 5,
 }) => {
   const subQuestion = `In what way does ${subject} ${getVerbName(

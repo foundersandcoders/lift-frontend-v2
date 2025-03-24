@@ -15,7 +15,7 @@ export const VerbStep: React.FC<VerbStepProps> = ({
   subject,
   selection,
   onUpdate,
-  currentStep = 2,
+  currentStep = 3, // Updated since category and subject now come first
   totalSteps = 5,
 }) => {
   const subQuestion = `What's happening with ${subject}? How do they feel or what do they experience?`;

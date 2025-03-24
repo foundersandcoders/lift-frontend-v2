@@ -14,10 +14,10 @@ interface CategoryStepProps {
 export const CategoryStep: React.FC<CategoryStepProps> = ({
   selection,
   onUpdate,
-  currentStep = 4,
+  currentStep = 1, // Updated to be the first step
   totalSteps = 5,
 }) => {
-  const subQuestion = `You can set a category for your statement`;
+  const subQuestion = `Select a category for your statement. This will determine available options for the subject.`;
   const categories = statementsCategories.categories || [];
 
   // Helper function to normalize category IDs

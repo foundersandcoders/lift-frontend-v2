@@ -7,6 +7,7 @@ interface SubjectStepProps {
   username: string;
   presetQuestion?: SetQuestion;
   selection: string;
+  selectedCategory?: string;
   onUpdate: (val: string) => void;
   currentStep?: number;
   totalSteps?: number;
@@ -16,8 +17,9 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
   username,
   presetQuestion,
   selection,
+  selectedCategory,
   onUpdate,
-  currentStep = 1,
+  currentStep = 2, // Updated step number since category is now first
   totalSteps = 5,
 }) => {
   // Use a default subject question text
@@ -41,6 +43,7 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
         <SubjectTiles
           username={username}
           activePresetQuestion={presetQuestion}
+          selectedCategory={selectedCategory}
           selectedValue={selection}
           onSelect={(value) => {
             onUpdate(value);

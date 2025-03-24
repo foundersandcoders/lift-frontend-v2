@@ -37,9 +37,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const isPreset = Boolean(presetQuestion);
 
   // Define steps: if preset, skip "category" and add "complement"
+  // For custom statements, show category first, then subject
   const steps: Exclude<Step, 'closed'>[] = isPreset
     ? ['subject', 'verb', 'object', 'privacy', 'complement']
-    : ['subject', 'verb', 'object', 'category', 'privacy'];
+    : ['category', 'subject', 'verb', 'object', 'privacy'];
 
   // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
@@ -75,9 +76,14 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       setSelection((prev) => ({
         ...prev,
         atoms: { ...prev.atoms, subject: username },
+        // For preset questions, use the category from the preset
+        category: presetQuestion.category || 'uncategorised',
+        // Add the presetId to identify this as a preset question in the preview
+        presetId: presetQuestion.id,
       }));
     } else {
-      // For custom statements, set defaults:
+      // For custom statements, set default category to "uncategorised" 
+      // but still show the category screen first
       setSelection((prev) => ({
         ...prev,
         // Set default subject to username
@@ -165,7 +171,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       case 'object':
         return selection.atoms.object.trim().length > 0;
       case 'category':
-        return selection.category.trim().length > 0;
+        // For custom statements (not preset), category must be selected
+        return isPreset || selection.category.trim().length > 0;
       case 'privacy':
         // Always valid since it's a boolean toggle.
         return true;
@@ -186,6 +193,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             username={username}
             presetQuestion={presetQuestion}
             selection={selection.atoms.subject}
+            selectedCategory={selection.category} // Pass the selected category to filter descriptors
             onUpdate={(val) => {
               // If the same value is selected again, move to next step
               if (selection.atoms.subject === val) {
@@ -248,7 +256,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
               if (selection.category === val) {
                 goNext();
               } else {
-                // Otherwise, just update the selection
+                // Update the selection but don't automatically advance
+                // Let the user click Next or click the same category again to advance
                 setSelection((prev) => ({
                   ...prev,
                   category: val,

@@ -16,7 +16,7 @@ export const PrivacyStep: React.FC<PrivacyStepProps> = ({
   isPublic,
   onUpdate,
   isSubmitting = false,
-  currentStep = 5,
+  currentStep = 5, // Still the final step
   totalSteps = 5,
 }) => {
   const { data } = useEntries();
