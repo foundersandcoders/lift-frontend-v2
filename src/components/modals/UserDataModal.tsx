@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { useAuth } from '../../features/auth/api/hooks';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
-import { Tooltip, TooltipTrigger, TooltipContent } from '../ui/better-tooltip';
 import { validateEmail } from '../../lib/utils/validateEmail';
 import QuestionCounter from '../ui/questionCounter/QuestionCounter';
 import ProgressWithFeedback from '../ui/progress/ProgressWithFeedback';
@@ -19,6 +18,18 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
   const { data, setData } = useEntries();
   const { signOut } = useAuth();
   const [isEditingContact, setIsEditingContact] = useState(false);
+  
+  // Add refs for height measurements
+  const userViewRef = useRef<HTMLDivElement>(null);
+  const userEditRef = useRef<HTMLDivElement>(null);
+  const managerViewRef = useRef<HTMLDivElement>(null);
+  const managerEditRef = useRef<HTMLDivElement>(null);
+  
+  // Store heights in state to handle transitions
+  const [userViewHeight, setUserViewHeight] = useState<number>(0);
+  const [userEditHeight, setUserEditHeight] = useState<number>(0);
+  const [managerViewHeight, setManagerViewHeight] = useState<number>(0);
+  const [managerEditHeight, setManagerEditHeight] = useState<number>(0);
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [managerEmailInput, setManagerEmailInput] = useState(
     data.managerEmail || ''
@@ -56,6 +67,36 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     data.managerName,
     data.username,
   ]);
+  
+  // Measure content heights when they change or when edit state changes
+  useEffect(() => {
+    // Use a small delay to ensure the DOM has updated
+    const measureHeights = () => {
+      setTimeout(() => {
+        // Measure user info section heights
+        if (userViewRef.current) {
+          setUserViewHeight(userViewRef.current.scrollHeight);
+        }
+        if (userEditRef.current) {
+          setUserEditHeight(userEditRef.current.scrollHeight);
+        }
+        
+        // Measure manager info section heights
+        if (managerViewRef.current) {
+          setManagerViewHeight(managerViewRef.current.scrollHeight);
+        }
+        if (managerEditRef.current) {
+          setManagerEditHeight(managerEditRef.current.scrollHeight);
+        }
+      }, 10);
+    };
+    
+    measureHeights();
+    
+    // Add resize listener to handle window size changes
+    window.addEventListener('resize', measureHeights);
+    return () => window.removeEventListener('resize', measureHeights);
+  }, [isEditingUsername, isEditingContact, data.username, data.userEmail, data.managerName, data.managerEmail]);
 
   const handleSaveContact = () => {
     if (managerEmailInput.trim() && !validateEmail(managerEmailInput.trim())) {
@@ -114,7 +155,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
               {/* Left column for desktop (stacked on mobile) */}
               <div className='flex flex-col space-y-2 sm:w-1/2 sm:self-stretch'>
                 {/* User Profile Section */}
-                <div className='bg-white rounded-lg p-2 shadow-sm border border-pink-100'>
+                <div className='bg-white rounded-lg p-2 shadow-sm border border-pink-100 transition-all duration-300'>
                   {/* User Information Title */}
                   <div className='flex items-center justify-between mb-2'>
                     <div className='flex items-center'>
@@ -135,8 +176,9 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                     )}
                   </div>
 
+                  <div className='overflow-hidden transition-height duration-300' style={{height: isEditingUsername ? `${userEditHeight}px` : `${userViewHeight}px`}}>
                   {isEditingUsername ? (
-                    <div className='space-y-2'>
+                    <div className='space-y-2' ref={userEditRef}>
                       <div>
                         <label
                           htmlFor='username'
@@ -231,7 +273,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       </div>
                     </div>
                   ) : (
-                    <div className='text-sm'>
+                    <div className='text-sm' ref={userViewRef}>
                       <div className='bg-pink-50 px-2 py-1 rounded-md mb-1'>
                         <span className='text-xs text-gray-500'>Name:</span>{' '}
                         <span className='font-medium text-gray-800 break-words'>
@@ -249,10 +291,11 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       )}
                     </div>
                   )}
+                  </div>
                 </div>
 
                 {/* Manager contact section */}
-                <div className='bg-white rounded-lg p-2 shadow-sm border border-pink-100 flex-grow'>
+                <div className='bg-white rounded-lg p-2 shadow-sm border border-pink-100 flex-grow transition-all duration-300'>
                   <div className='flex items-center justify-between mb-2'>
                     <div className='flex items-center'>
                       <Mail size={14} className='text-brand-pink mr-1' />
@@ -272,8 +315,9 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                     )}
                   </div>
 
+                  <div className='overflow-hidden transition-height duration-300' style={{height: isEditingContact ? `${managerEditHeight}px` : `${managerViewHeight}px`}}>
                   {isEditingContact ? (
-                    <div className='space-y-2'>
+                    <div className='space-y-2' ref={managerEditRef}>
                       <div>
                         <label
                           htmlFor='managerName'
@@ -346,7 +390,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       </div>
                     </div>
                   ) : (
-                    <div className='text-sm'>
+                    <div className='text-sm' ref={managerViewRef}>
                       <div className='bg-pink-50 px-2 py-1 rounded-md mb-1'>
                         <span className='text-xs text-gray-500'>Name:</span>{' '}
                         <span className='font-medium text-gray-800 break-words'>
@@ -361,13 +405,14 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       </div>
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
 
               {/* Right column for desktop (Progress) */}
               <div className='sm:w-1/2 flex sm:self-stretch'>
                 {/* Progress section */}
-                <div className='bg-white rounded-lg p-2 shadow-sm border border-pink-100 w-full'>
+                <div className='bg-white rounded-lg p-2 shadow-sm border border-pink-100 w-full transition-all duration-300'>
                   <div className='flex items-center justify-between mb-2'>
                     <div className='flex items-center'>
                       <Award size={14} className='text-brand-pink mr-1' />

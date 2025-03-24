@@ -405,35 +405,6 @@
           "presetAnswer": null
         }
       }
-    },
-    {
-      "id": "q15",
-      "category": "Example",
-      "mainQuestion": "How do you feel abour having pets on your working place?",
-      "steps": {
-        "subject": {
-          "question": "Who is this statement about?",
-          "preset": true,
-          "presetAnswer": "username",
-          "allowDescriptors": true
-        },
-        "verb": {
-          "question": "Select the action verb for your statement.",
-          "preset": false,
-          "presetAnswer": "Introduce",
-          "allowedVerbs": ["Introduce", "Share"]
-        },
-        "object": {
-          "question": "Provide a brief personal and professional introduction including key details.",
-          "preset": false,
-          "presetAnswer": null
-        },
-        "privacy": {
-          "question": "Do you want to share this introduction with your team?",
-          "preset": false,
-          "presetAnswer": null
-        }
-      }
     }
   ]
 }

@@ -1,10 +1,6 @@
 {
   "categories": [
     {
-      "id": "Example",
-      "name": "Category example"
-    },
-    {
       "id": "Wellbeing",
       "name": "Wellness at work"
     },

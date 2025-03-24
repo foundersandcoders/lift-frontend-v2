@@ -13,7 +13,7 @@ interface SimpleDialogContentProps {
   children: React.ReactNode;
   className?: string;
   headerTitle?: string;
-  onOpenAutoFocus?: (e: any) => void;
+  onOpenAutoFocus?: (e: FocusEvent) => void;
   onEscapeKeyDown?: () => void;
   onPointerDownOutside?: () => void;
 }
@@ -54,16 +54,18 @@ const SimpleDialogOverlay: React.FC<{ className?: string; onClick?: () => void }
 
 const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContentProps>(
   ({ className, children, headerTitle, onOpenAutoFocus, ...props }, ref) => {
-    if (onOpenAutoFocus) {
-      // Prevent auto focus
-      useEffect(() => {
+    // Always define the useEffect, but make its behavior conditional inside
+    useEffect(() => {
+      if (onOpenAutoFocus) {
         const handler = (e: FocusEvent) => {
-          if (onOpenAutoFocus) onOpenAutoFocus(e);
+          onOpenAutoFocus(e);
         };
         document.addEventListener('focus', handler, { once: true });
         return () => document.removeEventListener('focus', handler);
-      }, [onOpenAutoFocus]);
-    }
+      }
+      // Return empty cleanup function when onOpenAutoFocus is not provided
+      return () => {};
+    }, [onOpenAutoFocus]);
 
     // Stop click propagation to prevent closing the dialog when clicking content
     const handleContentClick = (e: React.MouseEvent) => {

@@ -102,3 +102,9 @@
     @apply bg-background text-foreground font-sans bg-gray-50;
   }
 }
+
+/* Custom transition class for height animation */
+.transition-height {
+  transition-property: height;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}

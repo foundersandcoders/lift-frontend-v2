@@ -290,12 +290,13 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent
-        className={`sm:max-w-[600px] p-0 w-full border-8 gap-2 md:gap-4 ${getBorderColor(
+        className={`sm:max-w-[600px] p-0 w-full border-8 ${getBorderColor(
           currentStep
-        )}`}
+        )} flex flex-col max-h-[90vh]`}
       >
+        {/* Header Section - Always Visible */}
         {presetQuestion && (
-          <div className='p-2 md:p-5 bg-gray-200 border-b'>
+          <div className='p-2 md:p-5 bg-gray-200 border-b flex-shrink-0'>
             <h2 className='text-base md:text-xl font-bold'>
               {presetQuestion.mainQuestion}
             </h2>
@@ -303,53 +304,62 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         )}
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
         <DialogTitle className='sr-only'>Wizard Steps</DialogTitle>
-        <AnimatePresence mode='wait' initial={false}>
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-          >
-            {renderStep()}
-          </motion.div>
-        </AnimatePresence>
-        {/* Navigation Panel */}
-        <div className='flex justify-center p-0 md:p-4 pb-2 mb-0 gap-6'>
-          <Button
-            onClick={goBack}
-            disabled={currentStepIndex === 0}
-            variant='outline'
-            className='shadow-sm p-2'
-          >
-            <span>Back</span>
-          </Button>
-          <Button
-            variant='default'
-            className='shadow-sm p-2'
-            onClick={
-              currentStepIndex === steps.length - 1 ? handleComplete : goNext
-            }
-            disabled={!isStepValid(currentStep) || isSubmitting}
-          >
-            <span>
-              {isSubmitting
-                ? 'Submitting...'
-                : currentStepIndex === steps.length - 1
-                ? 'Create Statement'
-                : 'Next'}
+        
+        {/* Scrollable Content Area */}
+        <div className='flex-grow overflow-y-auto min-h-0'>
+          <AnimatePresence mode='wait' initial={false}>
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+        
+        {/* Bottom Section - Always Visible */}
+        <div className='flex-shrink-0'>
+          {/* Navigation Panel */}
+          <div className='flex justify-center p-0 md:p-4 pb-2 mb-0 gap-6'>
+            <Button
+              onClick={goBack}
+              disabled={currentStepIndex === 0}
+              variant='outline'
+              className='shadow-sm p-2'
+            >
+              <span>Back</span>
+            </Button>
+            <Button
+              variant='default'
+              className='shadow-sm p-2'
+              onClick={
+                currentStepIndex === steps.length - 1 ? handleComplete : goNext
+              }
+              disabled={!isStepValid(currentStep) || isSubmitting}
+            >
+              <span>
+                {isSubmitting
+                  ? 'Submitting...'
+                  : currentStepIndex === steps.length - 1
+                  ? 'Create Statement'
+                  : 'Next'}
+              </span>
+            </Button>
+          </div>
+
+          {/* Divider to separate preview from wizard content */}
+          <div className='w-full border-t border-black my-2 relative'>
+            <span className='absolute left-0 right-0 text-center bg-white text-xs text-black px-2 -top-2 mx-auto w-fit'>
+              Statement Preview
             </span>
-          </Button>
-        </div>
+          </div>
 
-        {/* Divider to separate preview from wizard content */}
-        <div className='w-full border-t border-black my-3 relative'>
-          <span className='absolute left-0 right-0 text-center bg-white text-xs text-black px-2 -top-2 mx-auto w-fit'>
-            Statement Preview
-          </span>
+          {/* Preview - Always Visible */}
+          <StatementPreview selection={{ ...selection, currentStep }} />
         </div>
-
-        <StatementPreview selection={{ ...selection, currentStep }} />
       </DialogContent>
     </Dialog>
   );

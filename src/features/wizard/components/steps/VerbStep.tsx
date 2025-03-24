@@ -26,7 +26,7 @@ export const VerbStep: React.FC<VerbStepProps> = ({
       currentStep={currentStep}
       totalSteps={totalSteps}
     >
-      <div className='flex flex-col h-[50vh] p-2 md:p-4 rounded-md mt-0'>
+      <div className='flex flex-col p-2 md:p-4 rounded-md mt-0'>
         <SentimentVerbPicker
           selectedVerbId={selection}
           onVerbSelect={(verb: Verb) => {

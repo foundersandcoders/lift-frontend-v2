@@ -736,12 +736,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <DropdownMenuItem onClick={() => onToggleArchived(statement.id)}>
                 {statement.isArchived ? (
                   <>
-                    <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
+                    <ArchiveRestore className='mr-2 h-4 w-4  text-gray-600' />
                     Unarchive
                   </>
                 ) : (
                   <>
-                    <Archive className='mr-2 h-4 w-4 text-green-500' />
+                    <Archive className='mr-2 h-4 w-4 text-gray-600' />
                     Archive
                   </>
                 )}
@@ -835,12 +835,12 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <DropdownMenuItem onClick={() => onToggleArchived(statement.id)}>
                 {statement.isArchived ? (
                   <>
-                    <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
+                    <ArchiveRestore className='mr-2 h-4 w-4 text-gray-600' />
                     Unarchive
                   </>
                 ) : (
                   <>
-                    <Archive className='mr-2 h-4 w-4 text-green-500' />
+                    <Archive className='mr-2 h-4 w-4 text-gray-600' />
                     Archive
                   </>
                 )}
