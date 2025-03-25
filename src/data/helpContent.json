@@ -1,7 +1,7 @@
 {
   "welcome": {
-    "title": "Welcome to Lift",
-    "description": "Lift helps you communicate effectively with your line manager by organizing and sharing structured information about your needs, preferences, and work progress. Answer prepared questions by category or create custom statements to help them understand how to best support you.",
+    "title": "Welcome to Beacons",
+    "description": "Beacons helps you communicate effectively with your line manager by organizing and sharing structured information about your needs, preferences, and work progress. Answer prepared questions by category or create custom statements to help them understand how to best support you.",
     "keyBenefits": [
       "Share important information with your line manager through structured statements",
       "Track actions related to your statements and monitor progress",
@@ -13,12 +13,12 @@
     "desktop": {
       "title": "Desktop Tutorial",
       "videoUrl": "/videos/desktop-tutorial.mp4",
-      "description": "Learn how to use Lift on your desktop or laptop computer."
+      "description": "Learn how to use Beacons on your desktop or laptop computer."
     },
     "mobile": {
       "title": "Mobile Tutorial",
       "videoUrl": "/videos/mobile-tutorial.mp4",
-      "description": "Learn how to use Lift on your mobile device."
+      "description": "Learn how to use Beacons on your mobile device."
     }
   },
   "features": [
@@ -87,7 +87,7 @@
       "changes": [
         {
           "type": "feature",
-          "description": "Initial release of Lift application"
+          "description": "Initial release of Beacons application"
         },
         { "type": "feature", "description": "Create and manage statements" },
         { "type": "feature", "description": "Share statements via email" },
