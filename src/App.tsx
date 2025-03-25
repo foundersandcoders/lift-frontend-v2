@@ -7,6 +7,7 @@ import { TooltipProvider } from './components/ui/better-tooltip';
 import { AuthProvider } from './features/auth/AuthProvider';
 import { EntriesProvider } from './features/statements/context/EntriesProvider';
 import { QuestionsProvider } from './providers/QuestionsProvider';
+import { HelpProvider } from './components/ui/tour';
 
 // Components
 import LoginPage from './features/auth/components/LoginPage';
@@ -64,9 +65,11 @@ const App: React.FC = () => {
       <AuthProvider>
         <EntriesProvider>
           <QuestionsProvider>
-            <AppContent />
-            {/* Add the mock notification component for testing */}
-            {import.meta.env.DEV && <MockNotification />}
+            <HelpProvider>
+              <AppContent />
+              {/* Add the mock notification component for testing */}
+              {import.meta.env.DEV && <MockNotification />}
+            </HelpProvider>
           </QuestionsProvider>
         </EntriesProvider>
       </AuthProvider>
