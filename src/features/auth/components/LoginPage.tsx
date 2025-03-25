@@ -176,23 +176,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
             <h1 className='text-3xl font-bold mb-6 text-center'>
               Complete Your Profile
             </h1>
-            <p className='mb-6 text-center text-gray-700'>
-              Please enter your name and, optionally, your line manager's name
-              to continue.
-            </p>
+
             <form onSubmit={handleProfileSubmit}>
               {/* User Information Section */}
-              <div className="mb-6 p-4 bg-pink-50 rounded-lg border border-pink-100">
-                <h3 className="text-md font-semibold text-brand-pink mb-3 border-b pb-2 border-pink-200">
+              <div className='mb-6 p-4 bg-pink-50 rounded-lg border border-pink-100'>
+                <h3 className='text-md font-semibold text-brand-pink mb-3 border-b pb-2 border-pink-200'>
                   Your Information
                 </h3>
-                
-                <div className="mb-4">
+
+                <div className='mb-4'>
                   <label
                     htmlFor='name'
                     className='block text-sm font-medium text-gray-700 mb-1'
                   >
-                    Your Name <span className="text-red-500">*</span>
+                    Your Name <span className='text-red-500'>*</span>
                   </label>
                   <Input
                     id='name'
@@ -220,12 +217,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
               </div>
 
               {/* Manager Information Section */}
-              <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                <h3 className="text-md font-semibold text-blue-600 mb-3 border-b pb-2 border-blue-200">
+              <div className='mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100'>
+                <h3 className='text-md font-semibold text-blue-600 mb-3 border-b pb-2 border-blue-200'>
                   Manager Information (Optional)
                 </h3>
-                
-                <div className="mb-4">
+
+                <div className='mb-4'>
                   <label
                     htmlFor='managerName'
                     className='block text-sm font-medium text-gray-700 mb-1'
@@ -240,7 +237,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
                     className='w-full'
                   />
                 </div>
-                
+
                 <div>
                   <label
                     htmlFor='managerEmail'

@@ -27,6 +27,7 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showCenter, setShowCenter] = useState(false);
   const [activeTab, setActiveTab] = useState('welcome');
+  const [shouldPulseButton, setShouldPulseButton] = useState(false);
 
   // Check if this is the first visit
   useEffect(() => {
@@ -39,6 +40,8 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
   const handleWelcomeClose = () => {
     setShowWelcome(false);
     localStorage.setItem('app_visited', 'true');
+    // Pulse the help button after welcome panel closes
+    setShouldPulseButton(true);
   };
 
   const handleShowTutorial = () => {
@@ -48,9 +51,17 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
     localStorage.setItem('app_visited', 'true');
   };
 
+  const handleHelpCenterClose = () => {
+    setShowCenter(false);
+    // Pulse the help button after help center closes
+    setShouldPulseButton(true);
+  };
+
   const showHelpCenter = (tab = 'welcome') => {
     setActiveTab(tab);
     setShowCenter(true);
+    // Stop pulsing when help center opens
+    setShouldPulseButton(false);
   };
 
   return (
@@ -58,7 +69,10 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
       {children}
       
       {/* Persistent Help Button */}
-      <HelpButton onClick={() => showHelpCenter()} />
+      <HelpButton 
+        onClick={() => showHelpCenter()} 
+        shouldPulse={shouldPulseButton}
+      />
       
       {/* Welcome Panel (first visit) */}
       {showWelcome && (
@@ -71,7 +85,7 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
       {/* Help Center Panel */}
       {showCenter && (
         <HelpCenter 
-          onClose={() => setShowCenter(false)} 
+          onClose={handleHelpCenterClose} 
           initialTab={activeTab}
         />
       )}

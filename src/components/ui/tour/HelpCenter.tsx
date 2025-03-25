@@ -62,51 +62,51 @@ const HelpCenter: React.FC<HelpCenterProps> = ({ onClose, initialTab = 'welcome'
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b">
+        {/* Tabs - grid for mobile, flex for desktop */}
+        <div className="grid grid-cols-4 sm:flex border-b">
           <button
-            className={`px-4 py-2 font-medium text-sm flex items-center ${
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
               activeTab === 'welcome' 
                 ? 'text-brand-blue border-b-2 border-brand-blue' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
             onClick={() => handleTabChange('welcome')}
           >
-            <Info className="w-4 h-4 mr-1" />
-            About
+            <Info className="w-4 h-4 sm:mr-1 mb-1 sm:mb-0" />
+            <span>About</span>
           </button>
           <button
-            className={`px-4 py-2 font-medium text-sm flex items-center ${
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
               activeTab === 'tutorials' 
                 ? 'text-brand-blue border-b-2 border-brand-blue' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
             onClick={() => handleTabChange('tutorials')}
           >
-            <PlayCircle className="w-4 h-4 mr-1" />
-            Tutorials
+            <PlayCircle className="w-4 h-4 sm:mr-1 mb-1 sm:mb-0" />
+            <span>Tutorials</span>
           </button>
           <button
-            className={`px-4 py-2 font-medium text-sm flex items-center ${
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
               activeTab === 'features' 
                 ? 'text-brand-blue border-b-2 border-brand-blue' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
             onClick={() => handleTabChange('features')}
           >
-            <BookOpen className="w-4 h-4 mr-1" />
-            Features
+            <BookOpen className="w-4 h-4 sm:mr-1 mb-1 sm:mb-0" />
+            <span>Features</span>
           </button>
           <button
-            className={`px-4 py-2 font-medium text-sm flex items-center ${
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
               activeTab === 'versions' 
                 ? 'text-brand-blue border-b-2 border-brand-blue' 
                 : 'text-gray-500 hover:text-gray-700'
             }`}
             onClick={() => handleTabChange('versions')}
           >
-            <History className="w-4 h-4 mr-1" />
-            Versions
+            <History className="w-4 h-4 sm:mr-1 mb-1 sm:mb-0" />
+            <span>Versions</span>
           </button>
         </div>
 
