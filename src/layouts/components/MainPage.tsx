@@ -14,7 +14,6 @@ import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
 // import TestStatementButton from '../../components/debug/TestButton';
 import Footer from './Footer';
-// import { useTour } from '../../components/ui/tour/useTour';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
@@ -22,21 +21,6 @@ const MainPage: React.FC = () => {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  // Get tour functionality
-  // const { startTour, hasSeenTour } = useTour();
-
-  // Auto-start tour for new users
-  // useEffect(() => {
-  //   // Check if the user is authenticated and has not seen the tour
-  //   if (username && !hasSeenTour) {
-  //     // Wait for the UI to fully render before starting the tour
-  //     const tourTimeout = setTimeout(() => {
-  //       startTour();
-  //     }, 1000);
-
-  //     return () => clearTimeout(tourTimeout);
-  //   }
-  // }, [username, hasSeenTour, startTour]);
 
   // Determine if email button should be disabled:
   const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
