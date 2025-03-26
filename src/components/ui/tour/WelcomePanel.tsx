@@ -25,7 +25,7 @@ const WelcomePanel: React.FC<WelcomePanelProps> = ({
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50'>
       <div
-        className={`bg-white rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 ${
+        className={`bg-white rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 max-h-[90vh] flex flex-col ${
           visible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
         }`}
       >
@@ -43,8 +43,8 @@ const WelcomePanel: React.FC<WelcomePanelProps> = ({
           </button>
         </div>
 
-        {/* Content */}
-        <div className='p-5'>
+        {/* Content - scrollable */}
+        <div className='flex-1 overflow-y-auto p-5'>
           <p className='text-gray-700 mb-4'>
             {helpContent.welcome.description}
           </p>
@@ -55,22 +55,22 @@ const WelcomePanel: React.FC<WelcomePanelProps> = ({
               <li key={index}>{benefit}</li>
             ))}
           </ul>
+        </div>
 
-          {/* Buttons */}
-          <div className='flex flex-col sm:flex-row gap-3 mt-6'>
-            <Button variant='default' className='flex-1' onClick={onClose}>
-              Get Started
-              <ArrowRight className='w-4 h-4 ml-2' />
-            </Button>
-            <Button
-              variant='outline'
-              className='flex-1'
-              onClick={onShowTutorial}
-            >
-              Show Tutorial
-              <PlayCircle className='w-4 h-4 ml-2' />
-            </Button>
-          </div>
+        {/* Footer */}
+        <div className='border-t p-4 flex flex-row gap-3'>
+          <Button variant='default' className='flex-1' onClick={onClose}>
+            Get Started
+            <ArrowRight className='w-4 h-4 ml-2' />
+          </Button>
+          <Button
+            variant='outline'
+            className='flex-1'
+            onClick={onShowTutorial}
+          >
+            Show Tutorial
+            <PlayCircle className='w-4 h-4 ml-2' />
+          </Button>
         </div>
       </div>
     </div>
