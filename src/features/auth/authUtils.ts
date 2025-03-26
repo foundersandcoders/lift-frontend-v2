@@ -33,8 +33,13 @@ export const handleMagicLinkVerification = async () => {
     window.localStorage.setItem('auth', 'updated');
     window.localStorage.removeItem('auth');
     
-    // Dispatch a custom event that components can listen for
+    // Dispatch magicLinkVerified event
     window.dispatchEvent(new CustomEvent('magicLinkVerified', { 
+      detail: { user: result.user }
+    }));
+
+    // Also dispatch authStateChanged to update entries context
+    window.dispatchEvent(new CustomEvent('authStateChanged', { 
       detail: { user: result.user }
     }));
   }

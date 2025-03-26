@@ -91,16 +91,20 @@ export const EntriesProvider: React.FC<EntriesProviderProps> = ({
   useEffect(() => {
     // Handler for auth state changes
     const handleAuthStateChange = (event: AuthStateChangedEvent) => {
+      console.log('EntriesProvider: Auth state changed event received:', event.detail);
+      
       // If we have a user object with a username
       if (event.detail?.user?.username) {
         // Update username from auth state - ALWAYS update, don't check if empty
         setData({ type: 'SET_USERNAME', payload: event.detail.user.username });
+        console.log('EntriesProvider: Updated username to', event.detail.user.username);
       }
       
       // If we have a user object with an email
       if (event.detail?.user?.email) {
         // Store user email from auth (this is the email they used for magic link)
         setData({ type: 'SET_USER_EMAIL', payload: event.detail.user.email });
+        console.log('EntriesProvider: Updated user email to', event.detail.user.email);
       }
     };
     
