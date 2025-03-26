@@ -113,6 +113,14 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
     setData({ type: 'SET_USERNAME', payload: usernameInput });
     setIsEditingUsername(false);
   };
+  
+  // Handle keyboard events for input fields
+  const handleKeyDown = (e: React.KeyboardEvent, saveFunction: () => void) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveFunction();
+    }
+  };
 
   // Handler for clicks outside the modal
   const handleOutsideClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -182,14 +190,15 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                       <div>
                         <label
                           htmlFor='username'
-                          className='block text-sm font-medium text-gray-700 mb-1'
+                          className='block text-xs font-medium text-gray-500 mb-0.5'
                         >
                           Your Name
                         </label>
-                        <Input
+                        <input
                           id='username'
                           value={usernameInput}
                           onChange={(e) => setUsernameInput(e.target.value)}
+                          onKeyDown={(e) => handleKeyDown(e, handleSaveUsername)}
                           placeholder='Enter your name'
                           aria-label='Your Name'
                           className='w-full h-8 rounded-md border border-pink-200 focus:border-brand-pink text-gray-500 text-sm px-2'
@@ -329,6 +338,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                           id='managerName'
                           value={managerNameInput}
                           onChange={(e) => setManagerNameInput(e.target.value)}
+                          onKeyDown={(e) => handleKeyDown(e, handleSaveContact)}
                           placeholder="Manager's name"
                           aria-label='Manager Name'
                           className='w-full h-8 rounded-md border border-pink-200 focus:border-brand-pink text-gray-500 text-sm px-2'
@@ -345,6 +355,7 @@ const UserDataModal: React.FC<UserDataModalProps> = ({ onOpenChange }) => {
                           id='managerEmail'
                           value={managerEmailInput}
                           onChange={(e) => setManagerEmailInput(e.target.value)}
+                          onKeyDown={(e) => handleKeyDown(e, handleSaveContact)}
                           placeholder="Manager's email"
                           aria-label='Manager Email'
                           className='w-full h-8 rounded-md border border-pink-200 focus:border-brand-pink  text-gray-500 text-sm px-2'
