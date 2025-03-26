@@ -664,7 +664,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       id={`statement-${statement.id}`}
       className={`border rounded-md p-1 md:p-3 space-y-2 relative ${
         statement.isArchived
-          ? 'bg-gray-100 border-gray-300 opacity-80'
+          ? 'bg-gray-100 border-gray-300 text-gray-600'
           : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
@@ -685,7 +685,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <span
                 className={`inline-flex items-center justify-center ${
                   statement.isPublic ? 'text-green-500' : 'text-red-500'
-                } ${statement.isArchived ? 'opacity-70' : ''}`}
+                } ${statement.isArchived ? 'text-opacity-80' : ''}`}
               >
                 {statement.isPublic ? (
                   <MailPlus size={16} />
@@ -780,7 +780,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <span
                   className={`inline-flex items-center justify-center flex-shrink-0 ${
                     statement.isPublic ? 'text-green-500' : 'text-red-500'
-                  } ${statement.isArchived ? 'opacity-70' : ''}`}
+                  } ${statement.isArchived ? 'text-opacity-80' : ''}`}
                 >
                   {statement.isPublic ? (
                     <MailPlus size={16} className=' m-1' />
