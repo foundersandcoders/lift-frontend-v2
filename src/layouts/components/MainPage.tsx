@@ -21,7 +21,6 @@ const MainPage: React.FC = () => {
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-
   // Determine if email button should be disabled:
   const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
   // Include all public statements (including archived ones)
@@ -44,7 +43,7 @@ const MainPage: React.FC = () => {
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
           <h1
             id='page-title'
-            className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'
+            className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 break-words'
           >
             {managerName
               ? `${username} would like to share with ${managerName}`
@@ -64,7 +63,7 @@ const MainPage: React.FC = () => {
       <Footer />
 
       {/* Floating Email Button */}
-      <div className='fixed bottom-8 right-8 z-30'>
+      <div className='fixed bottom-4 right-4 z-30'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
         <Tooltip>
           <TooltipTrigger asChild>
