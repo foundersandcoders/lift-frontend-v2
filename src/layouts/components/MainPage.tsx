@@ -12,7 +12,7 @@ import { Button } from '../../components/ui/button';
 import { Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
-import TestStatementButton from '../../components/debug/TestButton';
+// import TestStatementButton from '../../components/debug/TestButton';
 import Footer from './Footer';
 // import { useTour } from '../../components/ui/tour/useTour';
 
@@ -48,11 +48,6 @@ const MainPage: React.FC = () => {
   // Email button should be disabled if no manager email or no public statements
   const isEmailDisabled = !hasManagerEmail || publicStatementsCount === 0;
 
-  // Handler to open the wizard for creating a new statement from scratch
-  const handleNewStatement = () => {
-    setIsWizardOpen(true);
-  };
-
   // Handler to open the share email modal
   const handleShareEmail = () => {
     setIsShareModalOpen(true);
@@ -77,14 +72,14 @@ const MainPage: React.FC = () => {
       <div className='container mx-auto px-4 flex-grow'>
         <StatementList
           username={username}
-          onAddCustomStatement={handleNewStatement}
+          // onAddCustomStatement={handleNewStatement}
         />
       </div>
 
       {/* Footer component */}
       <Footer />
 
-      {/* Floating Email Button (now singular) */}
+      {/* Floating Email Button */}
       <div className='fixed bottom-8 right-8 z-30'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
         <Tooltip>
@@ -114,9 +109,9 @@ const MainPage: React.FC = () => {
         </Tooltip>
 
         {/* Debug button */}
-        <div className='mt-2'>
+        {/* <div className='mt-2'>
           <TestStatementButton />
-        </div>
+        </div> */}
       </div>
 
       {/* Conditionally render the wizard modal */}

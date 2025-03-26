@@ -34,11 +34,11 @@ const HelpButton: React.FC<HelpButtonProps> = ({
         setIsPulsing(false); // Stop pulsing when clicked
         onClick();
       }}
-      className={`fixed bottom-4 right-4 z-40 bg-white p-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-opacity-50
+      className={`fixed bottom-8 left-4 z-40 rounded-full flex items-center p-2 shadow-lg bg-blue-600 hover:bg-blue-700 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400
         ${isPulsing ? 'help-button-pulse' : ''}`}
       aria-label='Help'
     >
-      <HelpCircle className='w-6 h-6 text-brand-blue' />
+      <HelpCircle className='w-6 h-6 text-white' />
     </button>
   );
 };
