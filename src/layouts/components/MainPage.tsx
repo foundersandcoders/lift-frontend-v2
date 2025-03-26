@@ -41,13 +41,10 @@ const MainPage: React.FC = () => {
       <div className='container mx-auto px-4 mb-0'>
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
-          <h1
-            id='page-title'
-            className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 break-words'
-          >
+          <h1 id='page-title' className='text-2xl md:text-3xl font-bold'>
             {managerName
-              ? `${username} would like to share with ${managerName}`
-              : `${username}'s statements for sharing`}
+              ? `Beacons for ${managerName}`
+              : `${username}'s Beacons`}
           </h1>
         </div>
       </div>
