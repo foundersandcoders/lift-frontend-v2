@@ -1,23 +1,10 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { HelpContext } from './HelpContext';
 import WelcomePanel from './WelcomePanel';
 import HelpButton from './HelpButton';
 import HelpCenter from './HelpCenter';
-
-interface HelpContextType {
-  showHelpCenter: (tab?: string) => void;
-}
-
-const HelpContext = createContext<HelpContextType | undefined>(undefined);
-
-export const useHelp = () => {
-  const context = useContext(HelpContext);
-  if (!context) {
-    throw new Error('useHelp must be used within a HelpProvider');
-  }
-  return context;
-};
 
 interface HelpProviderProps {
   children: React.ReactNode;

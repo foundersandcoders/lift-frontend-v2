@@ -81,7 +81,33 @@
     }
   ],
 
-  "resources": [{}],
+  "resources": [
+    {
+      "title": "Communication Guide",
+      "description": "Comprehensive guide on effective workplace communication strategies.",
+      "link": "https://example.com/communication-guide"
+    },
+    {
+      "title": "Manager Conversation Toolkit",
+      "description": "Tools and templates for having productive conversations with your manager.",
+      "link": "https://example.com/manager-conversation-toolkit"
+    },
+    {
+      "title": "Workplace Accommodations FAQ",
+      "description": "Frequently asked questions about requesting and implementing workplace accommodations.",
+      "link": "https://example.com/workplace-accommodations-faq"
+    },
+    {
+      "title": "Career Development Resources",
+      "description": "Resources to help plan and discuss your career development with your manager.",
+      "link": "https://example.com/career-development"
+    },
+    {
+      "title": "Wellbeing Support",
+      "description": "Information and resources for maintaining wellbeing in the workplace.",
+      "link": "https://example.com/wellbeing-support"
+    }
+  ],
   "versions": [
     {
       "version": "1.0.0",

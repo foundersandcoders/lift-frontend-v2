@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Info, PlayCircle, BookOpen, History } from 'lucide-react';
+import { X, Info, PlayCircle, BookOpen, History, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import helpContent from '@/data/helpContent.json';
 
@@ -73,7 +73,7 @@ const HelpCenter: React.FC<HelpCenterProps> = ({
         </div>
 
         {/* Tabs - grid for mobile, flex for desktop */}
-        <div className='grid grid-cols-4 sm:flex border-b'>
+        <div className='grid grid-cols-5 sm:flex border-b'>
           <button
             className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
               activeTab === 'welcome'
@@ -106,6 +106,17 @@ const HelpCenter: React.FC<HelpCenterProps> = ({
           >
             <BookOpen className='w-4 h-4 sm:mr-1 mb-1 sm:mb-0' />
             <span>Features</span>
+          </button>
+          <button
+            className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
+              activeTab === 'resources'
+                ? 'text-brand-blue border-b-2 border-brand-blue'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+            onClick={() => handleTabChange('resources')}
+          >
+            <LinkIcon className='w-4 h-4 sm:mr-1 mb-1 sm:mb-0' />
+            <span>Resources</span>
           </button>
           <button
             className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center ${
@@ -219,8 +230,29 @@ const HelpCenter: React.FC<HelpCenterProps> = ({
           {activeTab === 'resources' && (
             <div>
               <h3 className='text-lg font-medium text-gray-800 mb-3'>
-                Resources
+                Helpful Resources
               </h3>
+              
+              <div className='space-y-4'>
+                {helpContent.resources.map((resource, index) => (
+                  <div key={index} className='bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors'>
+                    <a 
+                      href={resource.link} 
+                      target='_blank' 
+                      rel='noopener noreferrer'
+                      className='block'
+                    >
+                      <h4 className='font-medium text-brand-blue mb-1 flex items-center'>
+                        <LinkIcon className='w-4 h-4 mr-2' />
+                        {resource.title}
+                      </h4>
+                      <p className='text-gray-700 text-sm'>
+                        {resource.description}
+                      </p>
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
