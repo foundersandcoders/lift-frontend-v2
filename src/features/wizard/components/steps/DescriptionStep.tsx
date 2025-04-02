@@ -25,10 +25,11 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
   };
 
   const handleBlur = () => {
+    // Update parent component with current input value
     onUpdate(inputValue);
   };
 
-  // Handle Enter key to save
+  // Handle Enter key without Shift to save and advance
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -69,15 +70,7 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
           </div>
         </div>
         
-        <div className="flex justify-end">
-          <button
-            onClick={() => onUpdate(inputValue)}
-            className="px-4 py-2 bg-[var(--description-input)] text-white rounded-md hover:bg-[var(--description-input-hover)] transition-colors"
-            type="button"
-          >
-            {inputValue === description ? 'Skip' : 'Save'}
-          </button>
-        </div>
+        {/* Removed explicit save button to be consistent with other steps */}
       </div>
     </StepContainer>
   );

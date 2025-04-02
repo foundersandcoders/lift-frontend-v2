@@ -257,7 +257,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
           <DescriptionStep
             description={selection.description}
             onUpdate={(val) => {
-              // Always move to the next step since description is optional
+              // If the same value is selected again, move to next step
               if (val === selection.description) {
                 goNext();
               } else {
@@ -267,10 +267,9 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                   description: val,
                 }));
                 
-                // If user entered something and pressed Save, move to next step
-                if (val.trim().length > 0) {
-                  goNext();
-                }
+                // Don't automatically advance - user will use Next button
+                // This is consistent with other steps and allows users
+                // to review their description before proceeding
               }
             }}
           />

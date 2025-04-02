@@ -45,6 +45,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
     (currentStep === 'subject') || 
     (currentStep === 'verb') || 
     (currentStep === 'object') || 
+    (currentStep === 'description') ||
     (currentStep === 'category' && isPresetQuestion) || 
     (currentStep === 'privacy') || 
     (currentStep === 'complement');
@@ -95,14 +96,14 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
       )}
       
       {/* Verb */}
-      {verb && (currentStep === 'verb' || currentStep === 'object' || currentStep === 'privacy' || currentStep === 'complement') && (
+      {verb && (currentStep === 'verb' || currentStep === 'object' || currentStep === 'description' || currentStep === 'privacy' || currentStep === 'complement') && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-verbSelector text-black'>
           {getVerbName(verb)}
         </span>
       )}
       
       {/* Object */}
-      {object && (currentStep === 'object' || currentStep === 'privacy' || currentStep === 'complement') && (
+      {object && (currentStep === 'object' || currentStep === 'description' || currentStep === 'privacy' || currentStep === 'complement') && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-objectInput text-black'>
           {object}
         </span>
