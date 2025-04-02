@@ -1,14 +1,10 @@
 /**
- * Help Center Module - Barrel file
+ * Barrel file for help feature
  * 
- * This file serves as a centralized export point for all Help Center components and hooks.
- * It enables clean imports throughout the application by providing a single entry point
- * without requiring consumers to know the internal file structure.
- * 
- * Usage:
- * import { HelpProvider, HelpButton, useHelp } from '@/features/help';
+ * Provides unified access to help center functionality
+ * including context, providers, hooks, and components.
  */
 
 export { HelpProvider } from './context/HelpProvider';
-export { useHelp } from './hooks';
+export { useHelp } from './hooks/useHelp';
 export { HelpButton, HelpCenter, WelcomePanel } from './components';

@@ -1,8 +1,8 @@
 /**
- * UI Components Module
+ * Barrel file for UI components
  * 
- * Provides reusable UI components that can be used across the application.
- * These components are the building blocks for more complex components.
+ * Provides unified access to reusable UI components
+ * that serve as building blocks across the application.
  */
 
 // Export individual UI components

@@ -10,7 +10,7 @@ import {
 import { StatementList } from '@/features/statements/components';
 import { useEntries } from '@/features/statements';
 import { Mail } from 'lucide-react';
-import { StatementWizard } from '@/features/wizard';
+import StatementWizard from '@/features/wizard/components/StatementWizard';
 import { ShareEmailModal } from '@/components/modals';
 // import TestStatementButton from '@/components/debug/TestButton';
 import Footer from './Footer';

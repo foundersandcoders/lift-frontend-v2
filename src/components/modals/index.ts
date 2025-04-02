@@ -1,8 +1,8 @@
 /**
- * Modal Components Module
+ * Barrel file for modal components
  * 
- * Provides reusable modal dialog components for various purposes
- * throughout the application.
+ * Provides unified access to modal dialog components
+ * for various purposes throughout the application.
  */
 
 export { default as GratitudeModal } from './GratitudeModal';

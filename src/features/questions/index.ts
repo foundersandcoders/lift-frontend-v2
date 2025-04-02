@@ -1,8 +1,8 @@
 /**
- * Questions Feature Module
+ * Barrel file for questions feature
  * 
- * Centralizes questions-related functionality including context,
- * providers, hooks, and components.
+ * Provides unified access to questions-related functionality
+ * including context, providers, hooks, and components.
  */
 
 // Re-export context and provider

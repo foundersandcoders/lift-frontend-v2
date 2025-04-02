@@ -1,8 +1,8 @@
 /**
- * Auth Feature Module
+ * Barrel file for auth feature
  * 
- * Centralizes authentication-related functionality including
- * context, providers, components, and utilities.
+ * Provides unified access to authentication-related functionality
+ * including context, providers, hooks, and components.
  */
 
 // Re-export context and provider

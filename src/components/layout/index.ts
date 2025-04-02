@@ -1,8 +1,8 @@
 /**
- * Layout Components Module
+ * Barrel file for layout components
  * 
- * Provides the main structural components for page layout,
- * including the overall app container, header, and footer.
+ * Provides unified access to structural page components
+ * including header, footer, and main content containers.
  */
 
 export { default as Header } from './Header';

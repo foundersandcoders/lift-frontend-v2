@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
 import { validateEmail } from '@/lib/utils/validateEmail';
 import { QuestionCounter } from '@/components/ui';
-import { ProgressWithFeedback } from '@/features/progress';
+import ProgressWithFeedback from '@/features/progress/components/ProgressWithFeedback';
 
 interface UserDataModalProps {
   onOpenChange: (open: boolean) => void;
