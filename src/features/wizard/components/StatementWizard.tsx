@@ -15,6 +15,7 @@ import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';
 import { CategoryStep } from './steps/CategoryStep';
+import { DescriptionStep } from './steps/DescriptionStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
@@ -39,14 +40,15 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   // Define steps: if preset, skip "category" and add "complement"
   // For custom statements, show category first, then subject
   const steps: Exclude<Step, 'closed'>[] = isPreset
-    ? ['subject', 'verb', 'object', 'privacy', 'complement']
-    : ['category', 'subject', 'verb', 'object', 'privacy'];
+    ? ['subject', 'verb', 'object', 'description', 'privacy', 'complement']
+    : ['category', 'subject', 'verb', 'object', 'description', 'privacy'];
 
   // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
     subject: 'border-[var(--subject-selector)]',
     verb: 'border-[var(--verb-selector)]',
     object: 'border-[var(--object-input)]',
+    description: 'border-[var(--description-input, #8BB8E8)]',
     category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
     complement: 'border-gray-400',
@@ -173,6 +175,9 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       case 'category':
         // For custom statements (not preset), category must be selected
         return isPreset || selection.category.trim().length > 0;
+      case 'description':
+        // Description is optional; always valid
+        return true;
       case 'privacy':
         // Always valid since it's a boolean toggle.
         return true;
@@ -243,6 +248,29 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
                   ...prev,
                   atoms: { ...prev.atoms, object: val },
                 }));
+              }
+            }}
+          />
+        );
+      case 'description':
+        return (
+          <DescriptionStep
+            description={selection.description}
+            onUpdate={(val) => {
+              // Always move to the next step since description is optional
+              if (val === selection.description) {
+                goNext();
+              } else {
+                // Update the description value
+                setSelection((prev) => ({
+                  ...prev,
+                  description: val,
+                }));
+                
+                // If user entered something and pressed Save, move to next step
+                if (val.trim().length > 0) {
+                  goNext();
+                }
               }
             }}
           />
