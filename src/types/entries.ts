@@ -2,6 +2,7 @@ export interface Atoms {
   subject: string;
   verb: string;
   object: string;
+  description?: string;
   adverbial?: string[];
 }
 

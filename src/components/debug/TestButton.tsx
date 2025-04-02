@@ -14,6 +14,8 @@ const TestStatementButton: React.FC = () => {
       subject: 'Alice',
       verb: 'supports',
       object: 'the project',
+      description:
+        'El perro de San Roque no tiene rabo, porque ramon ramirez se lo ha cortado',
     },
     category: 'wellbeing',
     actions: [
