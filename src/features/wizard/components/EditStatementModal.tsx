@@ -133,7 +133,8 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
                 subject: {
                   question: '',
                   preset: false,
-                  presetAnswer: null,
+                  // Use "I" instead of username
+                  presetAnswer: "I",
                   allowDescriptors: true,
                 },
                 verb: {

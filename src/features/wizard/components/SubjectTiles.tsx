@@ -34,10 +34,10 @@ const getSubjectTiles = (
     descriptorOptions = category.options;
   }
   return [
-    { label: username, value: username },
+    { label: "I", value: "I" },
     ...descriptorOptions.map((option) => ({
-      label: `${username}'s ${option}`,
-      value: `${username}'s ${option}`,
+      label: `My ${option}`,
+      value: `My ${option}`,
     })),
   ];
 };

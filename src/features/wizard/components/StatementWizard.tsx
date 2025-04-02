@@ -75,7 +75,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     if (presetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({
         ...prev,
-        atoms: { ...prev.atoms, subject: username },
+        atoms: { ...prev.atoms, subject: "I" },
         // For preset questions, use the category from the preset
         category: presetQuestion.category || 'uncategorised',
         // Add the presetId to identify this as a preset question in the preview
@@ -86,8 +86,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       // but still show the category screen first
       setSelection((prev) => ({
         ...prev,
-        // Set default subject to username
-        atoms: { ...prev.atoms, subject: username },
+        // Set default subject to "I" instead of username
+        atoms: { ...prev.atoms, subject: "I" },
         // Set default category to 'uncategorised'
         category: 'uncategorised',
       }));
