@@ -747,47 +747,58 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </span>
       )}
 
-      {/* Desktop layout (xs breakpoint and above) */}
-      <div className='hidden xs:flex xs:items-center xs:justify-between'>
-        <div className='flex items-center space-x-2'>
-          {/* Privacy status icon */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span
-                className={`inline-flex items-center justify-center ${
-                  statement.isPublic ? 'text-green-500' : 'text-red-500'
-                } ${statement.isArchived ? 'text-opacity-80' : ''}`}
-              >
-                {statement.isPublic ? (
-                  <MailPlus size={16} />
-                ) : (
-                  <MailX size={16} />
-                )}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent className='p-2 bg-black text-white rounded'>
-              {statement.isPublic
-                ? 'You are sharing this statement'
-                : 'This statement is private'}
-            </TooltipContent>
-          </Tooltip>
+      {/* Desktop layout (xs breakpoint and above) - Two row layout */}
+      <div className='hidden xs:flex xs:flex-col space-y-2'>
+        {/* First row: Statement, privacy icon, and settings button */}
+        <div className='flex items-start justify-between'>
+          <div className='flex items-start space-x-2 flex-1'>
+            {/* Privacy status icon */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className={`inline-flex items-center justify-center ${
+                    statement.isPublic ? 'text-green-500' : 'text-red-500'
+                  } ${statement.isArchived ? 'text-opacity-80' : ''}`}
+                >
+                  {statement.isPublic ? (
+                    <MailPlus size={16} />
+                  ) : (
+                    <MailX size={16} />
+                  )}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                {statement.isPublic
+                  ? 'You are sharing this statement'
+                  : 'This statement is private'}
+              </TooltipContent>
+            </Tooltip>
 
-          {/* Statement text with archived styling if needed */}
-          <div className='flex flex-col'>
-            <span className={statement.isArchived ? 'text-gray-500' : ''}>
-              {`${statement.atoms.subject} ${getVerbName(
-                statement.atoms.verb
-              )} ${statement.atoms.object}`}
-            </span>
+            {/* Statement text and description in a column */}
+            <div className='flex flex-col flex-1'>
+              <span className={statement.isArchived ? 'text-gray-500' : ''}>
+                {`${statement.atoms.subject} ${getVerbName(
+                  statement.atoms.verb
+                )} ${statement.atoms.object}`}
+              </span>
+              
+              {/* Description (shown if exists) */}
+              {statement.description && statement.description.trim() !== '' && (
+                <div className='mt-1.5 mr-8'>
+                  <div className='text-xs text-gray-500 italic whitespace-pre-line line-clamp-3 pl-1 border-l border-gray-300'>
+                    {statement.description}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='flex items-center space-x-4'>
+
           {/* Menu button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 onClick={(e) => e.stopPropagation()}
-                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors'
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors flex-shrink-0 mt-0.5'
               >
                 <Settings size={18} className='text-gray-600' />
               </button>
@@ -826,11 +837,13 @@ const StatementItem: React.FC<StatementItemProps> = ({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
 
-          {/* Actions counter - now the rightmost element */}
+        {/* Second row: Actions counter tab aligned to the right */}
+        <div className='flex justify-end'>
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer relative z-10 self-end'
+            className='cursor-pointer relative z-10'
           >
             <ActionsCounter
               count={statement.actions?.length ?? 0}
@@ -881,7 +894,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
               {/* Description (mobile only) */}
               {statement.description && statement.description.trim() !== '' && (
-                <div className='mt-2 text-xs text-gray-600 bg-gray-50 p-2 rounded-sm border-l-2 border-[var(--description-input,#8BB8E8)] italic whitespace-pre-line line-clamp-2'>
+                <div className='mt-1.5 text-xs text-gray-500 italic whitespace-pre-line line-clamp-3 pl-1 border-l border-gray-300'>
                   {statement.description}
                 </div>
               )}
