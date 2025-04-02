@@ -4,7 +4,7 @@ import {
   SimpleDialogContent as DialogContent,
   SimpleDialogTitle as DialogTitle,
   SimpleDialogDescription as DialogDescription,
-} from '@/components/ui/SimpleDialog';
+} from '@/components/ui/Dialog';
 import { Button } from '@/components/ui/Button';
 import type { Entry } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
@@ -77,7 +77,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
       // Create a completely new object with a deeper clone to ensure React detects the change
       // Force category to be a string to avoid type issues
       const categoryValue = localValue ? String(localValue) : '';
-      
+
       // Create a new object with the modified category
       const newStatement = {
         ...statement,
@@ -86,7 +86,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         _needsScroll: true, // Flag to indicate this needs scrolling
         category: categoryValue,
       };
-      
+
       // Deep clone to ensure all references are fresh
       updatedStatement = JSON.parse(JSON.stringify(newStatement));
 

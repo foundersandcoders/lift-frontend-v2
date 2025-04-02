@@ -5,7 +5,7 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/SimpleDialog';
+} from '../ui/Dialog';
 import { Button } from '../ui/Button';
 import { Loader2, Heart } from 'lucide-react';
 import { sendGratitude } from '../../features/email/api/gratitudeApi';
@@ -115,8 +115,8 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
           >
             {/* Heart decoration - smaller on mobile */}
             <div className='absolute top-2 right-2 sm:top-4 sm:right-4 text-pink-400 opacity-20 pointer-events-none'>
-              <Heart size={24} className="sm:hidden" />
-              <Heart size={40} className="hidden sm:block" />
+              <Heart size={24} className='sm:hidden' />
+              <Heart size={40} className='hidden sm:block' />
             </div>
 
             <DialogDescription className='mt-0 text-center text-sm'>
@@ -144,7 +144,9 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
               <h3 className='font-semibold text-gray-700 mb-1 sm:mb-2 flex items-center text-sm sm:text-base'>
                 Action
               </h3>
-              <p className='text-gray-600 text-xs sm:text-sm break-words'>{action.action}</p>
+              <p className='text-gray-600 text-xs sm:text-sm break-words'>
+                {action.action}
+              </p>
               {action.byDate && (
                 <p className='text-xs text-gray-500 mt-1'>
                   Due by: {action.byDate}
@@ -191,8 +193,8 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
                   </>
                 )}
               </Button>
-              <Button 
-                variant='outline' 
+              <Button
+                variant='outline'
                 onClick={onClose}
                 className='text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2'
               >

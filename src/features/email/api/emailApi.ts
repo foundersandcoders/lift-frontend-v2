@@ -1,9 +1,9 @@
-import { Email } from "../../../types/emails";
+import { Email } from '../../../types/emails';
 
 // Check if we should use mock implementation
 const shouldUseMock = () => {
   return (
-    import.meta.env.VITE_MOCK_EMAIL_SENDING === 'true' || 
+    import.meta.env.VITE_MOCK_EMAIL_SENDING === 'true' ||
     typeof import.meta.env.VITE_MOCK_EMAIL_SENDING === 'undefined'
   );
 };
@@ -11,15 +11,15 @@ const shouldUseMock = () => {
 // Mock implementation of sending email
 const mockSendEmail = async (email: Email) => {
   console.log('MOCK: Sending email with:', email);
-  
+
   // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
+  await new Promise((resolve) => setTimeout(resolve, 800));
+
   // Return mock success response
   return {
     success: true,
     message: 'Email sent successfully (mock)',
-    id: `mock-email-${Date.now()}`
+    id: `mock-email-${Date.now()}`,
   };
 };
 
@@ -29,7 +29,7 @@ export async function sendEmail(email: Email) {
   if (shouldUseMock()) {
     return mockSendEmail(email);
   }
-  
+
   // Real implementation
   try {
     const response = await fetch('/api/email/send', {
@@ -39,31 +39,31 @@ export async function sendEmail(email: Email) {
       },
       body: JSON.stringify(email),
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to send email');
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error("Error sending email:", error);
+    console.error('Error sending email:', error);
     throw error;
   }
 }
 
 // Mock implementation of sharing statements
 const mockShareStatements = async (recipientEmail: string) => {
-  console.log('MOCK: Sharing statements with:', recipientEmail);
-  
+  console.log('MOCK: Sharing statements from:', recipientEmail);
+
   // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
+  await new Promise((resolve) => setTimeout(resolve, 800));
+
   // Return mock success response
   return {
     success: true,
     message: 'Statements shared successfully (mock)',
-    id: `mock-share-${Date.now()}`
+    id: `mock-share-${Date.now()}`,
   };
 };
 
@@ -73,7 +73,7 @@ export async function shareStatements(recipientEmail: string) {
   if (shouldUseMock()) {
     return mockShareStatements(recipientEmail);
   }
-  
+
   // Real implementation
   try {
     const response = await fetch('/api/email/share-statements', {
@@ -83,15 +83,15 @@ export async function shareStatements(recipientEmail: string) {
       },
       body: JSON.stringify({ recipientEmail }),
     });
-    
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to share statements');
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error("Error sharing statements:", error);
+    console.error('Error sharing statements:', error);
     throw error;
   }
 }

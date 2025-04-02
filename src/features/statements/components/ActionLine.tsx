@@ -13,7 +13,7 @@ import {
   SimpleDropdownMenuContent as DropdownMenuContent,
   SimpleDropdownMenuItem as DropdownMenuItem,
   SimpleDropdownMenuSeparator as DropdownMenuSeparator,
-} from '../../../components/ui/SimpleDropdown';
+} from '../../../components/ui/Dropdown';
 import ActionForm from './ActionForm';
 import { ConfirmationDialog } from '../../../components/ui/ConfirmationDialog';
 import type { Action } from '../../../types/entries';
@@ -253,16 +253,24 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     {!action.gratitude?.sent && (
                       <>
                         <DropdownMenuSeparator />
-                        <div className="w-full">
+                        <div className='w-full'>
                           <DropdownMenuItem
                             onClick={() => {
                               if (hasManagerEmail) {
                                 setGratitudeModal({ isOpen: true, action });
                               }
                             }}
-                            className={hasManagerEmail ? "text-pink-600" : "text-pink-300 cursor-not-allowed"}
+                            className={
+                              hasManagerEmail
+                                ? 'text-pink-600'
+                                : 'text-pink-300 cursor-not-allowed'
+                            }
                             disabled={!hasManagerEmail}
-                            title={!hasManagerEmail ? "Manager's email is required to send gratitude" : ""}
+                            title={
+                              !hasManagerEmail
+                                ? "Manager's email is required to send gratitude"
+                                : ''
+                            }
                           >
                             <Heart className='mr-2 h-4 w-4' />
                             Send gratitude

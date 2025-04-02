@@ -5,7 +5,7 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/SimpleDialog';
+} from '../ui/Dialog';
 import { Button } from '../ui/Button';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { shareStatements } from '../../features/email/api/emailApi';

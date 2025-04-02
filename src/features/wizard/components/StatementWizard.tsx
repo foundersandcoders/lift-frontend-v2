@@ -6,7 +6,7 @@ import {
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
   SimpleDialogTitle as DialogTitle,
-} from '@/components/ui/SimpleDialog';
+} from '@/components/ui/Dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEntries } from '@/features/statements/hooks/useEntries';
 import { postNewEntry } from '@/features/statements/api/entriesApi';
@@ -82,7 +82,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         presetId: presetQuestion.id,
       }));
     } else {
-      // For custom statements, set default category to "uncategorised" 
+      // For custom statements, set default category to "uncategorised"
       // but still show the category screen first
       setSelection((prev) => ({
         ...prev,
@@ -313,7 +313,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         )}
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
         <DialogTitle className='sr-only'>Wizard Steps</DialogTitle>
-        
+
         {/* Scrollable Content Area */}
         <div className='flex-grow overflow-y-auto min-h-0'>
           <AnimatePresence mode='wait' initial={false}>
@@ -328,7 +328,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </motion.div>
           </AnimatePresence>
         </div>
-        
+
         {/* Bottom Section - Always Visible */}
         <div className='flex-shrink-0'>
           {/* Navigation Panel */}

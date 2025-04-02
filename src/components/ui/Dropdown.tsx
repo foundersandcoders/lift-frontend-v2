@@ -5,31 +5,27 @@ interface SimpleDropdownMenuProps {
   children: React.ReactNode;
 }
 
-interface SimpleDropdownMenuTriggerProps {
+interface SimpleDropdownMenuTriggerProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   asChild?: boolean;
   onClick?: (e: React.MouseEvent) => void;
   className?: string;
-  [key: string]: any; // Allow any other props
 }
 
-interface SimpleDropdownMenuContentProps {
+interface SimpleDropdownMenuContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   sideOffset?: number;
-  [key: string]: any;
 }
 
-interface SimpleDropdownMenuItemProps {
+interface SimpleDropdownMenuItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   onClick?: (e: React.MouseEvent) => void;
-  [key: string]: any;
 }
 
-interface SimpleDropdownMenuSeparatorProps {
+interface SimpleDropdownMenuSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
-  [key: string]: any;
 }
 
 // The root dropdown component
@@ -58,7 +54,7 @@ const SimpleDropdownMenu: React.FC<SimpleDropdownMenuProps> = ({ children }) => 
 
         // Pass the open state and toggle function to the children
         if (child.type === SimpleDropdownMenuTrigger) {
-          return React.cloneElement(child as React.ReactElement<any>, {
+          return React.cloneElement(child as React.ReactElement<SimpleDropdownMenuTriggerProps>, {
             onClick: (e: React.MouseEvent) => {
               e.stopPropagation(); // Prevent event bubbling
               setIsOpen(!isOpen);
@@ -123,14 +119,20 @@ const SimpleDropdownMenuTrigger: React.FC<SimpleDropdownMenuTriggerProps> = ({
 // The dropdown content container
 const SimpleDropdownMenuContent = React.forwardRef<HTMLDivElement, SimpleDropdownMenuContentProps>(
   ({ children, className, sideOffset = 4, ...props }, ref) => {
+    // Use sideOffset for positioning
+    const offsetStyles = {
+      marginTop: `${sideOffset}px`
+    };
+    
     return (
       <div 
         ref={ref}
         className={cn(
           'absolute z-[99999] min-w-[10rem] overflow-hidden rounded-md border bg-white p-2 shadow-md',
-          'top-full right-0 mt-1',
+          'top-full right-0',
           className
         )}
+        style={offsetStyles}
         {...props}
       >
         {children}

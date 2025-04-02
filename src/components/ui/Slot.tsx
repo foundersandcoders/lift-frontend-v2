@@ -2,11 +2,12 @@ import React from 'react';
 
 // A simple Slot component that just renders its children
 // This is a simplified version that doesn't try to do ref forwarding
-const Slot: React.FC<{ 
-  children?: React.ReactNode; 
+interface SlotProps extends React.HTMLAttributes<HTMLElement> {
+  children?: React.ReactNode;
   className?: string;
-  [key: string]: any;
-}> = ({ 
+}
+
+const Slot: React.FC<SlotProps> = ({ 
   children,
   ...props 
 }) => {

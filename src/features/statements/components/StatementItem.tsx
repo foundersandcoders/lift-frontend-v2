@@ -19,7 +19,7 @@ import {
   SimpleDropdownMenuTrigger as DropdownMenuTrigger,
   SimpleDropdownMenuContent as DropdownMenuContent,
   SimpleDropdownMenuItem as DropdownMenuItem,
-} from '@/components/ui/SimpleDropdown';
+} from '@/components/ui/Dropdown';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
 import {
