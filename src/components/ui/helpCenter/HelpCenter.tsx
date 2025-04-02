@@ -10,7 +10,7 @@ interface HelpCenterProps {
   initialTab?: string;
 }
 
-type TabType = 'welcome' | 'tutorials' | 'features' | 'versions';
+type TabType = 'welcome' | 'tutorials' | 'features' | 'resources' | 'versions';
 
 const HelpCenter: React.FC<HelpCenterProps> = ({
   onClose,
@@ -212,6 +212,15 @@ const HelpCenter: React.FC<HelpCenterProps> = ({
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Resources Tab */}
+          {activeTab === 'resources' && (
+            <div>
+              <h3 className='text-lg font-medium text-gray-800 mb-3'>
+                Resources
+              </h3>
             </div>
           )}
 

@@ -80,6 +80,8 @@
       "details": "For each statement, you can choose whether it's private (only visible to you) or public (visible to your line manager). You can change the privacy setting at any time."
     }
   ],
+
+  "resources": [{}],
   "versions": [
     {
       "version": "1.0.0",

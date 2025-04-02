@@ -7,7 +7,7 @@ import { TooltipProvider } from './components/ui/better-tooltip';
 import { AuthProvider } from './features/auth/AuthProvider';
 import { EntriesProvider } from './features/statements/context/EntriesProvider';
 import { QuestionsProvider } from './providers/QuestionsProvider';
-import { HelpProvider } from './components/ui/tour';
+import { HelpProvider } from './components/ui/helpCenter';
 
 // Components
 import LoginPage from './features/auth/components/LoginPage';
@@ -33,43 +33,50 @@ const AppContent: React.FC = () => {
 
     verifyToken();
   }, []);
-  
+
   // Force synchronization between auth state and entries state when component mounts
   useEffect(() => {
     if (authState.user && authState.isAuthenticated) {
-      console.log('AppContent: Found authenticated user, dispatching event:', authState.user);
+      console.log(
+        'AppContent: Found authenticated user, dispatching event:',
+        authState.user
+      );
       // Dispatch event to ensure EntriesProvider gets the user data
-      window.dispatchEvent(new CustomEvent('authStateChanged', { 
-        detail: { user: authState.user }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('authStateChanged', {
+          detail: { user: authState.user },
+        })
+      );
     }
   }, [authState.user, authState.isAuthenticated]);
-  
+
   // Listen for magic link verification and ensure user email is saved to entries context
   useEffect(() => {
     const handleMagicLinkVerified = (event: any) => {
       if (event.detail?.user?.email) {
-        console.log('App: Magic link verified with email:', event.detail.user.email);
+        console.log(
+          'App: Magic link verified with email:',
+          event.detail.user.email
+        );
         // Dispatch event with user email to entries context
-        window.dispatchEvent(new CustomEvent('authStateChanged', { 
-          detail: { user: { email: event.detail.user.email }}
-        }));
+        window.dispatchEvent(
+          new CustomEvent('authStateChanged', {
+            detail: { user: { email: event.detail.user.email } },
+          })
+        );
       }
     };
-    
+
     window.addEventListener('magicLinkVerified', handleMagicLinkVerified);
-    return () => window.removeEventListener('magicLinkVerified', handleMagicLinkVerified);
+    return () =>
+      window.removeEventListener('magicLinkVerified', handleMagicLinkVerified);
   }, []);
 
   return (
     // MainPage and Header receives the username from context.
     <>
       <Header />
-      {data.username ? (
-        <MainPage />
-      ) : (
-        <LoginPage />
-      )}
+      {data.username ? <MainPage /> : <LoginPage />}
     </>
   );
 };
