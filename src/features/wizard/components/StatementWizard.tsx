@@ -17,7 +17,6 @@ import { ObjectStep } from './steps/ObjectStep';
 import { CategoryStep } from './steps/CategoryStep';
 import { DescriptionStep } from './steps/DescriptionStep';
 import { PrivacyStep } from './steps/PrivacyStep';
-import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
 import { Button } from '@/components/ui/Button';
 
@@ -37,11 +36,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const { setData } = useEntries();
   const isPreset = Boolean(presetQuestion);
 
-  // Define steps: if preset, skip "category" and add "complement"
+  // Define steps: for both preset and custom statements, make description the final step
   // For custom statements, show category first, then subject
   const steps: Exclude<Step, 'closed'>[] = isPreset
-    ? ['subject', 'verb', 'object', 'description', 'privacy', 'complement']
-    : ['category', 'subject', 'verb', 'object', 'description', 'privacy'];
+    ? ['subject', 'verb', 'object', 'privacy', 'description']
+    : ['category', 'subject', 'verb', 'object', 'privacy', 'description'];
 
   // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
@@ -51,7 +50,6 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     description: 'border-[var(--description-input, #8BB8E8)]',
     category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
-    complement: 'border-gray-400',
   };
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -175,14 +173,11 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       case 'category':
         // For custom statements (not preset), category must be selected
         return isPreset || selection.category.trim().length > 0;
+      case 'privacy':
+        // Always valid since it's a boolean toggle
+        return true;
       case 'description':
         // Description is optional; always valid
-        return true;
-      case 'privacy':
-        // Always valid since it's a boolean toggle.
-        return true;
-      case 'complement':
-        // Complement is optional; consider it valid.
         return true;
       default:
         return false;
@@ -311,8 +306,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             }}
           />
         );
-      case 'complement':
-        return <ComplementStep />;
+      // No complement step anymore
       default:
         return null;
     }

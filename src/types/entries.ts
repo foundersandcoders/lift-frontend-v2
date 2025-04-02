@@ -100,5 +100,4 @@ export type Step =
   | 'object'
   | 'description'
   | 'category'
-  | 'privacy'
-  | 'complement';
+  | 'privacy';

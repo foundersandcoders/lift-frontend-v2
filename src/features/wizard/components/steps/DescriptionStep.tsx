@@ -26,8 +26,6 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
     }
   };
 
-  // No need for a separate handleBlur function since we update in real-time
-
   // Handle Enter key without Shift to save and advance
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -36,7 +34,7 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
     }
   };
 
-  const subQuestion = "Add more details to your statement (optional)";
+  const subQuestion = "Details (optional)";
   const charCount = inputValue.length;
   const remainingChars = maxLength - charCount;
   
@@ -47,18 +45,13 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
       currentStep={currentStep}
       totalSteps={totalSteps}
     >
-      <div className="flex flex-col space-y-3 h-full">
-        <div className="text-sm text-gray-600 mb-1">
-          <p>Use this space to provide additional context or details for your statement.</p>
-          <p className="text-gray-500 italic mt-1">This field is optional.</p>
-        </div>
-        
+      <div className="flex flex-col space-y-2 h-full">
         <div className="relative flex-grow">
           <textarea
             value={inputValue}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="Add more details about your statement..."
+            placeholder="Your statement is complete - only add details if necessary"
             className="w-full h-48 p-3 border-2 border-[var(--description-input)] rounded-md focus:ring-2 focus:ring-[var(--description-input)] focus:outline-none resize-none"
             aria-label="Description"
           />
@@ -67,8 +60,6 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
             {remainingChars} characters remaining
           </div>
         </div>
-        
-        {/* Removed explicit save button to be consistent with other steps */}
       </div>
     </StepContainer>
   );

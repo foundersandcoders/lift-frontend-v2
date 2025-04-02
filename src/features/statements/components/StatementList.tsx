@@ -97,7 +97,7 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
   // State for opening the modal for a specific part:
   const [editModalData, setEditModalData] = useState<{
     statement: Entry;
-    editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
+    editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | 'description';
   } | null>(null);
 
   // Keep a backup of the original entries when entering edit mode
@@ -260,7 +260,7 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
 
   // Callback for inline part clicks to open the modal:
   const handlePartClick = (
-    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
+    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | 'description',
     statementId: string
   ) => {
     const statementToEdit = entries.find((s) => s.id === statementId);

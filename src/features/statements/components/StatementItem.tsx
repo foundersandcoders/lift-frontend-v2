@@ -33,9 +33,22 @@ import { formatCategoryName } from '@/lib/utils';
 export interface StatementItemProps {
   statement: Entry;
   isEditing: boolean;
-  editingPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | null;
+  editingPart:
+    | 'subject'
+    | 'verb'
+    | 'object'
+    | 'category'
+    | 'description'
+    | 'privacy'
+    | null;
   onPartClick: (
-    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
+    part:
+      | 'subject'
+      | 'verb'
+      | 'object'
+      | 'category'
+      | 'description'
+      | 'privacy',
     statementId: string
   ) => void;
   // When the green save icon is clicked, the updated entry (draft) is passed back
@@ -133,6 +146,9 @@ const StatementItem: React.FC<StatementItemProps> = ({
   const [originalPrivacy, setOriginalPrivacy] = React.useState<boolean | null>(
     null
   );
+  const [originalDescription, setOriginalDescription] = React.useState<string | null>(
+    null
+  );
 
   // Local "draft" state to track current modifications
   const [draft, setDraft] = React.useState<Entry>(statement);
@@ -156,6 +172,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
         setOriginalVerb(statement.atoms.verb);
         setOriginalObject(statement.atoms.object);
         setOriginalPrivacy(statement.isPublic);
+        setOriginalDescription(statement.description || null);
       }
 
       // Always keep draft updated with latest statement value
@@ -167,6 +184,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       setOriginalVerb(null);
       setOriginalObject(null);
       setOriginalPrivacy(null);
+      setOriginalDescription(null);
 
       setDraft(JSON.parse(JSON.stringify(statement)));
     }
@@ -232,6 +250,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   let hasObjectChanged = false;
   let hasPrivacyChanged = false;
   let hasCategoryChanged = false;
+  let hasDescriptionChanged = false;
   let hasChanged = false;
 
   if (isEditing) {
@@ -246,6 +265,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       hasVerbChanged = draft.atoms.verb !== originalVerb;
       hasObjectChanged = draft.atoms.object !== originalObject;
       hasPrivacyChanged = draft.isPublic !== originalPrivacy;
+      hasDescriptionChanged = draft.description !== originalDescription;
 
       // Normalize categories for comparison
       const draftCategory = normalizeCategoryForComparison(draft.category);
@@ -262,7 +282,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
         hasVerbChanged ||
         hasObjectChanged ||
         hasPrivacyChanged ||
-        hasCategoryChanged;
+        hasCategoryChanged ||
+        hasDescriptionChanged;
     }
   }
 
@@ -322,12 +343,30 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer px-2 py-1 rounded bg-categorySelector text-black flex items-center gap-1 hover:bg-categorySelectorHover'
             >
               <span className='mr-1'>📁</span>
-              {/* Use formatted category name */}
-              {draft.category &&
-              draft.category.toLowerCase() !== 'uncategorized' &&
-              draft.category.toLowerCase() !== 'uncategorised'
-                ? getCategoryDisplayName(draft.category)
-                : 'Uncategorized'}
+              {/* Use formatted category name - truncated to 10 chars */}
+              <span className='truncate max-w-[80px]'>
+                {draft.category &&
+                draft.category.toLowerCase() !== 'uncategorized' &&
+                draft.category.toLowerCase() !== 'uncategorised'
+                  ? getCategoryDisplayName(draft.category)
+                  : 'Uncategorized'}
+              </span>
+            </div>
+
+            {/* Description - always show with placeholder if empty */}
+            <div
+              onClick={() => onPartClick('description', draft.id)}
+              className='cursor-pointer px-2 py-1 rounded bg-[var(--description-input,#8BB8E8)] bg-opacity-20 text-black flex items-center gap-1 hover:bg-opacity-30 '
+            >
+              {draft.description && draft.description.trim().length > 0 ? (
+                <span className='truncate max-w-[150px] italic'>
+                  {draft.description}
+                </span>
+              ) : (
+                <span className='truncate max-w-[150px] text-gray-500'>
+                  No description
+                </span>
+              )}
             </div>
           </div>
 
@@ -440,13 +479,29 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-2 rounded bg-categorySelector hover:bg-categorySelectorHover flex items-center'
             >
               <span className='mr-1'>📁</span>
-              <span className='font-medium'>
+              <span className='font-medium truncate max-w-[80px]'>
                 {draft.category &&
                 draft.category.toLowerCase() !== 'uncategorized' &&
                 draft.category.toLowerCase() !== 'uncategorised'
                   ? getCategoryDisplayName(draft.category)
                   : 'Uncategorized'}
               </span>
+            </div>
+
+            {/* Description - always show with placeholder if empty */}
+            <div
+              onClick={() => onPartClick('description', draft.id)}
+              className='cursor-pointer p-2 h-[38px] rounded bg-[var(--description-input,#8BB8E8)] bg-opacity-20 hover:bg-opacity-30 flex items-center'
+            >
+              {draft.description && draft.description.trim().length > 0 ? (
+                <span className='font-medium italic text-sm truncate max-w-[150px]'>
+                  {draft.description}
+                </span>
+              ) : (
+                <span className='text-sm text-gray-500 truncate max-w-[150px]'>
+                  No description
+                </span>
+              )}
             </div>
           </div>
 
@@ -565,13 +620,29 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-3 rounded bg-categorySelector hover:bg-categorySelectorHover flex items-center'
             >
               <span className='mr-1'>📁</span>
-              <span className='font-medium'>
+              <span className='font-medium truncate max-w-[80px]'>
                 {draft.category &&
                 draft.category.toLowerCase() !== 'uncategorized' &&
                 draft.category.toLowerCase() !== 'uncategorised'
                   ? getCategoryDisplayName(draft.category)
                   : 'Uncategorized'}
               </span>
+            </div>
+
+            {/* Description - always show with placeholder if empty */}
+            <div
+              onClick={() => onPartClick('description', draft.id)}
+              className='cursor-pointer p-3 h-[46px] rounded bg-[var(--description-input,#8BB8E8)] bg-opacity-20 hover:bg-opacity-30 flex items-center'
+            >
+              {draft.description && draft.description.trim().length > 0 ? (
+                <span className='italic text-sm truncate max-w-[200px]'>
+                  {draft.description}
+                </span>
+              ) : (
+                <span className='text-sm text-gray-500 truncate max-w-[200px]'>
+                  No description
+                </span>
+              )}
             </div>
           </div>
 

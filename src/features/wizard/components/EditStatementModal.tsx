@@ -11,12 +11,13 @@ import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';
 import { CategoryStep } from './steps/CategoryStep';
+import { DescriptionStep } from './steps/DescriptionStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { getVerbName } from '@/lib/utils/verbUtils';
 
 interface EditStatementModalProps {
   statement: Entry;
-  editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
+  editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | 'description';
   username: string;
   onUpdate: (updatedStatement: Entry) => void;
   onClose: () => void;
@@ -40,6 +41,8 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         return statement.atoms.object;
       case 'category':
         return statement.category;
+      case 'description':
+        return statement.description || '';
       case 'privacy':
         return statement.isPublic;
       default:
@@ -93,6 +96,8 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
       console.log('Updated statement (category change):', updatedStatement);
     } else if (editPart === 'privacy') {
       updatedStatement = { ...statement, isPublic: localValue as boolean };
+    } else if (editPart === 'description') {
+      updatedStatement = { ...statement, description: localValue as string };
     } else {
       updatedStatement = statement;
     }
@@ -108,7 +113,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
     object: 'border-[var(--object-input)]',
     category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
-    complement: 'border-gray-400',
+    description: 'border-[var(--description-input)]',
   };
   const borderClass = borderClasses[editPart] || 'border-gray-400';
 
@@ -215,6 +220,18 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
               } else {
                 setLocalValue(val);
               }
+            }}
+          />
+        );
+      case 'description':
+        return (
+          <DescriptionStep
+            description={localValue as string}
+            onUpdate={(val) => {
+              // Update the value immediately to show in preview
+              setLocalValue(val);
+              
+              // Don't automatically save - let the user click OK when ready
             }}
           />
         );
