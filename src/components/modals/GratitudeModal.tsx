@@ -8,7 +8,7 @@ import {
 } from '../ui/Dialog';
 import { Button } from '../ui/Button';
 import { Loader2, Heart } from 'lucide-react';
-import { sendGratitude } from '../../features/email/api/gratitudeApi';
+import { sendGratitude } from '../../features/email/api/emailGratitudeApi';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { Action } from '../../types/entries';
 

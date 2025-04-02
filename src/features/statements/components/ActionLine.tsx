@@ -19,7 +19,7 @@ import { ConfirmationDialog } from '../../../components/ui/ConfirmationDialog';
 import type { Action } from '../../../types/entries';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import GratitudeModal from '../../../components/modals/GratitudeModal';
-import { markGratitudeSent } from '../../../features/email/api/gratitudeApi';
+import { markGratitudeSent } from '../../email/api/emailGratitudeApi';
 import { useEntries } from '../hooks/useEntries';
 import {
   Tooltip,

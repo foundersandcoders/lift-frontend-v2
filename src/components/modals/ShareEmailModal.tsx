@@ -5,12 +5,12 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/Dialog';
-import { Button } from '../ui/Button';
-import { useEntries } from '../../features/statements/hooks/useEntries';
-import { shareStatements } from '../../features/email/api/emailApi';
+} from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
+import { useEntries } from '@/features/statements';
+import { shareStatements } from '@/features/email/api/emailStatementsApi';
 import { Loader2 } from 'lucide-react';
-import { getVerbName } from '../../lib/utils/verbUtils';
+import { getVerbName } from '@/lib/utils/verbUtils';
 import PrivacyModal from './PrivacyModal';
 
 const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {

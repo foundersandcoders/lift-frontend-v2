@@ -42,6 +42,3 @@ export {
 export { default as QuestionCounter } from './questionCounter/QuestionCounter';
 export { default as LargeCircularQuestionCounter } from './questionCounter/LargeCircularQuestionCounter';
 export { default as SmallCircularQuestionCounter } from './questionCounter/SmallCircularQuestionCounter';
-
-// Export progress component
-export { default as ProgressWithFeedback } from './ProgressWithFeedback';
