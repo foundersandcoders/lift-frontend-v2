@@ -878,6 +878,13 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   statement.atoms.verb
                 )} ${statement.atoms.object}`}
               </span>
+
+              {/* Description (mobile only) */}
+              {statement.description && statement.description.trim() !== '' && (
+                <div className='mt-2 text-xs text-gray-600 bg-gray-50 p-2 rounded-sm border-l-2 border-[var(--description-input,#8BB8E8)] italic whitespace-pre-line line-clamp-2'>
+                  {statement.description}
+                </div>
+              )}
             </div>
           </div>
 

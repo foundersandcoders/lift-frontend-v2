@@ -128,6 +128,13 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       {entry.atoms.object}
                     </p>
 
+                    {/* Display description if available */}
+                    {entry.description && entry.description.trim() !== '' && (
+                      <div className='mt-2 text-sm text-gray-700 bg-gray-50 p-2 rounded-sm border-l-2 border-[var(--description-input,#8BB8E8)] italic whitespace-pre-line'>
+                        {entry.description}
+                      </div>
+                    )}
+
                     {entry.actions && entry.actions.length > 0 && (
                       <div className='mt-2 sm:mt-3'>
                         <div className='text-xs uppercase text-gray-500 font-semibold border-b border-gray-200 pb-1 mb-1 sm:mb-2'>

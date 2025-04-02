@@ -16,6 +16,10 @@ interface GratitudeModalProps {
   onClose: () => void;
   statementId: string;
   action: Action;
+  statement?: {
+    input: string;
+    description?: string;
+  };
   onGratitudeSent: (
     statementId: string,
     actionId: string,
@@ -27,6 +31,7 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
   onClose,
   statementId,
   action,
+  statement,
   onGratitudeSent,
 }) => {
   const { data } = useEntries();
@@ -137,6 +142,25 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
             {sendError && (
               <div className='bg-red-50 border border-red-200 text-red-700 px-3 py-2 sm:px-4 sm:py-3 rounded mb-3 sm:mb-4 text-xs sm:text-sm'>
                 {sendError}
+              </div>
+            )}
+
+            {/* If statement is provided, show it */}
+            {statement && (
+              <div className='mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-md shadow-sm border border-pink-100'>
+                <h3 className='font-semibold text-gray-700 mb-1 sm:mb-2 flex items-center text-sm sm:text-base'>
+                  Statement
+                </h3>
+                <p className='text-gray-600 text-xs sm:text-sm break-words font-medium'>
+                  {statement.input}
+                </p>
+                
+                {/* Display description if available */}
+                {statement.description && statement.description.trim() !== '' && (
+                  <div className='mt-2 text-gray-600 text-xs sm:text-sm bg-gray-50 p-2 rounded-sm border-l-2 border-[var(--description-input,#8BB8E8)] italic whitespace-pre-line'>
+                    {statement.description}
+                  </div>
+                )}
               </div>
             )}
 

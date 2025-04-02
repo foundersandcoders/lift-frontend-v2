@@ -62,9 +62,12 @@ const ActionLine: React.FC<ActionLineProps> = ({
     action: Action | null;
   }>({ isOpen: false, action: null });
 
-  // Get entries data to check for manager email
+  // Get entries data to check for manager email and find current statement
   const { data } = useEntries();
   const hasManagerEmail = data.managerEmail && data.managerEmail.trim() !== '';
+  
+  // Find the current statement to pass its details to the gratitude modal
+  const currentStatement = data.entries.find(entry => entry.id === statementId);
 
   // --- Handlers for Editing ---
   const handleStartEdit = (action: Action) => {
@@ -322,6 +325,10 @@ const ActionLine: React.FC<ActionLineProps> = ({
           onClose={() => setGratitudeModal({ isOpen: false, action: null })}
           statementId={statementId}
           action={gratitudeModal.action}
+          statement={currentStatement ? {
+            input: currentStatement.input,
+            description: currentStatement.description
+          } : undefined}
           onGratitudeSent={async (stmtId, actionId, message) => {
             try {
               // Call the API to mark gratitude as sent
