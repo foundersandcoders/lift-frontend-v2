@@ -1,13 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useEntries } from '../../features/statements/hooks/useEntries';
-import { useAuth } from '../../features/auth/api/hooks';
-import { Button } from '../ui/button';
+import { useEntries } from '@/features/statements';
+import { useAuth } from '@/features/auth/api/hooks';
+import { Button } from '@/components/ui/Button';
 import { Save, X, User, Mail, Award, Edit2, LogOut } from 'lucide-react';
-import { validateEmail } from '../../lib/utils/validateEmail';
-import QuestionCounter from '../ui/questionCounter/QuestionCounter';
-import ProgressWithFeedback from '../ui/progress/ProgressWithFeedback';
+import { validateEmail } from '@/lib/utils/validateEmail';
+import { QuestionCounter, ProgressWithFeedback } from '@/components/ui';
 
 interface UserDataModalProps {
   onOpenChange: (open: boolean) => void;

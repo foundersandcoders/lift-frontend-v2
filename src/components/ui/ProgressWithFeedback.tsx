@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAnsweredCount } from '@/features/questions/hooks/useAnsweredCount';
 import { useProgressFeedback } from '@/hooks/useProgressFeedback';
-import LargeCircularQuestionCounter from '../questionCounter/LargeCircularQuestionCounter';
+import LargeCircularQuestionCounter from './questionCounter/LargeCircularQuestionCounter';
 
 const ProgressWithFeedback: React.FC = () => {
   const { answered, total } = useAnsweredCount();
