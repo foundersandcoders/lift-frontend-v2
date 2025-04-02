@@ -146,9 +146,9 @@ const StatementItem: React.FC<StatementItemProps> = ({
   const [originalPrivacy, setOriginalPrivacy] = React.useState<boolean | null>(
     null
   );
-  const [originalDescription, setOriginalDescription] = React.useState<string | null>(
-    null
-  );
+  const [originalDescription, setOriginalDescription] = React.useState<
+    string | null
+  >(null);
 
   // Local "draft" state to track current modifications
   const [draft, setDraft] = React.useState<Entry>(statement);

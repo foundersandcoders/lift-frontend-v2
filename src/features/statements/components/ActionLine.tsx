@@ -114,7 +114,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
   };
 
   return (
-    <div className='ml-0 pl-0 md:pl-2 border-gray-200 space-y-2 mt-2'>
+    <div className='ml-0 pl-0 md:pl-2 border-gray-200 space-y-2'>
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
         if (!isEditing) {

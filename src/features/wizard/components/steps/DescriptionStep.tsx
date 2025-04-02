@@ -26,18 +26,19 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
     }
   };
 
-  // Handle Enter key without Shift to save and advance
+  // Handle Shift+Enter to save and advance, regular Enter adds a new line
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault();
       onUpdate(inputValue);
     }
+    // Regular Enter will naturally add a new line in the textarea
   };
 
-  const subQuestion = "Details (optional)";
+  const subQuestion = 'Details (optional)';
   const charCount = inputValue.length;
   const remainingChars = maxLength - charCount;
-  
+
   return (
     <StepContainer
       subQuestion={subQuestion}
@@ -45,18 +46,18 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
       currentStep={currentStep}
       totalSteps={totalSteps}
     >
-      <div className="flex flex-col space-y-2 h-full">
-        <div className="relative flex-grow">
+      <div className='flex flex-col space-y-2 h-full'>
+        <div className='relative flex-grow'>
           <textarea
             value={inputValue}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="Your statement is complete - only add details if necessary"
-            className="w-full h-48 p-3 border-2 border-[var(--description-input)] rounded-md focus:ring-2 focus:ring-[var(--description-input)] focus:outline-none resize-none"
-            aria-label="Description"
+            placeholder='Your statement is complete - only add details if necessary. Press Enter for new line.'
+            className='w-full h-48 p-3 border-2 border-[var(--description-input)] rounded-md focus:ring-2 focus:ring-[var(--description-input)] focus:outline-none resize-none'
+            aria-label='Description'
           />
-          
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+
+          <div className='absolute bottom-2 right-2 text-xs text-gray-500'>
             {remainingChars} characters remaining
           </div>
         </div>
