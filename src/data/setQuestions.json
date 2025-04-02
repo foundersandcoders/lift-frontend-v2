@@ -31,13 +31,13 @@
     {
       "id": "q2",
       "category": "wellbeing",
-      "mainQuestion": "Please describe how you are when you are having a good day ",
+      "mainQuestion": "Please describe how you are when you are having a good day.",
       "steps": {
         "subject": {
           "question": "Who is this statement about?",
           "preset": true,
           "presetAnswer": "username",
-          "allowDescriptors": false
+          "allowDescriptors": true
         },
         "verb": {
           "question": "Select the action verb for your statement.",

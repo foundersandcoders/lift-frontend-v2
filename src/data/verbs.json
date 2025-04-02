@@ -2,526 +2,1508 @@
   "verbs": [
     {
       "id": "v1",
-      "name": "Express",
-      "popularity": 85,
-      "categories": ["Communication"],
-      "color": "#ff5733"
+      "name": "Accommodate",
+      "popularity": 80,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v2",
-      "name": "Introduce",
-      "popularity": 80,
-      "categories": ["Communication"],
-      "color": "#33ff57"
+      "name": "Accumulate",
+      "popularity": 78,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v3",
-      "name": "Share",
-      "popularity": 83,
-      "categories": ["Engagement", "Teamwork"],
-      "color": "#2ecc71"
+      "name": "Ache",
+      "popularity": 75,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v4",
-      "name": "Support",
-      "popularity": 99,
-      "categories": ["Support & Help", "Guide & Encourage"],
-      "color": "#3498db"
+      "name": "Adjust",
+      "popularity": 82,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v5",
-      "name": "Help",
-      "popularity": 98,
-      "categories": ["Support & Help"],
-      "color": "#2980b9"
+      "name": "Advise",
+      "popularity": 85,
+      "categories": ["Communication", "Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v6",
-      "name": "Assist",
-      "popularity": 87,
-      "categories": ["Support & Help"],
-      "color": "#2c3e50"
+      "name": "Advocate",
+      "popularity": 88,
+      "categories": ["Support & Guidance", "Collaboration & Leadership"],
+      "color": "#000000"
     },
     {
       "id": "v7",
-      "name": "Guide",
-      "popularity": 85,
-      "categories": ["Guide & Encourage"],
-      "color": "#34495e"
+      "name": "Affects",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v8",
-      "name": "Encourage",
-      "popularity": 84,
-      "categories": ["Guide & Encourage"],
-      "color": "#16a085"
+      "name": "Align",
+      "popularity": 82,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v9",
-      "name": "Facilitate",
-      "popularity": 77,
-      "categories": ["Guide & Encourage"],
-      "color": "#1abc9c"
+      "name": "Appears",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v10",
-      "name": "Mentor",
-      "popularity": 82,
-      "categories": ["Guide & Encourage", "Leadership"],
-      "color": "#27ae60",
-      "presentTenseForm": "mentor"
+      "name": "Appreciate",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v11",
-      "name": "Advise",
-      "popularity": 80,
-      "categories": ["Guide & Encourage"],
-      "color": "#2ecc71"
+      "name": "Arrange",
+      "popularity": 83,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v12",
-      "name": "Grow",
-      "popularity": 92,
-      "categories": ["Personal Growth"],
-      "color": "#8e44ad"
+      "name": "Articulate",
+      "popularity": 87,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v13",
-      "name": "Improve",
-      "popularity": 94,
-      "categories": ["Personal Growth", "Achievement"],
-      "color": "#9b59b6"
+      "name": "Ask",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v14",
-      "name": "Develop",
-      "popularity": 91,
-      "categories": ["Personal Growth", "Implementation"],
-      "color": "#7d3c98"
+      "name": "Assist",
+      "popularity": 84,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v15",
-      "name": "Progress",
-      "popularity": 88,
-      "categories": ["Personal Growth", "Adaptation & Learning"],
-      "color": "#2980b9"
+      "name": "Attend",
+      "popularity": 80,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v16",
-      "name": "Adapt",
-      "popularity": 90,
-      "categories": ["Adaptation & Learning"],
-      "color": "#3498db"
+      "name": "Balance",
+      "popularity": 86,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v17",
-      "name": "Learn",
-      "popularity": 89,
-      "categories": ["Adaptation & Learning"],
-      "color": "#2c3e50"
+      "name": "Battle",
+      "popularity": 82,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v18",
-      "name": "Evolve",
-      "popularity": 86,
-      "categories": ["Adaptation & Learning", "Personal Growth"],
-      "color": "#34495e"
+      "name": "Beats",
+      "popularity": 80,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v19",
-      "name": "Advance",
-      "popularity": 87,
-      "categories": ["Personal Growth", "Achievement"],
-      "color": "#16a085"
+      "name": "Become",
+      "popularity": 78,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v20",
-      "name": "Create",
-      "popularity": 91,
-      "categories": ["Creative Process"],
-      "color": "#1abc9c"
+      "name": "Benefit",
+      "popularity": 88,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v21",
-      "name": "Innovate",
-      "popularity": 82,
-      "categories": ["Creative Process"],
-      "color": "#27ae60"
+      "name": "Blossoms",
+      "popularity": 90,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v22",
-      "name": "Design",
-      "popularity": 88,
-      "categories": ["Creative Process", "Implementation"],
-      "color": "#2ecc71"
+      "name": "Blurs",
+      "popularity": 77,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v23",
-      "name": "Build",
-      "popularity": 86,
-      "categories": ["Implementation"],
-      "color": "#8e44ad"
+      "name": "Brightens",
+      "popularity": 85,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v24",
-      "name": "Transform",
-      "popularity": 85,
-      "categories": ["Implementation", "Creative Process"],
-      "color": "#9b59b6"
+      "name": "Brings",
+      "popularity": 80,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v25",
-      "name": "Pioneer",
+      "name": "Call For",
       "popularity": 83,
-      "categories": ["Creative Process"],
-      "color": "#7d3c98",
-      "presentTenseForm": "pioneer"
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v26",
-      "name": "Invent",
-      "popularity": 81,
-      "categories": ["Creative Process"],
-      "color": "#2980b9"
+      "name": "Care",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v27",
-      "name": "Craft",
-      "popularity": 79,
-      "categories": ["Implementation"],
-      "color": "#3498db"
+      "name": "Cause",
+      "popularity": 82,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v28",
-      "name": "Collaborate",
+      "name": "Celebrate",
       "popularity": 88,
-      "categories": ["Teamwork"],
-      "color": "#2c3e50"
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v29",
-      "name": "Connect",
-      "popularity": 86,
-      "categories": ["Engagement"],
-      "color": "#34495e"
+      "name": "Cherish",
+      "popularity": 87,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v30",
-      "name": "Engage",
-      "popularity": 89,
-      "categories": ["Engagement"],
-      "color": "#16a085"
+      "name": "Cloud",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v31",
-      "name": "Partner",
-      "popularity": 85,
-      "categories": ["Teamwork"],
-      "color": "#1abc9c",
-      "presentTenseForm": "partner"
+      "name": "Collapse",
+      "popularity": 75,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v32",
-      "name": "Unite",
-      "popularity": 84,
-      "categories": ["Teamwork"],
-      "color": "#27ae60"
+      "name": "Communicate",
+      "popularity": 95,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v33",
-      "name": "Network",
-      "popularity": 82,
-      "categories": ["Engagement"],
-      "color": "#8e44ad"
+      "name": "Confront",
+      "popularity": 85,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v34",
-      "name": "Cooperate",
-      "popularity": 81,
-      "categories": ["Teamwork"],
-      "color": "#9b59b6"
+      "name": "Consider",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v35",
-      "name": "Lead",
-      "popularity": 96,
-      "categories": ["Leadership"],
-      "color": "#7d3c98"
+      "name": "Contend",
+      "popularity": 82,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v36",
-      "name": "Achieve",
-      "popularity": 95,
-      "categories": ["Achievement"],
-      "color": "#2980b9"
+      "name": "Contribute",
+      "popularity": 88,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
     },
     {
       "id": "v37",
-      "name": "Excel",
-      "popularity": 93,
-      "categories": ["Achievement"],
-      "color": "#3498db"
+      "name": "Convey",
+      "popularity": 86,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v38",
-      "name": "Succeed",
-      "popularity": 92,
-      "categories": ["Achievement"],
-      "color": "#2c3e50"
+      "name": "Coordinate",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v39",
-      "name": "Motivate",
-      "popularity": 86,
-      "categories": ["Leadership"],
-      "color": "#34495e"
+      "name": "Dance",
+      "popularity": 85,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v40",
-      "name": "Empower",
+      "name": "Darken",
       "popularity": 78,
-      "categories": ["Leadership"],
-      "color": "#16a085"
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v41",
-      "name": "Inspire",
-      "popularity": 89,
-      "categories": ["Leadership"],
-      "color": "#1abc9c"
+      "name": "Declare",
+      "popularity": 84,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v42",
-      "name": "Influence",
-      "popularity": 87,
-      "categories": ["Leadership"],
-      "color": "#27ae60"
+      "name": "Decline",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v43",
-      "name": "Argue",
-      "popularity": 72,
-      "categories": ["Direct Conflict"],
-      "color": "#c0392b"
+      "name": "Decrease",
+      "popularity": 82,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v44",
-      "name": "Fight",
-      "popularity": 75,
-      "categories": ["Direct Conflict"],
-      "color": "#e74c3c"
+      "name": "Demand",
+      "popularity": 83,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v45",
-      "name": "Oppose",
-      "popularity": 73,
-      "categories": ["Direct Conflict", "Resistance"],
-      "color": "#d35400"
+      "name": "Demonstrate",
+      "popularity": 87,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v46",
-      "name": "Resist",
-      "popularity": 75,
-      "categories": ["Resistance"],
-      "color": "#e67e22"
+      "name": "Depend",
+      "popularity": 85,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v47",
-      "name": "Disagree",
-      "popularity": 75,
-      "categories": ["Resistance"],
-      "color": "#f39c12"
+      "name": "Desire",
+      "popularity": 88,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v48",
-      "name": "Challenge",
-      "popularity": 74,
-      "categories": ["Resistance", "Direct Conflict"],
-      "color": "#f1c40f"
+      "name": "Dictate",
+      "popularity": 84,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v49",
-      "name": "Confront",
-      "popularity": 71,
-      "categories": ["Direct Conflict"],
-      "color": "#c0392b"
+      "name": "Diminish",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v50",
-      "name": "Debate",
-      "popularity": 76,
-      "categories": ["Resistance"],
-      "color": "#e74c3c"
+      "name": "Dims",
+      "popularity": 78,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v51",
-      "name": "Block",
-      "popularity": 79,
-      "categories": ["Active Obstruction"],
-      "color": "#d35400"
+      "name": "Direct",
+      "popularity": 87,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
     },
     {
       "id": "v52",
-      "name": "Prevent",
-      "popularity": 77,
-      "categories": ["Active Obstruction"],
-      "color": "#e67e22"
+      "name": "Disclose",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v53",
-      "name": "Interrupt",
-      "popularity": 85,
-      "categories": ["Active Obstruction"],
-      "color": "#f39c12"
+      "name": "Display",
+      "popularity": 84,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v54",
-      "name": "Obstruct",
-      "popularity": 76,
-      "categories": ["Active Obstruction", "Passive Hindrance"],
-      "color": "#f1c40f"
+      "name": "Drains",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v55",
-      "name": "Hinder",
-      "popularity": 75,
-      "categories": ["Passive Hindrance"],
-      "color": "#c0392b"
+      "name": "Drift",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v56",
-      "name": "Restrict",
-      "popularity": 74,
-      "categories": ["Passive Hindrance"],
-      "color": "#e74c3c"
+      "name": "Drive",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
     },
     {
       "id": "v57",
-      "name": "Impede",
-      "popularity": 73,
-      "categories": ["Passive Hindrance"],
-      "color": "#d35400",
-      "presentTenseForm": "impede"
+      "name": "Drop",
+      "popularity": 82,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v58",
-      "name": "Delay",
-      "popularity": 78,
-      "categories": ["Passive Hindrance"],
-      "color": "#e67e22"
+      "name": "Dwindles",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v59",
-      "name": "Avoid",
-      "popularity": 74,
-      "categories": ["Active Evasion"],
-      "color": "#f39c12"
+      "name": "Embrace",
+      "popularity": 88,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v60",
-      "name": "Ignore",
-      "popularity": 90,
-      "categories": ["Passive Avoidance"],
-      "color": "#f1c40f"
+      "name": "Emphasize",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v61",
-      "name": "Withdraw",
-      "popularity": 68,
-      "categories": ["Active Evasion"],
-      "color": "#c0392b"
+      "name": "Encounter",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v62",
-      "name": "Evade",
-      "popularity": 70,
-      "categories": ["Active Evasion"],
-      "color": "#e74c3c"
+      "name": "Encourage",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v63",
-      "name": "Deflect",
-      "popularity": 69,
-      "categories": ["Active Evasion", "Passive Avoidance"],
-      "color": "#d35400"
+      "name": "Endorse",
+      "popularity": 84,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v64",
-      "name": "Withhold",
-      "popularity": 69,
-      "categories": ["Passive Avoidance"],
-      "color": "#e67e22",
-      "presentTenseForm": "withhold"
+      "name": "Endure",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
     },
     {
       "id": "v65",
-      "name": "Dodge",
-      "popularity": 71,
-      "categories": ["Active Evasion"],
-      "color": "#f39c12"
+      "name": "Enhance",
+      "popularity": 88,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v66",
-      "name": "Escape",
-      "popularity": 72,
-      "categories": ["Active Evasion"],
-      "color": "#f1c40f"
+      "name": "Enjoy",
+      "popularity": 90,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
     },
     {
       "id": "v67",
-      "name": "Criticize",
-      "popularity": 76,
-      "categories": ["Criticism"],
-      "color": "#7f8c8d"
+      "name": "Ensure",
+      "popularity": 85,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
     },
     {
       "id": "v68",
-      "name": "Reject",
+      "name": "Escalate",
       "popularity": 82,
-      "categories": ["Rejection"],
-      "color": "#95a5a6"
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
     },
     {
       "id": "v69",
-      "name": "Dismiss",
-      "popularity": 78,
-      "categories": ["Rejection", "Criticism"],
-      "color": "#bdc3c7"
+      "name": "Exhibit",
+      "popularity": 84,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v70",
-      "name": "Disapprove",
-      "popularity": 77,
-      "categories": ["Criticism"],
-      "color": "#7f8c8d"
+      "name": "Expect",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v71",
-      "name": "Dislike",
-      "popularity": 88,
-      "categories": ["Rejection"],
-      "color": "#95a5a6"
+      "name": "Experience",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v72",
-      "name": "Condemn",
-      "popularity": 75,
-      "categories": ["Criticism"],
-      "color": "#bdc3c7"
+      "name": "Express",
+      "popularity": 95,
+      "categories": ["Communication"],
+      "color": "#000000"
     },
     {
       "id": "v73",
-      "name": "Judge",
-      "popularity": 79,
-      "categories": ["Criticism"],
-      "color": "#7f8c8d"
+      "name": "Exude",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
     },
     {
       "id": "v74",
+      "name": "Face",
+      "popularity": 85,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v75",
+      "name": "Facilitate",
+      "popularity": 88,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v76",
+      "name": "Fade",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v77",
+      "name": "Falter",
+      "popularity": 78,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v78",
+      "name": "Favor",
+      "popularity": 84,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v79",
+      "name": "Feel",
+      "popularity": 90,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v80",
+      "name": "Flourish",
+      "popularity": 92,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v81",
+      "name": "Flows",
+      "popularity": 85,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v82",
+      "name": "Fosters",
+      "popularity": 87,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v83",
+      "name": "Fulfill",
+      "popularity": 88,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v84",
+      "name": "Glows",
+      "popularity": 85,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v85",
+      "name": "Guide",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v86",
+      "name": "Guides",
+      "popularity": 88,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v87",
+      "name": "Hamper",
+      "popularity": 82,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v88",
+      "name": "Handle",
+      "popularity": 87,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v89",
+      "name": "Highlight",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v90",
+      "name": "Illuminate",
+      "popularity": 88,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v91",
+      "name": "Impacts",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v92",
+      "name": "Impairs",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v93",
+      "name": "Impedes",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v94",
+      "name": "Imposes",
+      "popularity": 82,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v95",
+      "name": "Improves",
+      "popularity": 90,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v96",
+      "name": "Include",
+      "popularity": 84,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v97",
+      "name": "Increases",
+      "popularity": 88,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v98",
+      "name": "Indicate",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v99",
+      "name": "Influence",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v100",
+      "name": "Inform",
+      "popularity": 90,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v101",
+      "name": "Inspire",
+      "popularity": 95,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v102",
+      "name": "Intensifies",
+      "popularity": 82,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v103",
+      "name": "Is",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v104",
+      "name": "Juggle",
+      "popularity": 85,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v105",
+      "name": "Lags",
+      "popularity": 78,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v106",
+      "name": "Leads To",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v107",
+      "name": "Limits",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v108",
+      "name": "Maintain",
+      "popularity": 88,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v109",
+      "name": "Manage",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v110",
+      "name": "Manifest",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v111",
+      "name": "Mention",
+      "popularity": 90,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v112",
+      "name": "Mirrors",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v113",
+      "name": "Motivates",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v114",
+      "name": "Navigate",
+      "popularity": 84,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v115",
+      "name": "Necessitate",
+      "popularity": 82,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v116",
+      "name": "Need",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v117",
+      "name": "Note",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v118",
+      "name": "Notice",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v119",
+      "name": "Observe",
+      "popularity": 90,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v120",
+      "name": "Offer",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v121",
+      "name": "Organize",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v122",
+      "name": "Outline",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v123",
+      "name": "Oversee",
+      "popularity": 87,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v124",
+      "name": "Overwhelm",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v125",
+      "name": "Perceive",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v126",
+      "name": "Permit",
+      "popularity": 80,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v127",
+      "name": "Plummet",
+      "popularity": 78,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v128",
+      "name": "Point Out",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v129",
+      "name": "Prescribe",
+      "popularity": 82,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v130",
+      "name": "Prioritize",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v131",
+      "name": "Progresses",
+      "popularity": 88,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v132",
+      "name": "Project",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v133",
+      "name": "Promote",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v134",
+      "name": "Prompt",
+      "popularity": 85,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v135",
+      "name": "Provide",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v136",
+      "name": "Races",
+      "popularity": 80,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v137",
+      "name": "Radiate",
+      "popularity": 90,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v138",
+      "name": "React",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v139",
+      "name": "Recommend",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v140",
+      "name": "Reduces",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v141",
+      "name": "Reflect",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v142",
+      "name": "Rely",
+      "popularity": 85,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v143",
+      "name": "Remain",
+      "popularity": 82,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v144",
+      "name": "Remark",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v145",
+      "name": "Report",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v146",
+      "name": "Request",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v147",
+      "name": "Require",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v148",
+      "name": "Restrict",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v149",
+      "name": "Results In",
+      "popularity": 82,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v150",
+      "name": "Reveal",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v151",
+      "name": "Sag",
+      "popularity": 78,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v152",
+      "name": "Savor",
+      "popularity": 85,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v153",
+      "name": "Scatter",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v154",
+      "name": "Seek",
+      "popularity": 90,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v155",
+      "name": "Shape",
+      "popularity": 88,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v156",
+      "name": "Share",
+      "popularity": 90,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v157",
+      "name": "Shift",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v158",
+      "name": "Shines",
+      "popularity": 90,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v159",
+      "name": "Show",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v160",
+      "name": "Signal",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v161",
+      "name": "Sinks",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v162",
+      "name": "Slackens",
+      "popularity": 78,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v163",
+      "name": "Slow",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v164",
+      "name": "Slumps",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v165",
+      "name": "Soars",
+      "popularity": 90,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v166",
+      "name": "Softens",
+      "popularity": 85,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v167",
+      "name": "Spark",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v168",
+      "name": "Specify",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v169",
+      "name": "Spiral",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v170",
+      "name": "Stay",
+      "popularity": 80,
+      "categories": ["Support & Guidance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v171",
+      "name": "Strain",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v172",
+      "name": "Strength",
+      "popularity": 78,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v173",
+      "name": "Stress",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v174",
+      "name": "Struggle",
+      "popularity": 82,
+      "categories": ["Conflict & Resistance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v175",
+      "name": "Succeed",
+      "popularity": 90,
+      "categories": ["Growth & Innovation", "Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v176",
+      "name": "Suffer",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v177",
+      "name": "Suggest",
+      "popularity": 88,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v178",
+      "name": "Supervise",
+      "popularity": 85,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v179",
+      "name": "Support",
+      "popularity": 90,
+      "categories": ["Support & Guidance", "Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v180",
+      "name": "Surge",
+      "popularity": 85,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v181",
+      "name": "Thrive",
+      "popularity": 92,
+      "categories": ["Growth & Innovation"],
+      "color": "#000000"
+    },
+    {
+      "id": "v182",
+      "name": "Throbs",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v183",
+      "name": "Tightens",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v184",
+      "name": "Tremble",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v185",
+      "name": "Trembles",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v186",
+      "name": "Unfolds",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v187",
+      "name": "Update",
+      "popularity": 85,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v188",
+      "name": "Uplifts",
+      "popularity": 90,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v189",
+      "name": "Urge",
+      "popularity": 88,
+      "categories": ["Collaboration & Leadership"],
+      "color": "#000000"
+    },
+    {
+      "id": "v190",
+      "name": "Value",
+      "popularity": 90,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v191",
+      "name": "Vanish",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v192",
+      "name": "Vary",
+      "popularity": 80,
+      "categories": ["Communication"],
+      "color": "#000000"
+    },
+    {
+      "id": "v193",
+      "name": "Wanes",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v194",
+      "name": "Waver",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v195",
+      "name": "Wavers",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v196",
+      "name": "Weaken",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v197",
+      "name": "Wear",
+      "popularity": 80,
+      "categories": ["Obstruction & Hindrance"],
+      "color": "#000000"
+    },
+    {
+      "id": "v198",
+      "name": "Evade",
+      "popularity": 88,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v199",
+      "name": "Dodge",
+      "popularity": 86,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v200",
+      "name": "Sidestep",
+      "popularity": 85,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v201",
+      "name": "Escape",
+      "popularity": 87,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v202",
+      "name": "Withdraw",
+      "popularity": 84,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v203",
+      "name": "Shun",
+      "popularity": 82,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v204",
+      "name": "Elude",
+      "popularity": 83,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v205",
+      "name": "Bypass",
+      "popularity": 80,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v206",
+      "name": "Skirt",
+      "popularity": 81,
+      "categories": ["Avoidance & Evasion"],
+      "color": "#000000"
+    },
+    {
+      "id": "v207",
+      "name": "Condemn",
+      "popularity": 88,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v208",
+      "name": "Criticize",
+      "popularity": 87,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v209",
+      "name": "Rebuke",
+      "popularity": 85,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v210",
+      "name": "Dismiss",
+      "popularity": 84,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v211",
       "name": "Denounce",
-      "popularity": 74,
-      "categories": ["Criticism", "Rejection"],
-      "color": "#95a5a6"
+      "popularity": 86,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v212",
+      "name": "Disparage",
+      "popularity": 83,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v213",
+      "name": "Reject",
+      "popularity": 85,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v214",
+      "name": "Censure",
+      "popularity": 82,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
+    },
+    {
+      "id": "v215",
+      "name": "Berate",
+      "popularity": 80,
+      "categories": ["Criticism & Rejection"],
+      "color": "#000000"
     }
   ]
 }
