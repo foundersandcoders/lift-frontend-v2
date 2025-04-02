@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 import React, { useState } from 'react';
 import { useEntries } from '../../features/statements/hooks/useEntries';
-import SmallCircularQuestionCounter from '../../components/ui/questionCounter/smallCircularQuestionCounter';
+import SmallCircularQuestionCounter from '../../components/ui/questionCounter/SmallCircularQuestionCounter';
 import UserDataModal from '../../components/modals/UserDataModal';
 // import { Tooltip, TooltipTrigger, TooltipContent } from '../../components/ui/better-tooltip';
 

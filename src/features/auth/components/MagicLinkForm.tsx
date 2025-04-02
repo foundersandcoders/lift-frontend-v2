@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../api/hooks';
 import { validateEmail } from '@/lib/utils/validateEmail';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import { Mail, Loader2 } from 'lucide-react';
 
 interface MagicLinkFormProps {

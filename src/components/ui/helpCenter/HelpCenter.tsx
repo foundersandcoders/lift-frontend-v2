@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, Info, PlayCircle, BookOpen, History, Link as LinkIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import helpContent from '@/data/helpContent.json';
 
 interface HelpCenterProps {

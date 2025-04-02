@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { SimpleDialogContext } from './simple-dialog-context';
+import { SimpleDialogContext } from './SimpleDialogContext';
 
 interface SimpleDialogProps {
   isOpen?: boolean;

@@ -1,4 +1,4 @@
-import { Button } from './button';
+import { Button } from './Button';
 interface ConfirmationDialogProps {
   isOpen: boolean;
   onClose: () => void;

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import type { Verb, Category } from '@/types/entries';
 import { getVerbColor } from '@/lib/utils/categoryUtils';
 import { getContrastColor } from '@/lib/utils/colorUtils';

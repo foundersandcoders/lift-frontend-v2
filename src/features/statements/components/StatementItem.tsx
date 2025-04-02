@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { getVerbName } from '@/lib/utils/verbUtils';
 import {
   Trash2,
@@ -19,14 +19,14 @@ import {
   SimpleDropdownMenuTrigger as DropdownMenuTrigger,
   SimpleDropdownMenuContent as DropdownMenuContent,
   SimpleDropdownMenuItem as DropdownMenuItem,
-} from '@/components/ui/simple-dropdown';
+} from '@/components/ui/SimpleDropdown';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '@/components/ui/better-tooltip';
+} from '@/components/ui/BetterTooltip';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
 

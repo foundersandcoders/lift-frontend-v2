@@ -4,8 +4,8 @@ import {
   SimpleDialogContent as DialogContent,
   SimpleDialogTitle as DialogTitle,
   SimpleDialogDescription as DialogDescription,
-} from '@/components/ui/simple-dialog';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/SimpleDialog';
+import { Button } from '@/components/ui/Button';
 import type { Entry } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';

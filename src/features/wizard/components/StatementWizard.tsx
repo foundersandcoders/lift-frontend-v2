@@ -6,7 +6,7 @@ import {
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
   SimpleDialogTitle as DialogTitle,
-} from '@/components/ui/simple-dialog';
+} from '@/components/ui/SimpleDialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEntries } from '@/features/statements/hooks/useEntries';
 import { postNewEntry } from '@/features/statements/api/entriesApi';
@@ -18,7 +18,7 @@ import { CategoryStep } from './steps/CategoryStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface StatementWizardProps {
   username: string;

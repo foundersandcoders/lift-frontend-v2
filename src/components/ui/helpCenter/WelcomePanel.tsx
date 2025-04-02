@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Info, PlayCircle, ArrowRight, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import helpContent from '@/data/helpContent.json';
 
 interface WelcomePanelProps {
