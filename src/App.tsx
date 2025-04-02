@@ -4,21 +4,20 @@ import React, { useEffect } from 'react';
 import { TooltipProvider } from './components/ui/BetterTooltip';
 
 // Providers
-import { AuthProvider } from './features/auth/AuthProvider';
+import { AuthProvider } from './features/auth/context/AuthProvider';
 import { EntriesProvider } from './features/statements/context/EntriesProvider';
-import { QuestionsProvider } from './providers/QuestionsProvider';
-import { HelpProvider } from './components/ui/helpCenter';
+import { QuestionsProvider } from './features/questions/context/QuestionsProvider';
+import { HelpProvider } from './features/help';
 
 // Components
 import LoginPage from './features/auth/components/LoginPage';
-import Header from './layouts/components/Header';
-import MainPage from './layouts/components/MainPage';
+import { Header, MainPage } from './components/layout';
 import MockNotification from './features/auth/components/MockNotification';
 
 // Hooks and Utilities
 import { useEntries } from './features/statements/hooks/useEntries';
 import { useAuth } from './features/auth/api/hooks';
-import { handleMagicLinkVerification } from './features/auth/authUtils';
+import { handleMagicLinkVerification } from './features/auth/utils/authUtils';
 
 // Outer Component: Responsible only for setting up the environment (the providers) for the rest of the app.
 const AppContent: React.FC = () => {

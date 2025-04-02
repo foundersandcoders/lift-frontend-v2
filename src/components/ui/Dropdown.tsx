@@ -16,12 +16,15 @@ interface SimpleDropdownMenuContentProps extends React.HTMLAttributes<HTMLDivEle
   children: React.ReactNode;
   className?: string;
   sideOffset?: number;
+  align?: string;
 }
 
 interface SimpleDropdownMenuItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
   onClick?: (e: React.MouseEvent) => void;
+  disabled?: boolean;
+  title?: string;
 }
 
 interface SimpleDropdownMenuSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {

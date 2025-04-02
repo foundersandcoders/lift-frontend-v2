@@ -5,7 +5,7 @@ import {
   requestMagicLink as apiRequestMagicLink, 
   signOut as apiSignOut,
   updateUserProfile 
-} from './api/authApi';
+} from '../api/authApi';
 
 type AuthAction =
   | { type: 'AUTH_LOADING' }

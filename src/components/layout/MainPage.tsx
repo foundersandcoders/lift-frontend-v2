@@ -5,14 +5,14 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '../../components/ui/BetterTooltip';
-import StatementList from '../../features/statements/components/StatementList';
-import { useEntries } from '../../features/statements/hooks/useEntries';
-import { Button } from '../../components/ui/Button';
+  Button
+} from '@/components/ui';
+import { StatementList } from '@/features/statements/components';
+import { useEntries } from '@/features/statements';
 import { Mail } from 'lucide-react';
-import StatementWizard from '../../features/wizard/components/StatementWizard';
-import ShareEmailModal from '../../components/modals/ShareEmailModal';
-// import TestStatementButton from '../../components/debug/TestButton';
+import { StatementWizard } from '@/features/wizard';
+import { ShareEmailModal } from '@/components/modals';
+// import TestStatementButton from '@/components/debug/TestButton';
 import Footer from './Footer';
 
 const MainPage: React.FC = () => {

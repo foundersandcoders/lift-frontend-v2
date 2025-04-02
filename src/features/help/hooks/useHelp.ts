@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext } from 'react';
-import { HelpContext } from '../HelpContext';
+import { HelpContext } from '../context/HelpContext';
 
 export const useHelp = () => {
   const context = useContext(HelpContext);

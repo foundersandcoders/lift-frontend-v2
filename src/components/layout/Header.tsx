@@ -1,9 +1,9 @@
-// src/components/Header.tsx
+// src/components/layout/Header.tsx
 import React, { useState } from 'react';
-import { useEntries } from '../../features/statements/hooks/useEntries';
-import SmallCircularQuestionCounter from '../../components/ui/questionCounter/SmallCircularQuestionCounter';
-import UserDataModal from '../../components/modals/UserDataModal';
-// import { Tooltip, TooltipTrigger, TooltipContent } from '../../components/ui/better-tooltip';
+import { useEntries } from '@/features/statements';
+import { SmallCircularQuestionCounter } from '@/components/ui';
+import { UserDataModal } from '@/components/modals';
+// import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui';
 
 const Header: React.FC = () => {
   const { data } = useEntries();

@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { HelpContext } from './HelpContext';
-import WelcomePanel from './WelcomePanel';
-import HelpButton from './HelpButton';
-import HelpCenter from './HelpCenter';
+import WelcomePanel from '../components/WelcomePanel';
+import HelpButton from '../components/HelpButton';
+import HelpCenter from '../components/HelpCenter';
 
 interface HelpProviderProps {
   children: React.ReactNode;
@@ -79,5 +79,3 @@ export const HelpProvider: React.FC<HelpProviderProps> = ({ children }) => {
     </HelpContext.Provider>
   );
 };
-
-export default HelpProvider;

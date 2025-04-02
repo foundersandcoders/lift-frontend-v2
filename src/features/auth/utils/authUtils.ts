@@ -1,4 +1,4 @@
-import { verifyMagicLink } from './api/authApi';
+import { verifyMagicLink } from '../api/authApi';
 
 /**
  * Extract and verify magic link token from URL

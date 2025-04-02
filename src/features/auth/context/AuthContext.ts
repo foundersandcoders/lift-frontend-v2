@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { AuthState } from './api/authApi';
+import { AuthState } from '../api/authApi';
 
 // Initial auth state
 export const initialAuthState: AuthState = {

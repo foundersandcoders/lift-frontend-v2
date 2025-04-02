@@ -6,7 +6,7 @@ import { useEntries } from '../../statements/hooks/useEntries';
 import MagicLinkForm from './MagicLinkForm';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
-import { handleMagicLinkVerification } from '../authUtils';
+import { handleMagicLinkVerification } from '../utils/authUtils';
 import { Loader2 } from 'lucide-react';
 import PrivacyModal from '../../../components/modals/PrivacyModal';
 import TermsModal from '../../../components/modals/TermsModal';

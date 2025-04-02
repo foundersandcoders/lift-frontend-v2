@@ -6,11 +6,9 @@
  * without requiring consumers to know the internal file structure.
  * 
  * Usage:
- * import { HelpProvider, HelpButton, useHelp } from '@/components/ui/helpCenter';
+ * import { HelpProvider, HelpButton, useHelp } from '@/features/help';
  */
 
-export { default as HelpProvider } from './HelpProvider';
+export { HelpProvider } from './context/HelpProvider';
 export { useHelp } from './hooks';
-export { default as HelpButton } from './HelpButton';
-export { default as HelpCenter } from './HelpCenter';
-export { default as WelcomePanel } from './WelcomePanel';
+export { HelpButton, HelpCenter, WelcomePanel } from './components';
