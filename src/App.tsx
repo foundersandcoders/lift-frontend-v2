@@ -52,7 +52,16 @@ const AppContent: React.FC = () => {
 
   // Listen for magic link verification and ensure user email is saved to entries context
   useEffect(() => {
-    const handleMagicLinkVerified = (event: any) => {
+    interface MagicLinkVerifiedEvent extends CustomEvent {
+      detail: {
+        user: {
+          email: string;
+          [key: string]: unknown;
+        };
+      };
+    }
+
+    const handleMagicLinkVerified = (event: MagicLinkVerifiedEvent) => {
       if (event.detail?.user?.email) {
         console.log(
           'App: Magic link verified with email:',
@@ -67,9 +76,9 @@ const AppContent: React.FC = () => {
       }
     };
 
-    window.addEventListener('magicLinkVerified', handleMagicLinkVerified);
+    window.addEventListener('magicLinkVerified', handleMagicLinkVerified as EventListener);
     return () =>
-      window.removeEventListener('magicLinkVerified', handleMagicLinkVerified);
+      window.removeEventListener('magicLinkVerified', handleMagicLinkVerified as EventListener);
   }, []);
 
   return (

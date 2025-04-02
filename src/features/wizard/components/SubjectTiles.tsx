@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '../../../components/ui/Button';
 import descriptorsData from '../../../data/descriptors.json';
 import type { SetQuestion, DescriptorsData } from '../../../types/entries';
 
