@@ -1,9 +1,10 @@
 // src/components/statementWizard/steps/ObjectStep.tsx
 import React from 'react';
 import StepContainer from '../StepContainer';
-import { Input } from '../../../../components/ui/input';
+import { Input } from '../../../../components/ui/Input';
 import { getVerbName } from '@/lib/utils/verbUtils';
 
+// Force Redeploy
 interface ObjectStepProps {
   subject: string;
   verb: string;

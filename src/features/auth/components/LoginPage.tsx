@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../api/hooks';
 import { useEntries } from '../../statements/hooks/useEntries';
 import MagicLinkForm from './MagicLinkForm';
-import { Input } from '../../../components/ui/input';
-import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/Input';
+import { Button } from '../../../components/ui/Button';
 import { handleMagicLinkVerification } from '../utils/authUtils';
 import { Loader2 } from 'lucide-react';
 import PrivacyModal from '../../../components/modals/PrivacyModal';
@@ -19,6 +19,7 @@ interface LoginPageProps {
   ) => void;
 }
 
+// Forcing readd file to be tracked by github
 const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
   const { state } = useAuth();
   const { setData } = useEntries();
@@ -30,7 +31,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSubmit }) => {
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
-  // Handle token verification on initial load and URL changes
+  // Force Redeploy
   useEffect(() => {
     const verifyToken = async () => {
       setVerifying(true);

@@ -14,7 +14,9 @@ import { formatCategoryName } from '@/lib/utils';
 import { updateEntry } from '../api/entriesApi';
 import { EditStatementModal } from '../../wizard/components/EditStatementModal';
 import { BellOff, ChevronUp, ChevronDown, Plus } from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '../../../components/ui/Button';
+
+// Force Redeploy
 
 // Helper function to normalize category IDs for consistent comparison
 const normalizeCategoryIdForGrouping = (id: string): string => {
@@ -97,7 +99,13 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
   // State for opening the modal for a specific part:
   const [editModalData, setEditModalData] = useState<{
     statement: Entry;
-    editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | 'description';
+    editPart:
+      | 'subject'
+      | 'verb'
+      | 'object'
+      | 'category'
+      | 'privacy'
+      | 'description';
   } | null>(null);
 
   // Keep a backup of the original entries when entering edit mode
@@ -260,7 +268,13 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
 
   // Callback for inline part clicks to open the modal:
   const handlePartClick = (
-    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | 'description',
+    part:
+      | 'subject'
+      | 'verb'
+      | 'object'
+      | 'category'
+      | 'privacy'
+      | 'description',
     statementId: string
   ) => {
     const statementToEdit = entries.find((s) => s.id === statementId);
