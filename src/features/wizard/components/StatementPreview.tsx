@@ -133,9 +133,12 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
         ))}
         
       {/* Description preview */}
-      {selection.description && (currentStep === 'description' || currentStep === 'privacy' || currentStep === 'complement') && (
+      {((selection.description && selection.description.trim().length > 0) || currentStep === 'description') && 
+        (currentStep === 'description' || currentStep === 'privacy' || currentStep === 'complement') && (
         <div className='w-full mt-2 px-2'>
-          <p className='text-xs text-gray-500 italic truncate'>{selection.description}</p>
+          <p className='text-xs text-gray-500 italic truncate'>
+            {selection.description ? selection.description : 'Description (optional)'}
+          </p>
         </div>
       )}
     </div>

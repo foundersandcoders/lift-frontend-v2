@@ -21,13 +21,12 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
     const newValue = e.target.value;
     if (newValue.length <= maxLength) {
       setInputValue(newValue);
+      // Update the parent component in real-time to reflect changes in the preview
+      onUpdate(newValue);
     }
   };
 
-  const handleBlur = () => {
-    // Update parent component with current input value
-    onUpdate(inputValue);
-  };
+  // No need for a separate handleBlur function since we update in real-time
 
   // Handle Enter key without Shift to save and advance
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -58,7 +57,6 @@ export const DescriptionStep: React.FC<DescriptionStepProps> = ({
           <textarea
             value={inputValue}
             onChange={handleChange}
-            onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             placeholder="Add more details about your statement..."
             className="w-full h-48 p-3 border-2 border-[var(--description-input)] rounded-md focus:ring-2 focus:ring-[var(--description-input)] focus:outline-none resize-none"
