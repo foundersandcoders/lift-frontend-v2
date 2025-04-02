@@ -21,10 +21,10 @@ import { CheckCircle2, XCircle } from 'lucide-react';
 import GratitudeModal from '../../../components/modals/GratitudeModal';
 import { markGratitudeSent } from '../../../features/email/api/gratitudeApi';
 import { useEntries } from '../hooks/useEntries';
-import { 
-  Tooltip, 
-  TooltipTrigger, 
-  TooltipContent 
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from '../../../components/ui/better-tooltip';
 
 export interface ActionLineProps {
@@ -61,7 +61,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
     isOpen: boolean;
     action: Action | null;
   }>({ isOpen: false, action: null });
-  
+
   // Get entries data to check for manager email
   const { data } = useEntries();
   const hasManagerEmail = data.managerEmail && data.managerEmail.trim() !== '';
@@ -114,7 +114,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
   };
 
   return (
-    <div className='ml-1 pl-3 border-gray-200 space-y-2 mt-2'>
+    <div className='ml-0 pl-0 md:pl-2 border-gray-200 space-y-2 mt-2'>
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
         if (!isEditing) {
@@ -128,58 +128,91 @@ const ActionLine: React.FC<ActionLineProps> = ({
           return (
             <div
               key={action.id}
-              className={`flex items-center justify-between p-2 rounded border shadow-sm transition-colors bg-gray-50 hover:bg-gray-100 ${
+              className={`flex items-center justify-between p-2 rounded border shadow-sm transition-colors bg-gray-50 hover:bg-gray-100 relative ${
                 action.completed ? 'border-green-500' : 'border-gray-200'
               }`}
             >
-              {/* Text is placed on the left, taking up all remaining space with "flex-1". */}
-              <span className='flex-1'>{action.action}</span>
+              {/* Resolved badge - positioned in top right corner similar to archived badge */}
+              {action.completed && (
+                <span className='absolute -top-2 -right-2 bg-green-100 text-green-600 text-xs gap-1 px-2 py-0.5 rounded-full flex'>
+                  <CheckCircle2 size={14} />
+                  Resolved
+                </span>
+              )}
+              {/* Desktop layout (larger than xs breakpoint) */}
+              <div className='hidden xs:flex xs:items-center xs:justify-between w-full'>
+                <span className='flex-1'>{action.action}</span>
 
-              {/* Right side holds icons and dropdown menu. */}
-              <div className='flex items-center space-x-4'>
-                {/* Show resolved icon if action.completed is true. */}
-                {action.completed && (
-                  <CheckCircle2 size={18} className='text-green-600' />
-                )}
+                {/* Right side holds icons and dropdown menu. */}
+                <div className='flex items-center space-x-4 ml-2 flex-shrink-0'>
+                  {/* Show gratitude sent icon with tooltip */}
+                  {action.gratitude?.sent && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className='relative inline-flex items-center cursor-pointer'>
+                          <MessageCircleHeart
+                            size={18}
+                            className='text-pink-500'
+                          />
+                          {/* Small dot indicator */}
+                          <span className='absolute top-0 right-0 block w-2 h-2 bg-pink-500 border border-white rounded-full'></span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className='p-2 bg-black text-white rounded max-w-xs'>
+                        <div className='text-center'>
+                          <p className='font-semibold mb-1'>Gratitude Sent</p>
+                          {action.gratitude?.sentDate && (
+                            <p className='text-xs opacity-80'>
+                              {new Date(
+                                action.gratitude.sentDate
+                              ).toLocaleDateString()}
+                            </p>
+                          )}
+                          {action.gratitude?.message && (
+                            <p className='text-xs italic mt-1 max-w-xs break-words'>
+                              "{action.gratitude.message}"
+                            </p>
+                          )}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
 
-                {/* Show gratitude sent icon with tooltip */}
-                {action.gratitudeSent && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className='relative inline-flex items-center cursor-pointer'>
-                        <MessageCircleHeart
-                          size={18}
-                          className='text-pink-500'
-                        />
-                        {/* Small dot indicator */}
-                        <span className="absolute top-0 right-0 block w-2 h-2 bg-pink-500 border border-white rounded-full"></span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className='p-2 bg-black text-white rounded max-w-xs'>
-                      <div className="text-center">
-                        <p className="font-semibold mb-1">Gratitude Sent</p>
-                        {action.gratitudeSentDate && (
-                          <p className="text-xs opacity-80">
-                            {new Date(action.gratitudeSentDate).toLocaleDateString()}
-                          </p>
-                        )}
-                        {action.gratitudeMessage && (
-                          <p className="text-xs italic mt-1 max-w-xs break-words">
-                            "{action.gratitudeMessage}"
-                          </p>
-                        )}
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                )}
+                  {/* Show due date if present. */}
+                  {dueDateText && (
+                    <span className='text-sm text-gray-500 whitespace-nowrap'>
+                      Due: {dueDateText}
+                    </span>
+                  )}
+                </div>
+              </div>
 
-                {/* Show due date if present. */}
+              {/* Mobile layout (smaller than xs breakpoint) - two rows if due date exists */}
+              <div className='xs:hidden w-full'>
+                {/* First row: action text */}
+                <div className='flex items-center'>
+                  <span className='flex-1 mr-2'>{action.action}</span>
+
+                  {/* Status icons */}
+                  <div className='flex items-center space-x-1 flex-shrink-0'>
+                    {action.gratitude?.sent && (
+                      <MessageCircleHeart size={18} className='text-pink-500' />
+                    )}
+                  </div>
+                </div>
+
+                {/* Second row: due date if exists */}
                 {dueDateText && (
-                  <span className='text-sm text-gray-500'>
-                    Due: {dueDateText}
-                  </span>
+                  <div className='flex justify-end mt-1 pt-1 border-t border-gray-100'>
+                    <span className='text-sm text-gray-500'>
+                      Due: {dueDateText}
+                    </span>
+                  </div>
                 )}
+              </div>
 
+              {/* Dropdown menu for both layouts - aligned to top */}
+              <div className='ml-2 flex-shrink-0 self-start mt-1'>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button onClick={(e) => e.stopPropagation()}>
@@ -217,33 +250,24 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     </DropdownMenuItem>
 
                     {/* Only hide gratitude option for actions that already had gratitude sent */}
-                    {!action.gratitudeSent && (
+                    {!action.gratitude?.sent && (
                       <>
                         <DropdownMenuSeparator />
-                        {/* Determine if manager email is set */}
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="w-full">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  if (hasManagerEmail) {
-                                    setGratitudeModal({ isOpen: true, action });
-                                  }
-                                }}
-                                className={`${hasManagerEmail ? 'text-pink-600' : 'text-pink-300 cursor-not-allowed'}`}
-                                disabled={!hasManagerEmail}
-                              >
-                                <Heart className='mr-2 h-4 w-4' />
-                                Send gratitude
-                              </DropdownMenuItem>
-                            </div>
-                          </TooltipTrigger>
-                          {!hasManagerEmail && (
-                            <TooltipContent className='p-2 bg-black text-white rounded'>
-                              Manager's email is required to send gratitude
-                            </TooltipContent>
-                          )}
-                        </Tooltip>
+                        <div className="w-full">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              if (hasManagerEmail) {
+                                setGratitudeModal({ isOpen: true, action });
+                              }
+                            }}
+                            className={hasManagerEmail ? "text-pink-600" : "text-pink-300 cursor-not-allowed"}
+                            disabled={!hasManagerEmail}
+                            title={!hasManagerEmail ? "Manager's email is required to send gratitude" : ""}
+                          >
+                            <Heart className='mr-2 h-4 w-4' />
+                            Send gratitude
+                          </DropdownMenuItem>
+                        </div>
                       </>
                     )}
                   </DropdownMenuContent>

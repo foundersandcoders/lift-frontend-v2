@@ -5,14 +5,13 @@ import {
   Trash2,
   Edit2,
   Save,
-  MoreVertical,
   RotateCcw,
-  CheckCircle2,
   Archive,
   ArchiveRestore,
   MailPlus,
   MailX,
   PenOff,
+  Settings,
 } from 'lucide-react';
 import type { Entry } from '@/types/entries';
 import {
@@ -55,7 +54,7 @@ export interface StatementItemProps {
     newAction: { text: string; dueDate?: string }
   ) => void;
   onReset?: (statementId: string) => void;
-  onToggleResolved?: (statementId: string) => void;
+  onToggleArchived?: (statementId: string) => void;
   onToggleActionResolved?: (actionId: string) => void;
   originalCategory?: string; // Add prop for original category from parent
 }
@@ -107,7 +106,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   onDeleteAction = () => {},
   onAddAction = () => {},
   onReset,
-  onToggleResolved = () => {},
+  onToggleArchived = () => {},
   onToggleActionResolved = () => {},
   originalCategory: externalOriginalCategory, // Get original category from parent
 }) => {
@@ -663,21 +662,22 @@ const StatementItem: React.FC<StatementItemProps> = ({
     <div
       ref={itemRef}
       id={`statement-${statement.id}`}
-      className={`border rounded-md p-3 space-y-2 relative ${
-        statement.isResolved
-          ? 'bg-gray-100 border-gray-300 opacity-80'
+      className={`border rounded-md p-1 md:p-3 space-y-2 relative ${
+        statement.isArchived
+          ? 'bg-gray-100 border-gray-300 text-gray-600'
           : 'bg-white border-gray-200 shadow-sm'
       }`}
     >
       {/* Archived badge - positioned in top right corner */}
-      {statement.isResolved && (
+      {statement.isArchived && (
         <span className='absolute -top-2 -right-2 bg-gray-200 text-gray-600 text-xs gap-1 px-2 py-0.5 rounded-full flex'>
           <Archive size={14} />
           Archived
         </span>
       )}
 
-      <div className='flex items-center justify-between'>
+      {/* Desktop layout (xs breakpoint and above) */}
+      <div className='hidden xs:flex xs:items-center xs:justify-between'>
         <div className='flex items-center space-x-2'>
           {/* Privacy status icon */}
           <Tooltip>
@@ -685,7 +685,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               <span
                 className={`inline-flex items-center justify-center ${
                   statement.isPublic ? 'text-green-500' : 'text-red-500'
-                } ${statement.isResolved ? 'opacity-70' : ''}`}
+                } ${statement.isArchived ? 'text-opacity-80' : ''}`}
               >
                 {statement.isPublic ? (
                   <MailPlus size={16} />
@@ -703,7 +703,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
 
           {/* Statement text with archived styling if needed */}
           <div className='flex flex-col'>
-            <span className={statement.isResolved ? 'text-gray-500' : ''}>
+            <span className={statement.isArchived ? 'text-gray-500' : ''}>
               {`${statement.atoms.subject} ${getVerbName(
                 statement.atoms.verb
               )} ${statement.atoms.object}`}
@@ -711,31 +711,14 @@ const StatementItem: React.FC<StatementItemProps> = ({
           </div>
         </div>
         <div className='flex items-center space-x-4'>
-          {statement.isResolved && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className='inline-flex items-center justify-center text-green-600'>
-                  <CheckCircle2 size={18} />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent className='p-2 bg-black text-white rounded'>
-                This statement is resolved.
-              </TooltipContent>
-            </Tooltip>
-          )}
-          <div
-            onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer'
-          >
-            <ActionsCounter
-              count={statement.actions?.length ?? 0}
-              expanded={isActionsExpanded}
-            />
-          </div>
+          {/* Menu button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button onClick={(e) => e.stopPropagation()}>
-                <MoreVertical size={18} className='text-gray-500' />
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors'
+              >
+                <Settings size={18} className='text-gray-600' />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
@@ -750,15 +733,114 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 <Trash2 className='mr-2 h-4 w-4' />
                 Delete
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onToggleResolved(statement.id)}>
-                {statement.isResolved ? (
+              <DropdownMenuItem onClick={() => onToggleArchived(statement.id)}>
+                {statement.isArchived ? (
                   <>
-                    <ArchiveRestore className='mr-2 h-4 w-4 text-red-500' />
+                    <ArchiveRestore className='mr-2 h-4 w-4  text-gray-600' />
                     Unarchive
                   </>
                 ) : (
                   <>
-                    <Archive className='mr-2 h-4 w-4 text-green-500' />
+                    <Archive className='mr-2 h-4 w-4 text-gray-600' />
+                    Archive
+                  </>
+                )}
+              </DropdownMenuItem>
+
+              {onReset && (
+                <DropdownMenuItem onClick={() => onReset(statement.id)}>
+                  <RotateCcw className='mr-2 h-4 w-4' />
+                  Reset
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Actions counter - now the rightmost element */}
+          <div
+            onClick={() => setIsActionsExpanded((prev) => !prev)}
+            className='cursor-pointer relative z-10 self-end'
+          >
+            <ActionsCounter
+              count={statement.actions?.length ?? 0}
+              expanded={isActionsExpanded}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile layout (smaller than xs breakpoint) - Two row layout */}
+      <div className='xs:hidden flex flex-col space-y-2'>
+        {/* First row: Privacy icon, Statement text, Menu button */}
+        <div className='flex items-start justify-between'>
+          <div className='flex items-start space-x-2 flex-1 min-w-0'>
+            {/* Privacy status icon */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className={`inline-flex items-center justify-center flex-shrink-0 ${
+                    statement.isPublic ? 'text-green-500' : 'text-red-500'
+                  } ${statement.isArchived ? 'text-opacity-80' : ''}`}
+                >
+                  {statement.isPublic ? (
+                    <MailPlus size={16} className=' m-1' />
+                  ) : (
+                    <MailX size={16} />
+                  )}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                {statement.isPublic
+                  ? 'You are sharing this statement'
+                  : 'This statement is private'}
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Statement text with archived styling if needed */}
+            <div className='flex-1 min-w-0'>
+              <span
+                className={`${
+                  statement.isArchived ? 'text-gray-500' : ''
+                } break-words line-clamp-2`}
+              >
+                {`${statement.atoms.subject} ${getVerbName(
+                  statement.atoms.verb
+                )} ${statement.atoms.object}`}
+              </span>
+            </div>
+          </div>
+
+          {/* Menu button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors ml-2 flex-shrink-0'
+              >
+                <Settings size={18} className='text-gray-600' />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              <DropdownMenuItem onClick={() => onEditClick(statement.id)}>
+                <Edit2 className='mr-2 h-4 w-4' />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onDelete(statement.id)}
+                className='text-red-600'
+              >
+                <Trash2 className='mr-2 h-4 w-4' />
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onToggleArchived(statement.id)}>
+                {statement.isArchived ? (
+                  <>
+                    <ArchiveRestore className='mr-2 h-4 w-4 text-gray-600' />
+                    Unarchive
+                  </>
+                ) : (
+                  <>
+                    <Archive className='mr-2 h-4 w-4 text-gray-600' />
                     Archive
                   </>
                 )}
@@ -773,10 +855,24 @@ const StatementItem: React.FC<StatementItemProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
+        {/* Second row: Action counter (right aligned) */}
+        <div className='flex justify-end mb-0'>
+          {/* Action counter - rightmost element */}
+          <div
+            onClick={() => setIsActionsExpanded((prev) => !prev)}
+            className='cursor-pointer relative z-10 flex-shrink-0 self-end'
+          >
+            <ActionsCounter
+              count={statement.actions?.length ?? 0}
+              expanded={isActionsExpanded}
+            />
+          </div>
+        </div>
       </div>
 
       {isActionsExpanded && (
-        <div className='mt-2'>
+        <div className='border md:border-2 border-brand-pink rounded-b-lg rounded-tl-lg p-2 bg-white !mt-0'>
           <ActionLine
             statementId={statement.id}
             actions={statement.actions ?? []}
@@ -797,32 +893,36 @@ const StatementItem: React.FC<StatementItemProps> = ({
               // Create a copy of the entire statement
               const statementToUpdate = { ...statement };
               const updatedActions = [...(statementToUpdate.actions || [])];
-              const actionIndex = updatedActions.findIndex(a => a.id === actionId);
-              
+              const actionIndex = updatedActions.findIndex(
+                (a) => a.id === actionId
+              );
+
               if (actionIndex !== -1) {
                 // Create an updated action with gratitude information
                 const action = updatedActions[actionIndex];
                 const updatedAction = {
                   ...action,
-                  gratitudeSent: true,
-                  gratitudeMessage: message,
-                  gratitudeSentDate: new Date().toISOString()
+                  gratitude: {
+                    sent: true,
+                    message: message,
+                    sentDate: new Date().toISOString(),
+                  },
                 };
-                
+
                 // Replace the action in the array
                 updatedActions[actionIndex] = updatedAction;
-                
+
                 // Update the statement with the updated actions
                 statementToUpdate.actions = updatedActions;
-                
+
                 // Call onEditAction for UI updates (but it won't save the gratitude fields)
                 if (onEditAction) {
                   onEditAction(statement.id, actionId, {
                     text: action.action,
-                    dueDate: action.byDate
+                    dueDate: action.byDate,
                   });
                 }
-                
+
                 // Call onLocalSave to save the entire updated statement with gratitude info
                 if (onLocalSave) {
                   onLocalSave(statementToUpdate);

@@ -56,8 +56,8 @@
     --verb-selector-hover: #a0d8f1;
     --object-input: #bfdbfe;
     --object-input-hover: #aecbf0;
-    --privacy-selector: #f0a3d3;
-    --privacy-selector-hover: #e68fc0;
+    --privacy-selector: #aa2f4a;
+    --privacy-selector-hover: #8b243b;
     --category-selector: #ffc394;
     --category-selector-hover: #ffb57a;
     --complement: 'gray-400';
@@ -99,6 +99,34 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans bg-gray-50;
   }
+}
+
+/* Custom transition class for height animation */
+.transition-height {
+  transition-property: height;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Help Button Pulse Animation */
+@keyframes help-button-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+    transform: scale(1);
+  }
+  
+  70% {
+    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+    transform: scale(1.05);
+  }
+  
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    transform: scale(1);
+  }
+}
+
+.help-button-pulse {
+  animation: help-button-pulse 1.5s infinite;
 }

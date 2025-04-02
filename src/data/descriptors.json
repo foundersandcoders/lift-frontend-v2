@@ -1,6 +1,11 @@
 {
   "descriptors": [
     {
+      "name": "Example",
+      "description": "Descriptors for the tutorial",
+      "options": ["Option1", "Option2", "Option3", "Option4"]
+    },
+    {
       "name": "wellbeing",
       "description": "Descriptors related to the user's mental and emotional state, including stress, energy, and overall wellbeing.",
       "options": [
@@ -41,7 +46,7 @@
       ]
     },
     {
-      "name": "colleagueSharing",
+      "name": "Colleague_Sharing",
       "description": "Descriptors regarding the type and level of information the user is comfortable sharing with colleagues.",
       "options": [
         "detailed sharing",
@@ -51,7 +56,7 @@
       ]
     },
     {
-      "name": "employerSupport",
+      "name": "employer_Support",
       "description": "Descriptors regarding the user's support and communication preferences from the employer.",
       "options": [
         "formal check-ins",
@@ -61,7 +66,7 @@
       ]
     },
     {
-      "name": "personalIntroduction",
+      "name": "personal_Introduction",
       "description": "Descriptors for personal introduction details that capture background, hobbies, ambitions, and other personal insights.",
       "options": [
         "family background",

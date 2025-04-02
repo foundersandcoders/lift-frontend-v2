@@ -37,9 +37,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const isPreset = Boolean(presetQuestion);
 
   // Define steps: if preset, skip "category" and add "complement"
+  // For custom statements, show category first, then subject
   const steps: Exclude<Step, 'closed'>[] = isPreset
     ? ['subject', 'verb', 'object', 'privacy', 'complement']
-    : ['subject', 'verb', 'object', 'category', 'privacy'];
+    : ['category', 'subject', 'verb', 'object', 'privacy'];
 
   // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
@@ -75,9 +76,14 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       setSelection((prev) => ({
         ...prev,
         atoms: { ...prev.atoms, subject: username },
+        // For preset questions, use the category from the preset
+        category: presetQuestion.category || 'uncategorised',
+        // Add the presetId to identify this as a preset question in the preview
+        presetId: presetQuestion.id,
       }));
     } else {
-      // For custom statements, set defaults:
+      // For custom statements, set default category to "uncategorised" 
+      // but still show the category screen first
       setSelection((prev) => ({
         ...prev,
         // Set default subject to username
@@ -107,9 +113,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       presetId: presetQuestion ? presetQuestion.id : undefined,
       // Use the category ID directly - display name will be handled by the UI
       category:
-        presetQuestion?.category ||
-        selection.category ||
-        'Uncategorized',
+        presetQuestion?.category || selection.category || 'Uncategorized',
     };
 
     try {
@@ -129,10 +133,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     if (isTransitioning) {
       return; // Prevent multiple rapid transitions
     }
-    
+
     // Set transitioning flag to prevent additional advances
     setIsTransitioning(true);
-    
+
     // Add a small delay to prevent double-click issues
     setTimeout(() => {
       if (currentStepIndex < steps.length - 1) {
@@ -140,7 +144,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       } else {
         handleComplete();
       }
-      
+
       // Reset transition flag after a slightly longer delay
       setTimeout(() => {
         setIsTransitioning(false);
@@ -156,7 +160,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     }
   };
 
-  // Optional: Define a validation function for the current step.
+  // Validation function for the current step.
   // This function should return true if the current step’s required data is valid.
   const isStepValid = (step: Exclude<Step, 'closed'>): boolean => {
     switch (step) {
@@ -167,7 +171,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       case 'object':
         return selection.atoms.object.trim().length > 0;
       case 'category':
-        return selection.category.trim().length > 0;
+        // For custom statements (not preset), category must be selected
+        return isPreset || selection.category.trim().length > 0;
       case 'privacy':
         // Always valid since it's a boolean toggle.
         return true;
@@ -188,6 +193,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             username={username}
             presetQuestion={presetQuestion}
             selection={selection.atoms.subject}
+            selectedCategory={selection.category} // Pass the selected category to filter descriptors
             onUpdate={(val) => {
               // If the same value is selected again, move to next step
               if (selection.atoms.subject === val) {
@@ -250,7 +256,8 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
               if (selection.category === val) {
                 goNext();
               } else {
-                // Otherwise, just update the selection
+                // Update the selection but don't automatically advance
+                // Let the user click Next or click the same category again to advance
                 setSelection((prev) => ({
                   ...prev,
                   category: val,
@@ -294,54 +301,74 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
       <DialogContent
         className={`sm:max-w-[600px] p-0 w-full border-8 ${getBorderColor(
           currentStep
-        )}`}
+        )} flex flex-col max-h-[90vh]`}
       >
+        {/* Header Section - Always Visible */}
         {presetQuestion && (
-          <div className='px-4 py-3 bg-gray-200 border-b'>
-            <h2 className='text-xl font-bold'>{presetQuestion.mainQuestion}</h2>
+          <div className='p-2 md:p-5 bg-gray-200 border-b flex-shrink-0'>
+            <h2 className='text-base md:text-xl font-bold'>
+              {presetQuestion.mainQuestion}
+            </h2>
           </div>
         )}
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
         <DialogTitle className='sr-only'>Wizard Steps</DialogTitle>
-        <AnimatePresence mode='wait' initial={false}>
-          <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-          >
-            {renderStep()}
-          </motion.div>
-        </AnimatePresence>
-        {/* Navigation Panel */}
-        <div className='flex justify-center p-4 pb-4 mb-0 gap-4'>
-          <Button
-            onClick={goBack}
-            disabled={currentStepIndex === 0}
-            variant='outline'
-            className='shadow-sm'
-          >
-            <span>Back</span>
-          </Button>
-          <Button
-            variant='default'
-            className='shadow-sm'
-            onClick={
-              currentStepIndex === steps.length - 1 ? handleComplete : goNext
-            }
-            disabled={!isStepValid(currentStep) || isSubmitting}
-          >
-            <span>
-              {isSubmitting
-                ? 'Submitting...'
-                : currentStepIndex === steps.length - 1
-                ? 'Create Statement'
-                : 'Next'}
-            </span>
-          </Button>
+        
+        {/* Scrollable Content Area */}
+        <div className='flex-grow overflow-y-auto min-h-0'>
+          <AnimatePresence mode='wait' initial={false}>
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
         </div>
-        <StatementPreview selection={{...selection, currentStep}} />
+        
+        {/* Bottom Section - Always Visible */}
+        <div className='flex-shrink-0'>
+          {/* Navigation Panel */}
+          <div className='flex justify-center p-0 md:p-4 pb-2 mb-0 gap-6'>
+            <Button
+              onClick={goBack}
+              disabled={currentStepIndex === 0}
+              variant='outline'
+              className='shadow-sm p-2'
+            >
+              <span>Back</span>
+            </Button>
+            <Button
+              variant='default'
+              className='shadow-sm p-2'
+              onClick={
+                currentStepIndex === steps.length - 1 ? handleComplete : goNext
+              }
+              disabled={!isStepValid(currentStep) || isSubmitting}
+            >
+              <span>
+                {isSubmitting
+                  ? 'Submitting...'
+                  : currentStepIndex === steps.length - 1
+                  ? 'Create Statement'
+                  : 'Next'}
+              </span>
+            </Button>
+          </div>
+
+          {/* Divider to separate preview from wizard content */}
+          <div className='w-full border-t border-black my-2 relative'>
+            <span className='absolute left-0 right-0 text-center bg-white text-xs text-black px-2 -top-2 mx-auto w-fit'>
+              Statement Preview
+            </span>
+          </div>
+
+          {/* Preview - Always Visible */}
+          <StatementPreview selection={{ ...selection, currentStep }} />
+        </div>
       </DialogContent>
     </Dialog>
   );

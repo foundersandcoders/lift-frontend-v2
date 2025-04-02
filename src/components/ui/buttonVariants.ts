@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
@@ -10,9 +10,9 @@ export const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'border border-pink-200 bg-white text-gray-700  hover:border-pink-300 transition-colors',
+          'border-3 border-gray-200 bg-white text-gray-700 hover:border-gray-300 transition-colors focus:border-gray-300 focus-visible:border-gray-300',
         outlineVerbs:
-          'border border-pink-200 bg-white text-gray-700 hover:bg-brand-pink hover:border-pink-300 transition-colors',
+          'border-3 border-gray-200 bg-white text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition-colors',
         secondary:
           'bg-pink-100 text-brand-pink border border-pink-200  transition-colors',
         ghost: 'hover:bg-pink-50 hover:text-brand-pink transition-colors',
@@ -32,8 +32,8 @@ export const buttonVariants = cva(
         compact: 'h-8 px-3 py-1',
       },
       selected: {
-        true: 'bg-[var(--tile-color)]',
-        false: '',
+        true: 'border-3 border-[var(--tile-color)] bg-[var(--tile-color)] bg-opacity-20 focus:ring-0 focus:border-[var(--tile-color)] focus-visible:ring-0',
+        false: 'border-3 border-gray-200 focus:ring-0 focus-visible:ring-0',
       },
     },
     defaultVariants: {

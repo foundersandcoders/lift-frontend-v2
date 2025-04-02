@@ -18,7 +18,7 @@ export const ObjectStep: React.FC<ObjectStepProps> = ({
   verb,
   selection,
   onUpdate,
-  currentStep = 3,
+  currentStep = 4, // Updated since category, subject, and verb now come first
   totalSteps = 5,
 }) => {
   const subQuestion = `In what way does ${subject} ${getVerbName(
@@ -26,7 +26,7 @@ export const ObjectStep: React.FC<ObjectStepProps> = ({
   )}? What's the context?`;
 
   return (
-    <StepContainer 
+    <StepContainer
       subQuestion={subQuestion}
       showBack
       currentStep={currentStep}
@@ -38,7 +38,7 @@ export const ObjectStep: React.FC<ObjectStepProps> = ({
           placeholder='Type your answer...'
           value={selection}
           onChange={(e) => onUpdate(e.target.value)}
-          className='text-lg p-4 rounded'
+          className='text-lg p-4 rounded text-black'
         />
       </div>
     </StepContainer>

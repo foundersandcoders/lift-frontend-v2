@@ -1,0 +1,101 @@
+{
+  "welcome": {
+    "title": "Welcome to Beacons",
+    "description": "Beacons helps you communicate effectively with your line manager by organizing and sharing structured information about your needs, preferences, and work progress. Answer prepared questions by category or create custom statements to help them understand how to best support you.",
+    "keyBenefits": [
+      "Share important information with your line manager through structured statements",
+      "Track actions related to your statements and monitor progress",
+      "Express gratitude for completed actions with custom thank you messages",
+      "Easily compile and share all relevant information via email"
+    ]
+  },
+  "tutorials": {
+    "desktop": {
+      "title": "Desktop Tutorial",
+      "videoUrl": "/videos/desktop-tutorial.mp4",
+      "description": "Learn how to use Beacons on your desktop or laptop computer."
+    },
+    "mobile": {
+      "title": "Mobile Tutorial",
+      "videoUrl": "/videos/mobile-tutorial.mp4",
+      "description": "Learn how to use Beacons on your mobile device."
+    }
+  },
+  "features": [
+    {
+      "title": "Answering Preset Questions",
+      "description": "Answer organized questions by category to create statements that help your line manager understand your needs and preferences.",
+      "steps": [
+        "Browse questions organized by category (wellbeing, parental, religious, etc.)",
+        "Click on a question to open the statement wizard",
+        "Follow the guided steps to create your structured statement",
+        "Set the privacy level and save your statement"
+      ]
+    },
+    {
+      "title": "Creating Custom Statements",
+      "description": "Create your own custom statements when you have something specific to communicate that isn't covered by the preset questions.",
+      "steps": [
+        "Click 'Create Statement' to start",
+        "Choose a category for your statement (determines available subject options)",
+        "Select a subject, verb, and complete your statement",
+        "Set privacy level and save your statement"
+      ]
+    },
+    {
+      "title": "Managing Actions",
+      "description": "Track actions related to your statements to monitor progress and follow-up activities.",
+      "details": "Actions allow you and your line manager to track specific tasks that need to be completed in relation to your statements. This helps ensure that your needs are being addressed.",
+      "steps": [
+        "Open a statement from your statement list",
+        "Click 'Add Action' to create a new action item",
+        "Enter the action details and set a due date",
+        "Mark actions as complete when finished"
+      ]
+    },
+    {
+      "title": "Expressing Gratitude",
+      "description": "Send thank you messages for completed actions to acknowledge support from your line manager.",
+      "steps": [
+        "Find a completed action in your statements list",
+        "Click the 'Express Gratitude' option",
+        "Write a personalized thank you message",
+        "Send the gratitude message via email"
+      ]
+    },
+    {
+      "title": "Email Compilation & Sharing",
+      "description": "Compile and share all your public statements with your line manager via email.",
+      "steps": [
+        "Click the 'Share' button on your statements page",
+        "Review which statements will be shared (only public ones)",
+        "Enter your line manager's email address",
+        "Customize the message (optional)",
+        "Send your compiled statements"
+      ]
+    },
+    {
+      "title": "Privacy Control",
+      "description": "You have full control over which statements are shared with your line manager.",
+      "details": "For each statement, you can choose whether it's private (only visible to you) or public (visible to your line manager). You can change the privacy setting at any time."
+    }
+  ],
+  "versions": [
+    {
+      "version": "1.0.0",
+      "date": "2024-03-15",
+      "changes": [
+        {
+          "type": "feature",
+          "description": "Initial release of Beacons application"
+        },
+        { "type": "feature", "description": "Create and manage statements" },
+        { "type": "feature", "description": "Share statements via email" },
+        {
+          "type": "feature",
+          "description": "Privacy controls for each statement"
+        }
+      ]
+    }
+  ]
+}

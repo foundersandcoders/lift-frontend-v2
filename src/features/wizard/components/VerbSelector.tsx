@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import categoryStructure from '../../../data/categoryStructure.json';
 import verbData from '../../../data/verbs.json';
 import type { Category, Verb } from '../../../types/entries';
+import { getContrastColor } from '@/lib/utils/colorUtils';
 
 interface VerbSelectorProps {
   onVerbSelect?: (verb: Verb) => void;
@@ -125,16 +126,17 @@ const VerbSelector: React.FC<VerbSelectorProps> = ({ onVerbSelect }) => {
     return renderGrid(
       verbs.map((verb) => {
         // Use this to highlight the selected verb
-        //const isSelected = selectedVerb ? verb.id === selectedVerb.id : false;
+        const isSelected = selectedVerb ? verb.id === selectedVerb.id : false;
         return (
           <motion.button
             key={verb.id} // use verb.id as key
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='p-4 rounded-lg shadow-md flex items-center justify-center text-center'
+            className={`p-4 rounded-lg shadow-md flex items-center justify-center text-center ${isSelected ? 'border-4' : 'border'}`}
             style={{
-              background: verb.color,
-              color: getContrastColor(verb.color),
+              background: isSelected ? verb.color : 'white',
+              borderColor: verb.color,
+              color: isSelected ? getContrastColor(verb.color) : 'black',
             }}
             onClick={() => handleVerbSelect(verb)}
           >
@@ -145,16 +147,10 @@ const VerbSelector: React.FC<VerbSelectorProps> = ({ onVerbSelect }) => {
     );
   };
 
-  const getContrastColor = (hexColor: string) => {
-    const r = Number.parseInt(hexColor.slice(1, 3), 16);
-    const g = Number.parseInt(hexColor.slice(3, 5), 16);
-    const b = Number.parseInt(hexColor.slice(5, 7), 16);
-    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    return yiq >= 128 ? '#000000' : '#ffffff';
-  };
+  // Using getContrastColor from colorUtils.ts
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-4'>
+    <div className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center p-0'>
       <div className='bg-white rounded-xl shadow-lg w-full max-w-2xl h-[80vh] flex flex-col overflow-hidden'>
         <div className='flex items-center p-4 border-b border-gray-200'>
           {categoryPath.length > 0 && (

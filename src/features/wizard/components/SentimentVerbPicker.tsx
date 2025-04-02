@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Verb, Category } from '@/types/entries';
 import verbData from '@/data/verbs.json';
 import categoryStructure from '@/data/categoryStructure.json';
@@ -22,6 +22,27 @@ const SentimentVerbPicker: React.FC<SentimentVerbPickerProps> = ({
   const [path, setPath] = useState<Category[]>([]);
   const rootCategory = categoryStructure.root as Category;
   const currentCategory = path.length > 0 ? path[path.length - 1] : null;
+  
+  // State to track if we should show the filter bar based on screen size
+  const [showFilterBar, setShowFilterBar] = useState(false);
+  
+  // Effect to handle screen size changes
+  useEffect(() => {
+    // Function to check if we're on a desktop/tablet
+    const checkScreenSize = () => {
+      // Use 768px (md breakpoint) as the threshold
+      setShowFilterBar(window.innerWidth >= 768);
+    };
+    
+    // Check initially
+    checkScreenSize();
+    
+    // Add listener for window resize
+    window.addEventListener('resize', checkScreenSize);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // When a category is selected, push it onto the path.
   const handleSelectCategory = (cat: Category) => {
@@ -52,14 +73,18 @@ const SentimentVerbPicker: React.FC<SentimentVerbPickerProps> = ({
   });
 
   return (
-    <div className='flex flex-col h-full'>
-      <FilterBar
-        rootCategory={rootCategory}
-        currentCategory={currentCategory}
-        path={path}
-        onSelectCategory={handleSelectCategory}
-        onBreadcrumbClick={handleBreadcrumbClick}
-      />
+    <div className='flex flex-col h-full m-0'>
+      {showFilterBar && (
+        <div className="mb-3">
+          <FilterBar
+            rootCategory={rootCategory}
+            currentCategory={currentCategory}
+            path={path}
+            onSelectCategory={handleSelectCategory}
+            onBreadcrumbClick={handleBreadcrumbClick}
+          />
+        </div>
+      )}
       <VerbGrid
         verbs={filteredVerbs}
         rootCategory={rootCategory}

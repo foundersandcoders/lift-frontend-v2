@@ -12,17 +12,14 @@ import { Button } from '../../components/ui/button';
 import { Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';
-import PrivacyModal from '../../components/modals/PrivacyModal';
-import TermsModal from '../../components/modals/TermsModal';
-import TestStatementButton from '../../components/debug/TestButton';
+// import TestStatementButton from '../../components/debug/TestButton';
+import Footer from './Footer';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
   const { username, managerName, managerEmail, entries } = data;
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // Determine if email button should be disabled:
   const hasManagerEmail = managerEmail && managerEmail.trim().length > 0;
@@ -34,25 +31,20 @@ const MainPage: React.FC = () => {
   // Email button should be disabled if no manager email or no public statements
   const isEmailDisabled = !hasManagerEmail || publicStatementsCount === 0;
 
-  // Handler to open the wizard for creating a new statement from scratch
-  const handleNewStatement = () => {
-    setIsWizardOpen(true);
-  };
-
   // Handler to open the share email modal
   const handleShareEmail = () => {
     setIsShareModalOpen(true);
   };
 
   return (
-    <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 flex flex-col'>
-      <div className='container mx-auto px-4 mb-6'>
+    <main className='min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-4 md:py-8 flex flex-col'>
+      <div className='container mx-auto px-4 mb-0'>
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
-          <h1 className='text-2xl md:text-3xl font-bold mb-3 md:mb-0 truncate'>
+          <h1 id='page-title' className='text-2xl md:text-3xl font-bold'>
             {managerName
-              ? `${username} would like to share with ${managerName}`
-              : `${username}'s statements for sharing`}
+              ? `Beacons for ${managerName}`
+              : `${username}'s Beacons`}
           </h1>
         </div>
       </div>
@@ -60,33 +52,15 @@ const MainPage: React.FC = () => {
       <div className='container mx-auto px-4 flex-grow'>
         <StatementList
           username={username}
-          onAddCustomStatement={handleNewStatement}
+          // onAddCustomStatement={handleNewStatement}
         />
       </div>
 
-      {/* Footer with privacy links */}
-      <footer className='mt-auto pt-6 pb-4 bg-gray-50 border-t border-gray-200'>
-        <div className='container mx-auto px-4'>
-          <div className='flex flex-col sm:flex-row justify-center items-center text-xs text-gray-500 space-y-2 sm:space-y-0 sm:space-x-4'>
-            <button
-              onClick={() => setIsPrivacyModalOpen(true)}
-              className='hover:text-brand-pink hover:underline'
-            >
-              Privacy Policy
-            </button>
-            <button
-              onClick={() => setIsTermsModalOpen(true)}
-              className='hover:text-brand-pink hover:underline'
-            >
-              Terms of Use
-            </button>
-            <span>© {new Date().getFullYear()} Beacons</span>
-          </div>
-        </div>
-      </footer>
+      {/* Footer component */}
+      <Footer />
 
-      {/* Floating Email Button (now singular) */}
-      <div className='fixed bottom-8 right-8 z-30'>
+      {/* Floating Email Button */}
+      <div className='fixed bottom-4 right-4 z-30'>
         {/* Email Button: Disabled if there's no manager email or no public statements */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -115,9 +89,9 @@ const MainPage: React.FC = () => {
         </Tooltip>
 
         {/* Debug button */}
-        <div className='mt-2'>
+        {/* <div className='mt-2'>
           <TestStatementButton />
-        </div>
+        </div> */}
       </div>
 
       {/* Conditionally render the wizard modal */}
@@ -132,16 +106,6 @@ const MainPage: React.FC = () => {
       {/* Conditionally render the share email modal */}
       {isShareModalOpen && (
         <ShareEmailModal onClose={() => setIsShareModalOpen(false)} />
-      )}
-
-      {/* Conditionally render the privacy modal */}
-      {isPrivacyModalOpen && (
-        <PrivacyModal onClose={() => setIsPrivacyModalOpen(false)} />
-      )}
-
-      {/* Conditionally render the terms modal */}
-      {isTermsModalOpen && (
-        <TermsModal onClose={() => setIsTermsModalOpen(false)} />
       )}
     </main>
   );

@@ -15,18 +15,18 @@ export const VerbStep: React.FC<VerbStepProps> = ({
   subject,
   selection,
   onUpdate,
-  currentStep = 2,
+  currentStep = 3, // Updated since category and subject now come first
   totalSteps = 5,
 }) => {
   const subQuestion = `What's happening with ${subject}? How do they feel or what do they experience?`;
 
   return (
-    <StepContainer 
+    <StepContainer
       subQuestion={subQuestion}
       currentStep={currentStep}
       totalSteps={totalSteps}
     >
-      <div className='flex flex-col h-[60vh] p-4 rounded-md'>
+      <div className='flex flex-col p-2 md:p-4 rounded-md mt-0'>
         <SentimentVerbPicker
           selectedVerbId={selection}
           onVerbSelect={(verb: Verb) => {

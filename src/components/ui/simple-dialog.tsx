@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { SimpleDialogContext } from './simple-dialog-context';
 
 interface SimpleDialogProps {
   isOpen?: boolean;
@@ -13,7 +14,7 @@ interface SimpleDialogContentProps {
   children: React.ReactNode;
   className?: string;
   headerTitle?: string;
-  onOpenAutoFocus?: (e: any) => void;
+  onOpenAutoFocus?: (e: Event) => void;
   onEscapeKeyDown?: () => void;
   onPointerDownOutside?: () => void;
 }
@@ -54,16 +55,18 @@ const SimpleDialogOverlay: React.FC<{ className?: string; onClick?: () => void }
 
 const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContentProps>(
   ({ className, children, headerTitle, onOpenAutoFocus, ...props }, ref) => {
-    if (onOpenAutoFocus) {
-      // Prevent auto focus
-      useEffect(() => {
-        const handler = (e: FocusEvent) => {
-          if (onOpenAutoFocus) onOpenAutoFocus(e);
+    // Always define the useEffect, but make its behavior conditional inside
+    useEffect(() => {
+      if (onOpenAutoFocus) {
+        const handler = (e: Event) => {
+          onOpenAutoFocus(e);
         };
         document.addEventListener('focus', handler, { once: true });
         return () => document.removeEventListener('focus', handler);
-      }, [onOpenAutoFocus]);
-    }
+      }
+      // Return empty cleanup function when onOpenAutoFocus is not provided
+      return () => {};
+    }, [onOpenAutoFocus]);
 
     // Stop click propagation to prevent closing the dialog when clicking content
     const handleContentClick = (e: React.MouseEvent) => {
@@ -74,13 +77,23 @@ const SimpleDialogContent = React.forwardRef<HTMLDivElement, SimpleDialogContent
       <div
         ref={ref}
         className={cn(
-          'fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border-0 bg-background p-0 shadow-lg duration-200',
+          'fixed left-[50%] top-[50%] z-50 flex flex-col w-full translate-x-[-50%] translate-y-[-50%] border-0 bg-background p-0 shadow-lg duration-200',
+          'max-w-[95vw] max-h-[90vh] sm:max-w-lg rounded-lg overflow-hidden',
           className
         )}
         onClick={handleContentClick}
         {...props}
       >
-        {children}
+        {/* If there's a header title, add it as a styled header */}
+        {headerTitle && (
+          <div className="flex items-center justify-between bg-brand-pink p-2 sm:p-4 flex-shrink-0">
+            <h2 className="text-base sm:text-lg font-semibold text-white">{headerTitle}</h2>
+          </div>
+        )}
+        {/* Main content with scroll capability */}
+        <div className="overflow-y-auto flex-grow">
+          {children}
+        </div>
       </div>
     );
   }
@@ -108,20 +121,13 @@ const SimpleDialogTitle: React.FC<SimpleDialogTitleProps> = ({ children, classNa
 
 const SimpleDialogDescription: React.FC<SimpleDialogDescriptionProps> = ({ children, className }) => {
   return (
-    <p className={cn('text-sm text-muted-foreground', className)}>
+    <p className={cn('text-xs sm:text-sm text-muted-foreground mt-1 mb-2 sm:mb-3', className)}>
       {children}
     </p>
   );
 };
 
-// Context for communicating between Dialog and DialogTrigger
-export const SimpleDialogContext = React.createContext<{
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-}>({
-  isOpen: false,
-  onOpenChange: () => {},
-});
+// Context is now imported from separate file
 
 const SimpleDialogTrigger: React.FC<SimpleDialogTriggerProps> = ({ children }) => {
   // Get the dialog context to control the dialog's open state

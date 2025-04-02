@@ -7,6 +7,7 @@ import { TooltipProvider } from './components/ui/better-tooltip';
 import { AuthProvider } from './features/auth/AuthProvider';
 import { EntriesProvider } from './features/statements/context/EntriesProvider';
 import { QuestionsProvider } from './providers/QuestionsProvider';
+import { HelpProvider } from './components/ui/tour';
 
 // Components
 import LoginPage from './features/auth/components/LoginPage';
@@ -43,6 +44,22 @@ const AppContent: React.FC = () => {
       }));
     }
   }, [authState.user, authState.isAuthenticated]);
+  
+  // Listen for magic link verification and ensure user email is saved to entries context
+  useEffect(() => {
+    const handleMagicLinkVerified = (event: any) => {
+      if (event.detail?.user?.email) {
+        console.log('App: Magic link verified with email:', event.detail.user.email);
+        // Dispatch event with user email to entries context
+        window.dispatchEvent(new CustomEvent('authStateChanged', { 
+          detail: { user: { email: event.detail.user.email }}
+        }));
+      }
+    };
+    
+    window.addEventListener('magicLinkVerified', handleMagicLinkVerified);
+    return () => window.removeEventListener('magicLinkVerified', handleMagicLinkVerified);
+  }, []);
 
   return (
     // MainPage and Header receives the username from context.
@@ -64,9 +81,11 @@ const App: React.FC = () => {
       <AuthProvider>
         <EntriesProvider>
           <QuestionsProvider>
-            <AppContent />
-            {/* Add the mock notification component for testing */}
-            {import.meta.env.DEV && <MockNotification />}
+            <HelpProvider>
+              <AppContent />
+              {/* Add the mock notification component for testing */}
+              {import.meta.env.DEV && <MockNotification />}
+            </HelpProvider>
           </QuestionsProvider>
         </EntriesProvider>
       </AuthProvider>

@@ -15,8 +15,8 @@ export default {
       },
     },
     screens: {
-      xs: '480px',
-      sm: '480px',
+      xs: '580px',
+      sm: '640px',
       md: '768px',
       lg: '1024px',
       xl: '1280px',
@@ -90,6 +90,14 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      borderWidth: {
+        DEFAULT: '1px',
+        '0': '0',
+        '2': '2px',
+        '3': '3px',
+        '4': '4px',
+        '8': '8px',
       },
       spacing: {
         'wizard-padding': '1.5rem',
