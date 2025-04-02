@@ -13,9 +13,9 @@ import {
   SimpleDropdownMenuContent as DropdownMenuContent,
   SimpleDropdownMenuItem as DropdownMenuItem,
   SimpleDropdownMenuSeparator as DropdownMenuSeparator,
-} from '../../../components/ui/simple-dropdown';
+} from '../../../components/ui/SimpleDropdown';
 import ActionForm from './ActionForm';
-import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
+import { ConfirmationDialog } from '../../../components/ui/ConfirmationDialog';
 import type { Action } from '../../../types/entries';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import GratitudeModal from '../../../components/modals/GratitudeModal';
@@ -25,7 +25,7 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '../../../components/ui/better-tooltip';
+} from '../../../components/ui/BetterTooltip';
 
 export interface ActionLineProps {
   statementId: string;

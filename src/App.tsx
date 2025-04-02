@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { TooltipProvider } from './components/ui/better-tooltip';
+import { TooltipProvider } from './components/ui/BetterTooltip';
 
 // Providers
 import { AuthProvider } from './features/auth/AuthProvider';

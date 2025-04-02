@@ -5,10 +5,10 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '../../components/ui/better-tooltip';
+} from '../../components/ui/BetterTooltip';
 import StatementList from '../../features/statements/components/StatementList';
 import { useEntries } from '../../features/statements/hooks/useEntries';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../components/ui/Button';
 import { Mail } from 'lucide-react';
 import StatementWizard from '../../features/wizard/components/StatementWizard';
 import ShareEmailModal from '../../components/modals/ShareEmailModal';

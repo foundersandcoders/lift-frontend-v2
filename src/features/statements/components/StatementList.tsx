@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useEntries } from '../hooks/useEntries';
-import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
+import { ConfirmationDialog } from '../../../components/ui/ConfirmationDialog';
 import type { Entry, SetQuestion } from '@/types/entries';
 import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';

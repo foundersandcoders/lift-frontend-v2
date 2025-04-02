@@ -5,8 +5,8 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/simple-dialog';
-import { Button } from '../ui/button';
+} from '../ui/SimpleDialog';
+import { Button } from '../ui/Button';
 import { Loader2, Heart } from 'lucide-react';
 import { sendGratitude } from '../../features/email/api/gratitudeApi';
 import { useEntries } from '../../features/statements/hooks/useEntries';

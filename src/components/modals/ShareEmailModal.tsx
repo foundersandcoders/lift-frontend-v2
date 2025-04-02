@@ -5,8 +5,8 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/simple-dialog';
-import { Button } from '../ui/button';
+} from '../ui/SimpleDialog';
+import { Button } from '../ui/Button';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { shareStatements } from '../../features/email/api/emailApi';
 import { Loader2 } from 'lucide-react';
