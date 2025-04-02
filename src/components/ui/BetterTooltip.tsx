@@ -142,11 +142,10 @@ export const TooltipContent: React.FC<{
   children: React.ReactNode;
   className?: string;
   sideOffset?: number;
-}> = (
-  // We're intentionally not using the props here but TooltipContent element acts as a data container
-  { children: _children }
-) => {
-  return null; // This doesn't render directly, content is passed to portal via context
+}> = () => {
+  // This component doesn't render its children directly
+  // Content is passed to portal via context in the parent Tooltip component
+  return null;
 };
 
 // Portal component that actually renders the tooltip
@@ -212,7 +211,7 @@ const TooltipPortal: React.FC = () => {
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition);
     };
-  }, [open, triggerRef.current, tooltipRef.current, isMobile]);
+  }, [open, triggerRef, tooltipRef, isMobile]);
 
   if (!open) return null;
 
