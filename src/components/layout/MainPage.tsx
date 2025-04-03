@@ -17,7 +17,7 @@ import Footer from './Footer';
 
 const MainPage: React.FC = () => {
   const { data } = useEntries();
-  const { username, managerName, managerEmail, entries } = data;
+  const { username, managerEmail, entries } = data;
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
@@ -42,9 +42,10 @@ const MainPage: React.FC = () => {
         {/* Fixed header layout with 1 or 2 rows */}
         <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
           <h1 id='page-title' className='text-2xl md:text-3xl font-bold'>
-            {managerName
+            {/* {managerName
               ? `Beacons for ${managerName}`
-              : `${username}'s Beacons`}
+              : `${username}'s Beacons`} */}
+            My Dashboard
           </h1>
         </div>
       </div>
