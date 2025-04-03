@@ -327,7 +327,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 onClick={() => onPartClick('verb', draft.id)}
                 className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
               >
-                <span>{getVerbName(draft.atoms.verb)}</span>
+                <span>{getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')}</span>
               </div>
               {/* Object */}
               <div
@@ -383,7 +383,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                       const updatedDraft = { ...draft };
                       updatedDraft.input = `${
                         draft.atoms.subject
-                      } ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
+                      } ${getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')} ${draft.atoms.object}`;
 
                       await onLocalSave(updatedDraft);
                       setIsSaving(false);
@@ -461,7 +461,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-2 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
               <span className='font-medium'>
-                {getVerbName(draft.atoms.verb)}
+                {getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')}
               </span>
             </div>
 
@@ -568,7 +568,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   setIsSaving(true);
                   const updatedDraft = { ...draft };
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
-                    draft.atoms.verb
+                    draft.atoms.verb,
+                    draft.atoms.subject === 'I'
                   )} ${draft.atoms.object}`;
 
                   await onLocalSave(updatedDraft);
@@ -602,7 +603,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-3 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
               <span className='font-medium'>
-                {getVerbName(draft.atoms.verb)}
+                {getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')}
               </span>
             </div>
 
@@ -709,7 +710,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   setIsSaving(true);
                   const updatedDraft = { ...draft };
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
-                    draft.atoms.verb
+                    draft.atoms.verb,
+                    draft.atoms.subject === 'I'
                   )} ${draft.atoms.object}`;
 
                   await onLocalSave(updatedDraft);
@@ -778,7 +780,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
             <div className='flex flex-col flex-1'>
               <span className={statement.isArchived ? 'text-gray-500' : ''}>
                 {`${statement.atoms.subject} ${getVerbName(
-                  statement.atoms.verb
+                  statement.atoms.verb,
+                  statement.atoms.subject === 'I'
                 )} ${statement.atoms.object}`}
               </span>
               
@@ -888,7 +891,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 } break-words line-clamp-2`}
               >
                 {`${statement.atoms.subject} ${getVerbName(
-                  statement.atoms.verb
+                  statement.atoms.verb,
+                  statement.atoms.subject === 'I'
                 )} ${statement.atoms.object}`}
               </span>
 

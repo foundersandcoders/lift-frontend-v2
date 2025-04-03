@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { useEntries } from '@/features/statements';
 import { shareStatements } from '@/features/email/api/emailStatementsApi';
 import { Loader2 } from 'lucide-react';
-import { getVerbName } from '@/lib/utils/verbUtils';
+import { getEmailFormattedStatement } from '@/lib/utils/verbUtils';
 import PrivacyModal from './PrivacyModal';
 
 const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -124,8 +124,7 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     className='p-3 sm:p-4 border bg-white shadow-sm rounded-sm'
                   >
                     <p className='text-sm sm:text-base font-semibold break-words'>
-                      {entry.atoms.subject} {getVerbName(entry.atoms.verb)}{' '}
-                      {entry.atoms.object}
+                      {getEmailFormattedStatement(entry, data.username || 'User')}
                     </p>
 
                     {/* Display description if available */}

@@ -97,7 +97,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
       {/* Verb */}
       {verb && (currentStep === 'verb' || currentStep === 'object' || currentStep === 'privacy' || currentStep === 'description') && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-verbSelector text-black'>
-          {getVerbName(verb)}
+          {getVerbName(verb, subject === 'I')}
         </span>
       )}
       
