@@ -12,7 +12,7 @@ import { useEntries } from '@/features/statements';
 import { Mail } from 'lucide-react';
 import StatementWizard from '@/features/wizard/components/StatementWizard';
 import { ShareEmailModal } from '@/components/modals';
-import TestStatementButton from '@/components/debug/TestButton';
+// import TestStatementButton from '@/components/debug/TestButton';
 import Footer from './Footer';
 
 const MainPage: React.FC = () => {
@@ -90,9 +90,9 @@ const MainPage: React.FC = () => {
         </Tooltip>
 
         {/* Debug button */}
-        <div className='mt-2'>
+        {/* <div className='mt-2'>
           <TestStatementButton />
-        </div>
+        </div> */}
       </div>
 
       {/* Conditionally render the wizard modal */}
