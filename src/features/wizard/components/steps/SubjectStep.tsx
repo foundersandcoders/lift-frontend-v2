@@ -23,9 +23,16 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
   totalSteps = 5,
 }) => {
   // Use a default subject question text
-  const subQuestion = `This statement applies to ${username} or someone/something else?`;
+  const subQuestion = `Who is this statement about?`;
   // Check whether descriptors are allowed (if using a preset)
   const allowDescriptors = presetQuestion?.steps?.subject?.allowDescriptors;
+  
+  // If preset answer is "username" but descriptors aren't allowed, update to "I"
+  React.useEffect(() => {
+    if (allowDescriptors === false && presetQuestion?.steps?.subject?.presetAnswer === "username" && selection === username) {
+      onUpdate("I");
+    }
+  }, [allowDescriptors, presetQuestion, username, selection, onUpdate]);
 
   return (
     <StepContainer 
@@ -36,7 +43,7 @@ export const SubjectStep: React.FC<SubjectStepProps> = ({
       {allowDescriptors === false ? (
         <>
           <div className='text-center p-4 border rounded'>
-            <p>{username}</p>
+            <p>I</p>
           </div>
         </>
       ) : (

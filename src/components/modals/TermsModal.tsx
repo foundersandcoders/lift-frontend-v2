@@ -2,9 +2,10 @@
 
 import React from 'react';
 // import { SimpleDialog as Dialog, SimpleDialogContent as DialogContent } from '../ui/simple-dialog';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 import { X, FileText, Check, AlertTriangle, Scale } from 'lucide-react';
 
+// Force Redeploy
 interface TermsModalProps {
   onClose: () => void;
 }

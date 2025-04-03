@@ -8,7 +8,7 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '../../../components/ui/better-tooltip';
+} from '../../../components/ui/BetterTooltip';
 
 export interface QuestionCardProps {
   presetQuestion: SetQuestion;

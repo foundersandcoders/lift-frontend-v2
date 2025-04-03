@@ -17,12 +17,12 @@ const ActionsCounter: React.FC<ActionsCounterProps> = ({
   // Tab-like styling similar to category tabs
   const baseClasses =
     'inline-flex items-center px-3 py-1 text-sm transition-colors cursor-pointer whitespace-nowrap';
-  
+
   // Determine border radius and border styling based on expanded state
-  const borderStyles = expanded 
-    ? 'rounded-t-lg border-t border-l border-r' 
+  const borderStyles = expanded
+    ? 'rounded-t-lg border-t border-l border-r'
     : 'rounded-lg border';
-    
+
   const backgroundClasses =
     count > 0
       ? `bg-brand-pink text-white ${borderStyles} border-brand-pink`

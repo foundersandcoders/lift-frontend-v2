@@ -17,8 +17,8 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
   // Get the current step from the wizard
   const currentStep = selection.currentStep ?? 'privacy';
 
-  // Determine if we're using a preset question (indicated by the complement step being present)
-  const isPresetQuestion = !selection.currentStep || selection.currentStep === 'complement' || Boolean(selection.presetId);
+  // Determine if we're using a preset question
+  const isPresetQuestion = !selection.currentStep || Boolean(selection.presetId);
   
   // For custom statements, only show preview if we have at least a category
   // For preset questions, show if we have a subject
@@ -26,7 +26,7 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
 
   // Only show privacy icon if we've reached or passed that step
   const showPrivacyIcon =
-    currentStep === 'privacy' || currentStep === 'complement';
+    currentStep === 'privacy' || currentStep === 'description';
 
   // Only show category if:
   // - For custom statements: on category step or beyond
@@ -45,9 +45,9 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
     (currentStep === 'subject') || 
     (currentStep === 'verb') || 
     (currentStep === 'object') || 
-    (currentStep === 'category' && isPresetQuestion) || 
-    (currentStep === 'privacy') || 
-    (currentStep === 'complement');
+    (currentStep === 'privacy') ||
+    (currentStep === 'description') ||
+    (currentStep === 'category' && isPresetQuestion);
 
   // Get category display name from ID
   const getCategoryName = (categoryId: string) => {
@@ -95,14 +95,14 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
       )}
       
       {/* Verb */}
-      {verb && (currentStep === 'verb' || currentStep === 'object' || currentStep === 'privacy' || currentStep === 'complement') && (
+      {verb && (currentStep === 'verb' || currentStep === 'object' || currentStep === 'privacy' || currentStep === 'description') && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-verbSelector text-black'>
-          {getVerbName(verb)}
+          {getVerbName(verb, subject === 'I')}
         </span>
       )}
       
       {/* Object */}
-      {object && (currentStep === 'object' || currentStep === 'privacy' || currentStep === 'complement') && (
+      {object && (currentStep === 'object' || currentStep === 'privacy' || currentStep === 'description') && (
         <span className='px-1.5 py-0.5 text-xs rounded bg-objectInput text-black'>
           {object}
         </span>
@@ -130,6 +130,15 @@ const StatementPreview: React.FC<StatementPreviewProps> = ({ selection }) => {
             {word}
           </span>
         ))}
+        
+      {/* Description preview */}
+      {((selection.description && selection.description.trim().length > 0) || currentStep === 'description') && (
+        <div className='w-full mt-2 px-2'>
+          <p className='text-xs text-gray-500 italic truncate'>
+            {selection.description ? selection.description : 'Description (optional)'}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

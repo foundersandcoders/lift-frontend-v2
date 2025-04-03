@@ -1,7 +1,7 @@
 // src/components/statementWizard/steps/CategoryStep.tsx
 import React from 'react';
 import StepContainer from '../StepContainer';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import statementsCategories from '@/data/statementsCategories.json';
 
 interface CategoryStepProps {
