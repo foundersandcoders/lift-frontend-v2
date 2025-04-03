@@ -60,4 +60,19 @@ const getEmailFormattedStatement = (entry: Entry, username: string): string => {
   return `${formattedSubject} ${verbForm} ${entry.atoms.object}`;
 };
 
-export { getVerbName, getEmailFormattedStatement };
+/**
+ * Determines appropriate Tailwind CSS text size class based on the length of verb text.
+ * Used to ensure verb text fits properly in buttons without overflowing.
+ * 
+ * @param verbText The verb text to evaluate
+ * @returns The appropriate Tailwind CSS class for text size
+ */
+const getVerbTextSizeClass = (verbText: string): string => {
+  if (verbText.length >= 11) {
+    return 'text-xs'; // Small for longer texts
+  } else {
+    return 'text-sm'; // Default size
+  }
+};
+
+export { getVerbName, getEmailFormattedStatement, getVerbTextSizeClass };
