@@ -15,6 +15,7 @@ import { updateEntry } from '../api/entriesApi';
 import { EditStatementModal } from '../../wizard/components/EditStatementModal';
 import { BellOff, ChevronUp, ChevronDown, Plus } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
+import { SmallCircularQuestionCounter } from '../../../components/ui';
 
 // Force Redeploy
 
@@ -388,9 +389,12 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
                 : 'bg-slate-100 border-slate-300'
             } border-t border-l border-r border-b-0`}
           >
-            <h3 className='text-lg font-semibold'>
-              {formatCategoryName(catLabel)}
-            </h3>
+            <div className='flex items-center space-x-2'>
+              <h3 className='text-lg font-semibold'>
+                {formatCategoryName(catLabel)}
+              </h3>
+              <SmallCircularQuestionCounter size={18} categoryId={catId} />
+            </div>
           </div>
         </div>
 
