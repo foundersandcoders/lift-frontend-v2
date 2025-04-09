@@ -410,10 +410,10 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
           >
             <div className='flex items-center justify-between'>
               <div className='flex items-center space-x-2'>
+                <SmallCircularQuestionCounter size={18} categoryId={catId} />
                 <h3 className='text-lg font-semibold'>
                   {formatCategoryName(catLabel)}
                 </h3>
-                <SmallCircularQuestionCounter size={18} categoryId={catId} />
               </div>
               {isCollapsed ? (
                 <ChevronDown className='h-5 w-5' />
