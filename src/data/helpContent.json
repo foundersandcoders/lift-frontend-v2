@@ -38,7 +38,7 @@
       "steps": [
         "Click 'Create Statement' to start",
         "Choose a category for your statement (determines available subject options)",
-        "Select a subject, verb, and complete your statement",
+        "Select a subject, verb, and object complete your statement. You can also add a detailed description if you need it.",
         "Set privacy level and save your statement"
       ]
     },
@@ -78,6 +78,34 @@
       "title": "Privacy Control",
       "description": "You have full control over which statements are shared with your line manager.",
       "details": "For each statement, you can choose whether it's private (only visible to you) or public (visible to your line manager). You can change the privacy setting at any time."
+    }
+  ],
+
+  "resources": [
+    {
+      "title": "Communication Guide",
+      "description": "Comprehensive guide on effective workplace communication strategies.",
+      "link": "https://example.com/communication-guide"
+    },
+    {
+      "title": "Manager Conversation Toolkit",
+      "description": "Tools and templates for having productive conversations with your manager.",
+      "link": "https://example.com/manager-conversation-toolkit"
+    },
+    {
+      "title": "Workplace Accommodations FAQ",
+      "description": "Frequently asked questions about requesting and implementing workplace accommodations.",
+      "link": "https://example.com/workplace-accommodations-faq"
+    },
+    {
+      "title": "Career Development Resources",
+      "description": "Resources to help plan and discuss your career development with your manager.",
+      "link": "https://example.com/career-development"
+    },
+    {
+      "title": "Wellbeing Support",
+      "description": "Information and resources for maintaining wellbeing in the workplace.",
+      "link": "https://example.com/wellbeing-support"
     }
   ],
   "versions": [

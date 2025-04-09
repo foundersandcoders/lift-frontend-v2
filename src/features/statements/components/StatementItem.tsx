@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { getVerbName } from '@/lib/utils/verbUtils';
 import {
   Trash2,
@@ -19,23 +19,36 @@ import {
   SimpleDropdownMenuTrigger as DropdownMenuTrigger,
   SimpleDropdownMenuContent as DropdownMenuContent,
   SimpleDropdownMenuItem as DropdownMenuItem,
-} from '@/components/ui/simple-dropdown';
+} from '@/components/ui/Dropdown';
 import ActionsCounter from './ActionsCounter';
 import ActionLine from './ActionLine';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '@/components/ui/better-tooltip';
+} from '@/components/ui/BetterTooltip';
 import statementsCategories from '@/data/statementsCategories.json';
 import { formatCategoryName } from '@/lib/utils';
 
 export interface StatementItemProps {
   statement: Entry;
   isEditing: boolean;
-  editingPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | null;
+  editingPart:
+    | 'subject'
+    | 'verb'
+    | 'object'
+    | 'category'
+    | 'description'
+    | 'privacy'
+    | null;
   onPartClick: (
-    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
+    part:
+      | 'subject'
+      | 'verb'
+      | 'object'
+      | 'category'
+      | 'description'
+      | 'privacy',
     statementId: string
   ) => void;
   // When the green save icon is clicked, the updated entry (draft) is passed back
@@ -133,6 +146,9 @@ const StatementItem: React.FC<StatementItemProps> = ({
   const [originalPrivacy, setOriginalPrivacy] = React.useState<boolean | null>(
     null
   );
+  const [originalDescription, setOriginalDescription] = React.useState<
+    string | null
+  >(null);
 
   // Local "draft" state to track current modifications
   const [draft, setDraft] = React.useState<Entry>(statement);
@@ -156,6 +172,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
         setOriginalVerb(statement.atoms.verb);
         setOriginalObject(statement.atoms.object);
         setOriginalPrivacy(statement.isPublic);
+        setOriginalDescription(statement.description || null);
       }
 
       // Always keep draft updated with latest statement value
@@ -167,6 +184,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       setOriginalVerb(null);
       setOriginalObject(null);
       setOriginalPrivacy(null);
+      setOriginalDescription(null);
 
       setDraft(JSON.parse(JSON.stringify(statement)));
     }
@@ -232,6 +250,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
   let hasObjectChanged = false;
   let hasPrivacyChanged = false;
   let hasCategoryChanged = false;
+  let hasDescriptionChanged = false;
   let hasChanged = false;
 
   if (isEditing) {
@@ -246,6 +265,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
       hasVerbChanged = draft.atoms.verb !== originalVerb;
       hasObjectChanged = draft.atoms.object !== originalObject;
       hasPrivacyChanged = draft.isPublic !== originalPrivacy;
+      hasDescriptionChanged = draft.description !== originalDescription;
 
       // Normalize categories for comparison
       const draftCategory = normalizeCategoryForComparison(draft.category);
@@ -262,7 +282,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
         hasVerbChanged ||
         hasObjectChanged ||
         hasPrivacyChanged ||
-        hasCategoryChanged;
+        hasCategoryChanged ||
+        hasDescriptionChanged;
     }
   }
 
@@ -306,7 +327,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 onClick={() => onPartClick('verb', draft.id)}
                 className='cursor-pointer px-2 py-1 rounded bg-verbSelector hover:bg-verbSelectorHover'
               >
-                <span>{getVerbName(draft.atoms.verb)}</span>
+                <span>{getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')}</span>
               </div>
               {/* Object */}
               <div
@@ -322,12 +343,30 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer px-2 py-1 rounded bg-categorySelector text-black flex items-center gap-1 hover:bg-categorySelectorHover'
             >
               <span className='mr-1'>📁</span>
-              {/* Use formatted category name */}
-              {draft.category &&
-              draft.category.toLowerCase() !== 'uncategorized' &&
-              draft.category.toLowerCase() !== 'uncategorised'
-                ? getCategoryDisplayName(draft.category)
-                : 'Uncategorized'}
+              {/* Use formatted category name - truncated to 10 chars */}
+              <span className='truncate max-w-[80px]'>
+                {draft.category &&
+                draft.category.toLowerCase() !== 'uncategorized' &&
+                draft.category.toLowerCase() !== 'uncategorised'
+                  ? getCategoryDisplayName(draft.category)
+                  : 'Uncategorized'}
+              </span>
+            </div>
+
+            {/* Description - always show with placeholder if empty */}
+            <div
+              onClick={() => onPartClick('description', draft.id)}
+              className='cursor-pointer px-2 py-1 rounded bg-[var(--description-input,#8BB8E8)] bg-opacity-20 text-black flex items-center gap-1 hover:bg-opacity-30 '
+            >
+              {draft.description && draft.description.trim().length > 0 ? (
+                <span className='truncate max-w-[150px] italic'>
+                  {draft.description}
+                </span>
+              ) : (
+                <span className='truncate max-w-[150px] text-gray-500'>
+                  No description
+                </span>
+              )}
             </div>
           </div>
 
@@ -344,7 +383,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
                       const updatedDraft = { ...draft };
                       updatedDraft.input = `${
                         draft.atoms.subject
-                      } ${getVerbName(draft.atoms.verb)} ${draft.atoms.object}`;
+                      } ${getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')} ${draft.atoms.object}`;
 
                       await onLocalSave(updatedDraft);
                       setIsSaving(false);
@@ -422,7 +461,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-2 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
               <span className='font-medium'>
-                {getVerbName(draft.atoms.verb)}
+                {getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')}
               </span>
             </div>
 
@@ -440,13 +479,29 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-2 rounded bg-categorySelector hover:bg-categorySelectorHover flex items-center'
             >
               <span className='mr-1'>📁</span>
-              <span className='font-medium'>
+              <span className='font-medium truncate max-w-[80px]'>
                 {draft.category &&
                 draft.category.toLowerCase() !== 'uncategorized' &&
                 draft.category.toLowerCase() !== 'uncategorised'
                   ? getCategoryDisplayName(draft.category)
                   : 'Uncategorized'}
               </span>
+            </div>
+
+            {/* Description - always show with placeholder if empty */}
+            <div
+              onClick={() => onPartClick('description', draft.id)}
+              className='cursor-pointer p-2 h-[38px] rounded bg-[var(--description-input,#8BB8E8)] bg-opacity-20 hover:bg-opacity-30 flex items-center'
+            >
+              {draft.description && draft.description.trim().length > 0 ? (
+                <span className='font-medium italic text-sm truncate max-w-[150px]'>
+                  {draft.description}
+                </span>
+              ) : (
+                <span className='text-sm text-gray-500 truncate max-w-[150px]'>
+                  No description
+                </span>
+              )}
             </div>
           </div>
 
@@ -513,7 +568,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   setIsSaving(true);
                   const updatedDraft = { ...draft };
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
-                    draft.atoms.verb
+                    draft.atoms.verb,
+                    draft.atoms.subject === 'I'
                   )} ${draft.atoms.object}`;
 
                   await onLocalSave(updatedDraft);
@@ -547,7 +603,7 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-3 rounded bg-verbSelector hover:bg-verbSelectorHover'
             >
               <span className='font-medium'>
-                {getVerbName(draft.atoms.verb)}
+                {getVerbName(draft.atoms.verb, draft.atoms.subject === 'I')}
               </span>
             </div>
 
@@ -565,13 +621,29 @@ const StatementItem: React.FC<StatementItemProps> = ({
               className='cursor-pointer p-3 rounded bg-categorySelector hover:bg-categorySelectorHover flex items-center'
             >
               <span className='mr-1'>📁</span>
-              <span className='font-medium'>
+              <span className='font-medium truncate max-w-[80px]'>
                 {draft.category &&
                 draft.category.toLowerCase() !== 'uncategorized' &&
                 draft.category.toLowerCase() !== 'uncategorised'
                   ? getCategoryDisplayName(draft.category)
                   : 'Uncategorized'}
               </span>
+            </div>
+
+            {/* Description - always show with placeholder if empty */}
+            <div
+              onClick={() => onPartClick('description', draft.id)}
+              className='cursor-pointer p-3 h-[46px] rounded bg-[var(--description-input,#8BB8E8)] bg-opacity-20 hover:bg-opacity-30 flex items-center'
+            >
+              {draft.description && draft.description.trim().length > 0 ? (
+                <span className='italic text-sm truncate max-w-[200px]'>
+                  {draft.description}
+                </span>
+              ) : (
+                <span className='text-sm text-gray-500 truncate max-w-[200px]'>
+                  No description
+                </span>
+              )}
             </div>
           </div>
 
@@ -638,7 +710,8 @@ const StatementItem: React.FC<StatementItemProps> = ({
                   setIsSaving(true);
                   const updatedDraft = { ...draft };
                   updatedDraft.input = `${draft.atoms.subject} ${getVerbName(
-                    draft.atoms.verb
+                    draft.atoms.verb,
+                    draft.atoms.subject === 'I'
                   )} ${draft.atoms.object}`;
 
                   await onLocalSave(updatedDraft);
@@ -676,47 +749,59 @@ const StatementItem: React.FC<StatementItemProps> = ({
         </span>
       )}
 
-      {/* Desktop layout (xs breakpoint and above) */}
-      <div className='hidden xs:flex xs:items-center xs:justify-between'>
-        <div className='flex items-center space-x-2'>
-          {/* Privacy status icon */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span
-                className={`inline-flex items-center justify-center ${
-                  statement.isPublic ? 'text-green-500' : 'text-red-500'
-                } ${statement.isArchived ? 'text-opacity-80' : ''}`}
-              >
-                {statement.isPublic ? (
-                  <MailPlus size={16} />
-                ) : (
-                  <MailX size={16} />
-                )}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent className='p-2 bg-black text-white rounded'>
-              {statement.isPublic
-                ? 'You are sharing this statement'
-                : 'This statement is private'}
-            </TooltipContent>
-          </Tooltip>
+      {/* Desktop layout (xs breakpoint and above) - Two row layout */}
+      <div className='hidden xs:flex xs:flex-col space-y-2'>
+        {/* First row: Statement, privacy icon, and settings button */}
+        <div className='flex items-start justify-between'>
+          <div className='flex items-start space-x-2 flex-1'>
+            {/* Privacy status icon */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className={`inline-flex items-center justify-center ${
+                    statement.isPublic ? 'text-green-500' : 'text-red-500'
+                  } ${statement.isArchived ? 'text-opacity-80' : ''}`}
+                >
+                  {statement.isPublic ? (
+                    <MailPlus size={16} />
+                  ) : (
+                    <MailX size={16} />
+                  )}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent className='p-2 bg-black text-white rounded'>
+                {statement.isPublic
+                  ? 'You are sharing this statement'
+                  : 'This statement is private'}
+              </TooltipContent>
+            </Tooltip>
 
-          {/* Statement text with archived styling if needed */}
-          <div className='flex flex-col'>
-            <span className={statement.isArchived ? 'text-gray-500' : ''}>
-              {`${statement.atoms.subject} ${getVerbName(
-                statement.atoms.verb
-              )} ${statement.atoms.object}`}
-            </span>
+            {/* Statement text and description in a column */}
+            <div className='flex flex-col flex-1'>
+              <span className={statement.isArchived ? 'text-gray-500' : ''}>
+                {`${statement.atoms.subject} ${getVerbName(
+                  statement.atoms.verb,
+                  statement.atoms.subject === 'I'
+                )} ${statement.atoms.object}`}
+              </span>
+              
+              {/* Description (shown if exists) */}
+              {statement.description && statement.description.trim() !== '' && (
+                <div className='mt-1.5 mr-8'>
+                  <div className='text-xs text-gray-500 italic whitespace-pre-line line-clamp-3 pl-1 border-l border-gray-300'>
+                    {statement.description}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        <div className='flex items-center space-x-4'>
+
           {/* Menu button */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 onClick={(e) => e.stopPropagation()}
-                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors'
+                className='p-1.5 rounded-full hover:bg-gray-200 transition-colors flex-shrink-0 mt-0.5'
               >
                 <Settings size={18} className='text-gray-600' />
               </button>
@@ -755,11 +840,13 @@ const StatementItem: React.FC<StatementItemProps> = ({
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
 
-          {/* Actions counter - now the rightmost element */}
+        {/* Second row: Actions counter tab aligned to the right */}
+        <div className='flex justify-end'>
           <div
             onClick={() => setIsActionsExpanded((prev) => !prev)}
-            className='cursor-pointer relative z-10 self-end'
+            className='cursor-pointer relative z-10'
           >
             <ActionsCounter
               count={statement.actions?.length ?? 0}
@@ -804,9 +891,17 @@ const StatementItem: React.FC<StatementItemProps> = ({
                 } break-words line-clamp-2`}
               >
                 {`${statement.atoms.subject} ${getVerbName(
-                  statement.atoms.verb
+                  statement.atoms.verb,
+                  statement.atoms.subject === 'I'
                 )} ${statement.atoms.object}`}
               </span>
+
+              {/* Description (mobile only) */}
+              {statement.description && statement.description.trim() !== '' && (
+                <div className='mt-1.5 text-xs text-gray-500 italic whitespace-pre-line line-clamp-3 pl-1 border-l border-gray-300'>
+                  {statement.description}
+                </div>
+              )}
             </div>
           </div>
 

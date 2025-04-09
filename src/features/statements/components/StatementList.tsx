@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useEntries } from '../hooks/useEntries';
-import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
+import { ConfirmationDialog } from '../../../components/ui/ConfirmationDialog';
 import type { Entry, SetQuestion } from '@/types/entries';
 import QuestionCard from './QuestionCard';
 import StatementItem from './StatementItem';
@@ -14,7 +14,10 @@ import { formatCategoryName } from '@/lib/utils';
 import { updateEntry } from '../api/entriesApi';
 import { EditStatementModal } from '../../wizard/components/EditStatementModal';
 import { BellOff, ChevronUp, ChevronDown, Plus } from 'lucide-react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '../../../components/ui/Button';
+import { SmallCircularQuestionCounter } from '../../../components/ui';
+
+// Force Redeploy
 
 // Helper function to normalize category IDs for consistent comparison
 const normalizeCategoryIdForGrouping = (id: string): string => {
@@ -97,7 +100,13 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
   // State for opening the modal for a specific part:
   const [editModalData, setEditModalData] = useState<{
     statement: Entry;
-    editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
+    editPart:
+      | 'subject'
+      | 'verb'
+      | 'object'
+      | 'category'
+      | 'privacy'
+      | 'description';
   } | null>(null);
 
   // Keep a backup of the original entries when entering edit mode
@@ -260,7 +269,13 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
 
   // Callback for inline part clicks to open the modal:
   const handlePartClick = (
-    part: 'subject' | 'verb' | 'object' | 'category' | 'privacy',
+    part:
+      | 'subject'
+      | 'verb'
+      | 'object'
+      | 'category'
+      | 'privacy'
+      | 'description',
     statementId: string
   ) => {
     const statementToEdit = entries.find((s) => s.id === statementId);
@@ -337,6 +352,9 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
     isSnoozedQuestionsSectionExpanded,
     setIsSnoozedQuestionsSectionExpanded,
   ] = useState(true);
+  
+  // State for managing the visibility of category sections
+  const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
 
   // Move the hook call to the top level
   const { categoryCounts } = useAnsweredCountByCategory();
@@ -362,103 +380,132 @@ const StatementList: React.FC<StatementListProps> = ({ username }) => {
     const isComplete =
       categoryStatus.total > 0 &&
       categoryStatus.answered === categoryStatus.total;
+      
+    // Check if category is collapsed
+    const isCollapsed = collapsedCategories[catId] || false;
+    
+    // Toggle collapsed state for this category
+    const toggleCollapsed = () => {
+      setCollapsedCategories(prev => ({
+        ...prev,
+        [catId]: !prev[catId]
+      }));
+    };
 
     return (
       <div key={catId} className='mb-4 md:mb-8 category-section'>
         {/* Folder Tab Design */}
         <div className={`relative z-10`}>
           <div
-            className={`inline-block px-4 py-1 md:py-2 rounded-t-lg ${
+            className={`${isCollapsed ? 'w-full' : 'inline-block'} px-4 py-1 md:py-2 ${
+              isCollapsed ? 'rounded-lg' : 'rounded-t-lg'
+            } ${
               isComplete
                 ? 'bg-green-200 border-green-500'
                 : 'bg-slate-100 border-slate-300'
-            } border-t border-l border-r border-b-0`}
+            } border ${isCollapsed ? '' : 'border-b-0'} cursor-pointer`}
+            onClick={toggleCollapsed}
+            aria-expanded={!isCollapsed}
+            aria-controls={`category-content-${catId}`}
           >
-            <h3 className='text-lg font-semibold'>
-              {formatCategoryName(catLabel)}
-            </h3>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center space-x-2'>
+                <SmallCircularQuestionCounter size={18} categoryId={catId} />
+                <h3 className='text-lg font-semibold'>
+                  {formatCategoryName(catLabel)}
+                </h3>
+              </div>
+              {isCollapsed ? (
+                <ChevronDown className='h-5 w-5' />
+              ) : (
+                <ChevronUp className='h-5 w-5' />
+              )}
+            </div>
           </div>
         </div>
 
         {/* Folder Content */}
-        <div
-          className={`border rounded-tr-lg rounded-b-lg p-2 md:p-4 -mt-[1px] ${
-            isComplete
-              ? 'bg-white border-green-500'
-              : 'bg-white border-slate-300'
-          }`}
-        >
-          {presetForCat.length > 0 && (
-            <ul className='space-y-2'>
-              {presetForCat.map((presetQuestion) => (
-                <li key={`preset-${presetQuestion.id}`}>
-                  <QuestionCard
-                    presetQuestion={presetQuestion}
-                    onSelect={handlePresetQuestionSelect}
-                    onToggleSnooze={handleToggleQuestionSnooze}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-          {statementsForCat.length > 0 && (
-            <ul className='space-y-4 mt-4'>
-              {statementsForCat.map((statement) => (
-                <li key={statement.id}>
-                  <StatementItem
-                    statement={statement}
-                    isEditing={statement.id === editingStatementId}
-                    editingPart={null}
-                    originalCategory={originalCategories[statement.id]}
-                    onPartClick={handlePartClick}
-                    onLocalSave={handleLocalSave}
-                    onCancel={() => {
-                      // If we have the original, restore it
-                      if (originalEntries[statement.id]) {
-                        // Restore the original entry from our backup
-                        setData({
-                          type: 'UPDATE_ENTRY',
-                          payload: originalEntries[statement.id],
-                        });
+        {!isCollapsed && (
+          <div
+            id={`category-content-${catId}`}
+            className={`border rounded-tr-lg rounded-b-lg p-2 md:p-4 -mt-[1px] ${
+              isComplete
+                ? 'bg-white border-green-500'
+                : 'bg-white border-slate-300'
+            }`}
+          >
+            {presetForCat.length > 0 && (
+              <ul className='space-y-2'>
+                {presetForCat.map((presetQuestion) => (
+                  <li key={`preset-${presetQuestion.id}`}>
+                    <QuestionCard
+                      presetQuestion={presetQuestion}
+                      onSelect={handlePresetQuestionSelect}
+                      onToggleSnooze={handleToggleQuestionSnooze}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+            {statementsForCat.length > 0 && (
+              <ul className='space-y-4 mt-4'>
+                {statementsForCat.map((statement) => (
+                  <li key={statement.id}>
+                    <StatementItem
+                      statement={statement}
+                      isEditing={statement.id === editingStatementId}
+                      editingPart={null}
+                      originalCategory={originalCategories[statement.id]}
+                      onPartClick={handlePartClick}
+                      onLocalSave={handleLocalSave}
+                      onCancel={() => {
+                        // If we have the original, restore it
+                        if (originalEntries[statement.id]) {
+                          // Restore the original entry from our backup
+                          setData({
+                            type: 'UPDATE_ENTRY',
+                            payload: originalEntries[statement.id],
+                          });
 
-                        // Remove from originalEntries and originalCategories
-                        setOriginalEntries((prev) => {
-                          const newEntries = { ...prev };
-                          delete newEntries[statement.id];
-                          return newEntries;
-                        });
+                          // Remove from originalEntries and originalCategories
+                          setOriginalEntries((prev) => {
+                            const newEntries = { ...prev };
+                            delete newEntries[statement.id];
+                            return newEntries;
+                          });
 
-                        // Also clear from original categories
-                        setOriginalCategories((prev) => {
-                          const newCategories = { ...prev };
-                          delete newCategories[statement.id];
-                          return newCategories;
-                        });
+                          // Also clear from original categories
+                          setOriginalCategories((prev) => {
+                            const newCategories = { ...prev };
+                            delete newCategories[statement.id];
+                            return newCategories;
+                          });
+                        }
+
+                        // Exit edit mode
+                        setEditingStatementId(null);
+                      }}
+                      onDelete={handleDeleteClick}
+                      onEditClick={handleEditClick}
+                      onAddAction={handleAddAction}
+                      onEditAction={handleEditAction}
+                      onDeleteAction={handleDeleteAction}
+                      onReset={
+                        statement.presetId
+                          ? () => handleResetClick(statement.id)
+                          : undefined
                       }
-
-                      // Exit edit mode
-                      setEditingStatementId(null);
-                    }}
-                    onDelete={handleDeleteClick}
-                    onEditClick={handleEditClick}
-                    onAddAction={handleAddAction}
-                    onEditAction={handleEditAction}
-                    onDeleteAction={handleDeleteAction}
-                    onReset={
-                      statement.presetId
-                        ? () => handleResetClick(statement.id)
-                        : undefined
-                    }
-                    onToggleArchived={handleToggleArchived}
-                    onToggleActionResolved={(actionId: string) =>
-                      handleToggleActionResolved(statement.id, actionId)
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                      onToggleArchived={handleToggleArchived}
+                      onToggleActionResolved={(actionId: string) =>
+                        handleToggleActionResolved(statement.id, actionId)
+                      }
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
     );
   };

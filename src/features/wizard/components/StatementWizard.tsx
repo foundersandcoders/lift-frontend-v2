@@ -6,7 +6,7 @@ import {
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
   SimpleDialogTitle as DialogTitle,
-} from '@/components/ui/simple-dialog';
+} from '@/components/ui/Dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEntries } from '@/features/statements/hooks/useEntries';
 import { postNewEntry } from '@/features/statements/api/entriesApi';
@@ -15,10 +15,10 @@ import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';
 import { CategoryStep } from './steps/CategoryStep';
+import { DescriptionStep } from './steps/DescriptionStep';
 import { PrivacyStep } from './steps/PrivacyStep';
-import { ComplementStep } from './steps/ComplementStep';
 import StatementPreview from './StatementPreview';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface StatementWizardProps {
   username: string;
@@ -36,20 +36,20 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
   const { setData } = useEntries();
   const isPreset = Boolean(presetQuestion);
 
-  // Define steps: if preset, skip "category" and add "complement"
+  // Define steps: for both preset and custom statements, make description the final step
   // For custom statements, show category first, then subject
   const steps: Exclude<Step, 'closed'>[] = isPreset
-    ? ['subject', 'verb', 'object', 'privacy', 'complement']
-    : ['category', 'subject', 'verb', 'object', 'privacy'];
+    ? ['subject', 'verb', 'object', 'privacy', 'description']
+    : ['category', 'subject', 'verb', 'object', 'privacy', 'description'];
 
   // Use design tokens for border colors via Tailwind’s arbitrary value syntax:
   const stepBorderColors: Record<Exclude<Step, 'closed'>, string> = {
     subject: 'border-[var(--subject-selector)]',
     verb: 'border-[var(--verb-selector)]',
     object: 'border-[var(--object-input)]',
+    description: 'border-[var(--description-input, #8BB8E8)]',
     category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
-    complement: 'border-gray-400',
   };
 
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -75,19 +75,19 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
     if (presetQuestion?.steps?.subject?.preset) {
       setSelection((prev) => ({
         ...prev,
-        atoms: { ...prev.atoms, subject: username },
+        atoms: { ...prev.atoms, subject: "I" },
         // For preset questions, use the category from the preset
         category: presetQuestion.category || 'uncategorised',
         // Add the presetId to identify this as a preset question in the preview
         presetId: presetQuestion.id,
       }));
     } else {
-      // For custom statements, set default category to "uncategorised" 
+      // For custom statements, set default category to "uncategorised"
       // but still show the category screen first
       setSelection((prev) => ({
         ...prev,
-        // Set default subject to username
-        atoms: { ...prev.atoms, subject: username },
+        // Set default subject to "I" instead of username
+        atoms: { ...prev.atoms, subject: "I" },
         // Set default category to 'uncategorised'
         category: 'uncategorised',
       }));
@@ -174,10 +174,10 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         // For custom statements (not preset), category must be selected
         return isPreset || selection.category.trim().length > 0;
       case 'privacy':
-        // Always valid since it's a boolean toggle.
+        // Always valid since it's a boolean toggle
         return true;
-      case 'complement':
-        // Complement is optional; consider it valid.
+      case 'description':
+        // Description is optional; always valid
         return true;
       default:
         return false;
@@ -247,6 +247,28 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             }}
           />
         );
+      case 'description':
+        return (
+          <DescriptionStep
+            description={selection.description}
+            onUpdate={(val) => {
+              // If the same value is selected again, move to next step
+              if (val === selection.description) {
+                goNext();
+              } else {
+                // Update the description value
+                setSelection((prev) => ({
+                  ...prev,
+                  description: val,
+                }));
+                
+                // Don't automatically advance - user will use Next button
+                // This is consistent with other steps and allows users
+                // to review their description before proceeding
+              }
+            }}
+          />
+        );
       case 'category':
         return (
           <CategoryStep
@@ -284,8 +306,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             }}
           />
         );
-      case 'complement':
-        return <ComplementStep />;
+      // No complement step anymore
       default:
         return null;
     }
@@ -313,7 +334,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
         )}
         <DialogDescription className='sr-only'>Wizard Steps</DialogDescription>
         <DialogTitle className='sr-only'>Wizard Steps</DialogTitle>
-        
+
         {/* Scrollable Content Area */}
         <div className='flex-grow overflow-y-auto min-h-0'>
           <AnimatePresence mode='wait' initial={false}>
@@ -328,7 +349,7 @@ const StatementWizard: React.FC<StatementWizardProps> = ({
             </motion.div>
           </AnimatePresence>
         </div>
-        
+
         {/* Bottom Section - Always Visible */}
         <div className='flex-shrink-0'>
           {/* Navigation Panel */}

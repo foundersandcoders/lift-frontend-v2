@@ -13,19 +13,19 @@ import {
   SimpleDropdownMenuContent as DropdownMenuContent,
   SimpleDropdownMenuItem as DropdownMenuItem,
   SimpleDropdownMenuSeparator as DropdownMenuSeparator,
-} from '../../../components/ui/simple-dropdown';
+} from '../../../components/ui/Dropdown';
 import ActionForm from './ActionForm';
-import { ConfirmationDialog } from '../../../components/ui/confirmation-dialog';
+import { ConfirmationDialog } from '../../../components/ui/ConfirmationDialog';
 import type { Action } from '../../../types/entries';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import GratitudeModal from '../../../components/modals/GratitudeModal';
-import { markGratitudeSent } from '../../../features/email/api/gratitudeApi';
+import { markGratitudeSent } from '../../email/api/emailGratitudeApi';
 import { useEntries } from '../hooks/useEntries';
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from '../../../components/ui/better-tooltip';
+} from '../../../components/ui/BetterTooltip';
 
 export interface ActionLineProps {
   statementId: string;
@@ -62,9 +62,12 @@ const ActionLine: React.FC<ActionLineProps> = ({
     action: Action | null;
   }>({ isOpen: false, action: null });
 
-  // Get entries data to check for manager email
+  // Get entries data to check for manager email and find current statement
   const { data } = useEntries();
   const hasManagerEmail = data.managerEmail && data.managerEmail.trim() !== '';
+  
+  // Find the current statement to pass its details to the gratitude modal
+  const currentStatement = data.entries.find(entry => entry.id === statementId);
 
   // --- Handlers for Editing ---
   const handleStartEdit = (action: Action) => {
@@ -114,7 +117,7 @@ const ActionLine: React.FC<ActionLineProps> = ({
   };
 
   return (
-    <div className='ml-0 pl-0 md:pl-2 border-gray-200 space-y-2 mt-2'>
+    <div className='ml-0 pl-0 md:pl-2 border-gray-200 space-y-2'>
       {actions.map((action) => {
         const isEditing = editingActionId === action.id;
         if (!isEditing) {
@@ -253,16 +256,24 @@ const ActionLine: React.FC<ActionLineProps> = ({
                     {!action.gratitude?.sent && (
                       <>
                         <DropdownMenuSeparator />
-                        <div className="w-full">
+                        <div className='w-full'>
                           <DropdownMenuItem
                             onClick={() => {
                               if (hasManagerEmail) {
                                 setGratitudeModal({ isOpen: true, action });
                               }
                             }}
-                            className={hasManagerEmail ? "text-pink-600" : "text-pink-300 cursor-not-allowed"}
+                            className={
+                              hasManagerEmail
+                                ? 'text-pink-600'
+                                : 'text-pink-300 cursor-not-allowed'
+                            }
                             disabled={!hasManagerEmail}
-                            title={!hasManagerEmail ? "Manager's email is required to send gratitude" : ""}
+                            title={
+                              !hasManagerEmail
+                                ? "Manager's email is required to send gratitude"
+                                : ''
+                            }
                           >
                             <Heart className='mr-2 h-4 w-4' />
                             Send gratitude
@@ -314,6 +325,10 @@ const ActionLine: React.FC<ActionLineProps> = ({
           onClose={() => setGratitudeModal({ isOpen: false, action: null })}
           statementId={statementId}
           action={gratitudeModal.action}
+          statement={currentStatement ? {
+            input: currentStatement.input,
+            description: currentStatement.description
+          } : undefined}
           onGratitudeSent={async (stmtId, actionId, message) => {
             try {
               // Call the API to mark gratitude as sent

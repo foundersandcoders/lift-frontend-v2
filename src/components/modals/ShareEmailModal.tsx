@@ -5,12 +5,12 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/simple-dialog';
-import { Button } from '../ui/button';
-import { useEntries } from '../../features/statements/hooks/useEntries';
-import { shareStatements } from '../../features/email/api/emailApi';
+} from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
+import { useEntries } from '@/features/statements';
+import { shareStatements } from '@/features/email/api/emailStatementsApi';
 import { Loader2 } from 'lucide-react';
-import { getVerbName } from '../../lib/utils/verbUtils';
+import { getEmailFormattedStatement } from '@/lib/utils/verbUtils';
 import PrivacyModal from './PrivacyModal';
 
 const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
@@ -124,9 +124,15 @@ const ShareEmailModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     className='p-3 sm:p-4 border bg-white shadow-sm rounded-sm'
                   >
                     <p className='text-sm sm:text-base font-semibold break-words'>
-                      {entry.atoms.subject} {getVerbName(entry.atoms.verb)}{' '}
-                      {entry.atoms.object}
+                      {getEmailFormattedStatement(entry, data.username || 'User')}
                     </p>
+
+                    {/* Display description if available */}
+                    {entry.description && entry.description.trim() !== '' && (
+                      <div className='mt-2 text-sm text-gray-700 bg-gray-50 p-2 rounded-sm border-l-2 border-[var(--description-input,#8BB8E8)] italic whitespace-pre-line'>
+                        {entry.description}
+                      </div>
+                    )}
 
                     {entry.actions && entry.actions.length > 0 && (
                       <div className='mt-2 sm:mt-3'>

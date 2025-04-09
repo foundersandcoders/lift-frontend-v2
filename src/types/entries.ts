@@ -2,6 +2,7 @@ export interface Atoms {
   subject: string;
   verb: string;
   object: string;
+  description?: string;
   adverbial?: string[];
 }
 
@@ -23,6 +24,7 @@ export interface Entry {
   input: string; // The full statement as a single string (headline)
   isPublic: boolean;
   atoms: Atoms; // Nested grammatical components
+  description?: string; // Optional detailed description/expansion of the statement
   actions?: Action[];
   category: string;
   presetId?: string;
@@ -72,6 +74,7 @@ export interface SetQuestion {
     subject: SetQuestionStep;
     verb: SetQuestionStep;
     object: SetQuestionStep;
+    description?: SetQuestionStep;
     category?: SetQuestionStep;
     privacy: SetQuestionStep;
   };
@@ -96,6 +99,6 @@ export type Step =
   | 'subject'
   | 'verb'
   | 'object'
+  | 'description'
   | 'category'
-  | 'privacy'
-  | 'complement';
+  | 'privacy';

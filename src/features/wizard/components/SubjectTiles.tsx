@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Button } from '../../../components/ui/button';
+import { Button } from '../../../components/ui/Button';
 import descriptorsData from '../../../data/descriptors.json';
 import type { SetQuestion, DescriptorsData } from '../../../types/entries';
 
@@ -17,7 +17,7 @@ interface SubjectTilesProps {
 }
 
 const getSubjectTiles = (
-  username: string,
+  // username: string,
   activePresetQuestion?: SetQuestion,
   selectedCategory?: string
 ): SubjectTile[] => {
@@ -25,7 +25,8 @@ const getSubjectTiles = (
 
   // Use the selected category if available, or the top-level category from the preset question
   // defaulting to 'wellbeing' if neither is available
-  const categoryKey = selectedCategory || activePresetQuestion?.category || 'wellbeing';
+  const categoryKey =
+    selectedCategory || activePresetQuestion?.category || 'wellbeing';
   const data = descriptorsData as DescriptorsData;
   const category = data.descriptors.find(
     (d) => d.name.toLowerCase() === categoryKey.toLowerCase()
@@ -34,24 +35,24 @@ const getSubjectTiles = (
     descriptorOptions = category.options;
   }
   return [
-    { label: username, value: username },
+    { label: 'I', value: 'I' },
     ...descriptorOptions.map((option) => ({
-      label: `${username}'s ${option}`,
-      value: `${username}'s ${option}`,
+      label: `My ${option}`,
+      value: `My ${option}`,
     })),
   ];
 };
 
 export const SubjectTiles: React.FC<SubjectTilesProps> = ({
-  username,
+  // username,
   activePresetQuestion,
   selectedCategory,
   selectedValue,
   onSelect,
 }) => {
   const tiles = useMemo(
-    () => getSubjectTiles(username, activePresetQuestion, selectedCategory),
-    [username, activePresetQuestion, selectedCategory]
+    () => getSubjectTiles(activePresetQuestion, selectedCategory),
+    [activePresetQuestion, selectedCategory]
   );
 
   return (

@@ -4,19 +4,20 @@ import {
   SimpleDialogContent as DialogContent,
   SimpleDialogTitle as DialogTitle,
   SimpleDialogDescription as DialogDescription,
-} from '@/components/ui/simple-dialog';
-import { Button } from '@/components/ui/button';
+} from '@/components/ui/Dialog';
+import { Button } from '@/components/ui/Button';
 import type { Entry } from '@/types/entries';
 import { SubjectStep } from './steps/SubjectStep';
 import { VerbStep } from './steps/VerbStep';
 import { ObjectStep } from './steps/ObjectStep';
 import { CategoryStep } from './steps/CategoryStep';
+import { DescriptionStep } from './steps/DescriptionStep';
 import { PrivacyStep } from './steps/PrivacyStep';
 import { getVerbName } from '@/lib/utils/verbUtils';
 
 interface EditStatementModalProps {
   statement: Entry;
-  editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy';
+  editPart: 'subject' | 'verb' | 'object' | 'category' | 'privacy' | 'description';
   username: string;
   onUpdate: (updatedStatement: Entry) => void;
   onClose: () => void;
@@ -40,6 +41,8 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         return statement.atoms.object;
       case 'category':
         return statement.category;
+      case 'description':
+        return statement.description || '';
       case 'privacy':
         return statement.isPublic;
       default:
@@ -77,7 +80,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
       // Create a completely new object with a deeper clone to ensure React detects the change
       // Force category to be a string to avoid type issues
       const categoryValue = localValue ? String(localValue) : '';
-      
+
       // Create a new object with the modified category
       const newStatement = {
         ...statement,
@@ -86,13 +89,15 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
         _needsScroll: true, // Flag to indicate this needs scrolling
         category: categoryValue,
       };
-      
+
       // Deep clone to ensure all references are fresh
       updatedStatement = JSON.parse(JSON.stringify(newStatement));
 
       console.log('Updated statement (category change):', updatedStatement);
     } else if (editPart === 'privacy') {
       updatedStatement = { ...statement, isPublic: localValue as boolean };
+    } else if (editPart === 'description') {
+      updatedStatement = { ...statement, description: localValue as string };
     } else {
       updatedStatement = statement;
     }
@@ -108,7 +113,7 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
     object: 'border-[var(--object-input)]',
     category: 'border-[var(--category-selector)]',
     privacy: 'border-[var(--privacy-selector)]',
-    complement: 'border-gray-400',
+    description: 'border-[var(--description-input)]',
   };
   const borderClass = borderClasses[editPart] || 'border-gray-400';
 
@@ -128,7 +133,8 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
                 subject: {
                   question: '',
                   preset: false,
-                  presetAnswer: null,
+                  // Use "I" instead of username
+                  presetAnswer: "I",
                   allowDescriptors: true,
                 },
                 verb: {
@@ -215,6 +221,18 @@ export const EditStatementModal: React.FC<EditStatementModalProps> = ({
               } else {
                 setLocalValue(val);
               }
+            }}
+          />
+        );
+      case 'description':
+        return (
+          <DescriptionStep
+            description={localValue as string}
+            onUpdate={(val) => {
+              // Update the value immediately to show in preview
+              setLocalValue(val);
+              
+              // Don't automatically save - let the user click OK when ready
             }}
           />
         );

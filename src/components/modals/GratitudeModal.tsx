@@ -5,10 +5,10 @@ import {
   SimpleDialog as Dialog,
   SimpleDialogContent as DialogContent,
   SimpleDialogDescription as DialogDescription,
-} from '../ui/simple-dialog';
-import { Button } from '../ui/button';
+} from '../ui/Dialog';
+import { Button } from '../ui/Button';
 import { Loader2, Heart } from 'lucide-react';
-import { sendGratitude } from '../../features/email/api/gratitudeApi';
+import { sendGratitude } from '../../features/email/api/emailGratitudeApi';
 import { useEntries } from '../../features/statements/hooks/useEntries';
 import { Action } from '../../types/entries';
 
@@ -16,6 +16,10 @@ interface GratitudeModalProps {
   onClose: () => void;
   statementId: string;
   action: Action;
+  statement?: {
+    input: string;
+    description?: string;
+  };
   onGratitudeSent: (
     statementId: string,
     actionId: string,
@@ -27,6 +31,7 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
   onClose,
   statementId,
   action,
+  statement,
   onGratitudeSent,
 }) => {
   const { data } = useEntries();
@@ -115,8 +120,8 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
           >
             {/* Heart decoration - smaller on mobile */}
             <div className='absolute top-2 right-2 sm:top-4 sm:right-4 text-pink-400 opacity-20 pointer-events-none'>
-              <Heart size={24} className="sm:hidden" />
-              <Heart size={40} className="hidden sm:block" />
+              <Heart size={24} className='sm:hidden' />
+              <Heart size={40} className='hidden sm:block' />
             </div>
 
             <DialogDescription className='mt-0 text-center text-sm'>
@@ -140,11 +145,32 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
               </div>
             )}
 
+            {/* If statement is provided, show it */}
+            {statement && (
+              <div className='mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-md shadow-sm border border-pink-100'>
+                <h3 className='font-semibold text-gray-700 mb-1 sm:mb-2 flex items-center text-sm sm:text-base'>
+                  Statement
+                </h3>
+                <p className='text-gray-600 text-xs sm:text-sm break-words font-medium'>
+                  {statement.input}
+                </p>
+                
+                {/* Display description if available */}
+                {statement.description && statement.description.trim() !== '' && (
+                  <div className='mt-2 text-gray-600 text-xs sm:text-sm bg-gray-50 p-2 rounded-sm border-l-2 border-[var(--description-input,#8BB8E8)] italic whitespace-pre-line'>
+                    {statement.description}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className='mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-md shadow-sm border border-pink-100'>
               <h3 className='font-semibold text-gray-700 mb-1 sm:mb-2 flex items-center text-sm sm:text-base'>
                 Action
               </h3>
-              <p className='text-gray-600 text-xs sm:text-sm break-words'>{action.action}</p>
+              <p className='text-gray-600 text-xs sm:text-sm break-words'>
+                {action.action}
+              </p>
               {action.byDate && (
                 <p className='text-xs text-gray-500 mt-1'>
                   Due by: {action.byDate}
@@ -191,8 +217,8 @@ const GratitudeModal: React.FC<GratitudeModalProps> = ({
                   </>
                 )}
               </Button>
-              <Button 
-                variant='outline' 
+              <Button
+                variant='outline'
                 onClick={onClose}
                 className='text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2'
               >
